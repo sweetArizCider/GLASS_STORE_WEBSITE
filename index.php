@@ -4,7 +4,6 @@ include './class/database.php';
 
 $id_usuario = 0;
 $notificaciones = [];
-
 if (isset($_SESSION["nom_usuario"])) {
     $user = $_SESSION["nom_usuario"];
 
