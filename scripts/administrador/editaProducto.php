@@ -63,7 +63,7 @@
                     $imagen = basename($_FILES["fileToUpload"]["name"]);
 
                     // Actualizar la imagen del producto en la base de datos
-                    $cadena = "UPDATE PRODUCTOS SET imagen = '$imagen' WHERE nombre = '$nuevo_nombre';";
+                    $cadena = "UPDATE productos SET imagen = '$imagen' WHERE nombre = '$nuevo_nombre';";
                     $db->ejecuta($cadena);
                 } else {
                     echo "<div class='alert alert-danger'>Lo siento, hubo un error al subir tu archivo.</div>";
