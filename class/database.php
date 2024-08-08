@@ -3,8 +3,8 @@
 class database{
     // paramentros que le voy a enviar al objeto pdo
     private $PDOlocal;
-    private $user = 'arizpe1';
-    private $password = "arizpe1";
+    private $user = 'sofia';
+    private $password = "password";
     private $server = "mysql:host=localhost;dbname=glass_store_ana";
 
     // le ponemos la sig cadena: host, base de datos
@@ -309,6 +309,38 @@ class database{
         }
     }
     
-
+    public function ObtenerProductosPredeterminados() {
+    
+        try {
+            $query = "
+                SELECT P.id_producto, P.nombre, P.precio, I.imagen
+                FROM productos P
+                INNER JOIN imagen I ON P.id_producto = I.producto
+                WHERE P.estatus = 'activo'
+                ORDER BY RAND()
+                LIMIT 16
+            ";
+            $stmt = $this->PDOlocal->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_OBJ); // Devuelve los resultados como objetos
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return []; // Devuelve un array vacío en caso de error
+        } 
+    }
+    public function buscarProductos($termino) {
+    
+        try {
+            $query = "SELECT id_producto, nombre FROM PRODUCTOS WHERE nombre LIKE :termino AND estatus = 'activo' LIMIT 10";
+            $stmt = $this->PDOlocal->prepare($query);
+            $termino = "%$termino%";
+            $stmt->bindParam(':termino', $termino, PDO::PARAM_STR);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_OBJ); // Devuelve los resultados como objetos
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return [];
+        }
+    }
 }
 ?>

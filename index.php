@@ -30,7 +30,6 @@ if (isset($_SESSION["nom_usuario"])) {
             if ($nombre_rol == 'cliente' && isset($fila->id_cliente)) {
                 $id_cliente = $fila->id_cliente;
                 $id_usuario = $id_cliente;
-
                 // Cambia el nombre de la tabla a minúsculas
                 $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = :cliente";
                 $paramsNotificaciones = [':cliente' => $id_cliente];
@@ -104,7 +103,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
               <img src="./img/index/GLASS.png" alt="" class="logo">
           </div>
           <div class="icons">
-                <a href="/productos"><img src="./img/index/search.svg" alt="" width="25px"></a>
+                <a href="./views/productos.php"><img src="./img/index/search.svg" alt="" width="25px"></a>
                 <button class="botonMostrarFavoritos" data-bs-toggle="modal" data-bs-target="#favoritosModal"><img src="./img/index/favorites.svg" alt="" width="25px"></button>
                 <a id="carrito" data-bs-toggle="modal" data-bs-target="#carritoModal"><img src="./img/index/clip.svg" alt="" width="25px"></a>
 
@@ -115,7 +114,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                     <?php
                     if (isset($_SESSION["nom_usuario"])) {
                         echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
-                        echo '<li><a class="dropdown-item" href="perfil.php">Perfil</a></li>';
+                        echo '<li><a class="dropdown-item" href="./views/cliente/perfil.php">Perfil</a></li>';
                         echo '<li><a class="dropdown-item" href="#" id="notification-icon" data-bs-toggle="modal" data-bs-target="#notificationModal">Notificaciones</a></li>';
                         
                         $user = $_SESSION["nom_usuario"];

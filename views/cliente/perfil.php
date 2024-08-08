@@ -28,10 +28,10 @@
 
         // Obtener los datos del usuario
         $cadena = "CALL obtenerdatosusuario(:nombre_usuario)";
+
         $params = [':nombre_usuario' => $nombre_usuario];
         $stmt = $db->ejecutarcita($cadena, $params);
 
-        // Verificar si se obtuvieron resultados
         if ($stmt && $stmt->rowCount() > 0) {
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
             $nombres = $usuario['nombres'];
@@ -50,7 +50,6 @@
     }
     ?>
 
-    <!-- Barra lateral -->
     <div class="wrapper">
         <aside id="sidebar">
             <div class="d-flex">
@@ -110,12 +109,10 @@
             </div>
         </aside>
 
-        <!-- Contenido principal -->
         <div class="main p-3">
             <div class="container mt-5">
                 <h2>Editar Perfil</h2>
-                <form action="../../scripts/cliente/editar_perfil.php" method="POST">
-                    <!-- Datos Personales -->
+                <form action="../../scripts/cliente/editar_perfil.php" method="POST" id="editProfileForm">
                     <div class="card mb-4">
                         <div class="card-header">
                             Datos Personales
@@ -123,7 +120,8 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label for="nombre_usuario">Nombre de Usuario</label>
-                                <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" value="<?php echo htmlspecialchars($nombre_usuario); ?>" required>
+                                <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" value="<?php echo htmlspecialchars($nombre_usuario); ?>" minlength="6" required>
+                                <small class="form-text text-muted">Mínimo 6 caracteres.</small>
                             </div>
                             <div class="form-group">
                                 <label for="nombres">Nombres</label>
@@ -149,7 +147,6 @@
                         </div>
                     </div>
 
-                    <!-- Cambiar Contraseña -->
                     <div class="card mb-4">
                         <div class="card-header">
                             Cambiar Contraseña
@@ -161,11 +158,12 @@
                             </div>
                             <div class="form-group">
                                 <label for="nueva_contrasena">Nueva Contraseña</label>
-                                <input type="password" class="form-control" id="nueva_contrasena" name="nueva_contrasena">
+                                <input type="password" class="form-control" id="nueva_contrasena" name="nueva_contrasena" minlength="8">
+                                <small class="form-text text-muted">Mínimo 8 caracteres.</small>
                             </div>
                             <div class="form-group">
                                 <label for="confirmar_contrasena">Confirmar Nueva Contraseña</label>
-                                <input type="password" class="form-control" id="confirmar_contrasena" name="confirmar_contrasena">
+                                <input type="password" class="form-control" id="confirmar_contrasena" name="confirmar_contrasena" minlength="8">
                             </div>
                         </div>
                     </div>
@@ -176,7 +174,6 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -184,6 +181,16 @@
 
         hamBurger.addEventListener("click", function () {
             document.querySelector("#sidebar").classList.toggle("expand");
+        });
+
+        document.getElementById("editProfileForm").addEventListener("submit", function(event) {
+            const nuevaContrasena = document.getElementById("nueva_contrasena").value;
+            const confirmarContrasena = document.getElementById("confirmar_contrasena").value;
+
+            if (nuevaContrasena !== confirmarContrasena) {
+                event.preventDefault();
+                alert("Las contraseñas no coinciden.");
+            }
         });
     </script>
 </body>

@@ -257,21 +257,23 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
       </div>
     </main>
 
-    <!-- aquí se cargan los productos con imágenes -->
-    <div class="container">
+<!-- aquí se cargan los productos con imágenes -->
+<div class="container">
     <div class="row" style="margin-top: 50px;" id="product-list">
     <?php
-if (isset($_SESSION['nombre_producto'])) {
-    $nombreBuscado = trim($_SESSION['nombre_producto']);
-    unset($_SESSION['nombre_producto']);
+require_once '../class/database.php';
 
-    $db = new database();
-    $db->conectarDB();
+$db = new database();
+$db->conectarDB();
+
+// Verificar si se ha enviado una búsqueda
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
+    $nombreBuscado = trim($_POST['nombre_producto']);
     $resultados = $db->BuscarProductoPorNombre($nombreBuscado);
 
     if (!empty($resultados)) {
         foreach ($resultados as $producto) {
-            $imagen = $producto->imagen ? '../img/index/' . $producto->imagen : '../img/index/default.png';
+            $imagen = $producto->imagen ? '../img/productos/' . $producto->imagen : '../img/productos/default.png';
             $id_producto = $producto->id_producto;
             $esFavorito = $db->esFavorito($id_producto, $id_usuario);
             $iconoFavorito = $esFavorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
@@ -292,15 +294,44 @@ if (isset($_SESSION['nombre_producto'])) {
                 </div>
             </div>
             ";
-            /*arriba cambie img src='{$imagen} y la hice variable*/
         }
     } else {
         echo "<div class='col-12'><p class='text-center'>No se encontraron productos.</p></div>";
     }
 } else {
-    echo "<div class='col-12'><p class='text-center'>Ingrese un nombre de producto para buscar.</p></div>";
+    // Cargar productos predeterminados
+    $resultados = $db->ObtenerProductosPredeterminados();
+
+    if (!empty($resultados)) {
+        foreach ($resultados as $producto) {
+            $imagen = $producto->imagen ? '../img/productos/' . $producto->imagen : '../img/productos/default.png';
+            $id_producto = $producto->id_producto;
+            $esFavorito = $db->esFavorito($id_producto, $id_usuario);
+            $iconoFavorito = $esFavorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
+            echo "
+            <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='{$producto->nombre}'>
+                <div class='card shadow' id='c'>
+                    <a href='./perfilProducto.php?id={$id_producto}' style='text-decoration: none; color: inherit;'>
+                        <img src='{$imagen}' alt='{$producto->nombre}' class='card image-top pad'>
+                    </a>
+                    
+                    <div class='icon-overlay-container' onclick='changeIcon(this, {$id_producto})'>
+                        <img src='{$iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
+                    </div>
+                    <div class='card-body'>
+                        <h3 class='card-title text-center title-card-new'>{$producto->nombre}</h3>
+                        <p class='card-text text-center card-price'>\${$producto->precio}</p>
+                    </div>
+                </div>
+            </div>
+            ";
+        }
+    } else {
+        echo "<div class='col-12'><p class='text-center'>No se encontraron productos.</p></div>";
+    }
 }
 ?>
+
     </div>
 </div>
 
