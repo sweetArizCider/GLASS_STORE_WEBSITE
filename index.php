@@ -31,7 +31,6 @@ if (isset($_SESSION["nom_usuario"])) {
             if ($nombre_rol == 'cliente' && isset($fila->id_cliente)) {
                 $id_cliente = $fila->id_cliente;
                 $id_usuario = $id_cliente;
-
                 // Cambia el nombre de la tabla a minúsculas
                 $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = :cliente";
                 $paramsNotificaciones = [':cliente' => $id_cliente];

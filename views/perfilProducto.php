@@ -118,6 +118,7 @@ if (isset($_GET['id'])) {
 <link rel="stylesheet" href="../css/styles.css">
 <link rel="stylesheet" href="../css/normalized.css">
 <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
 <style>
     .card-img-left {
@@ -227,7 +228,11 @@ if (isset($_GET['id'])) {
         </div>
     </div>
 </nav>
-
+<div class="container mt-3 d-flex justify-content-end">
+    <a href="./productos.php" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
+</div>
  <div class="container mt-5" id="product-profile">
     <div class="row">
          <div class="col-md-6">

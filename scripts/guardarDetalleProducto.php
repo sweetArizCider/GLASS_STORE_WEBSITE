@@ -40,6 +40,7 @@ if (isset($_POST['producto'], $_POST['alto'], $_POST['ancho'], $_POST['cantidad'
 
             if ($stmt->execute()) {
                 echo "Detalle del producto guardado exitosamente.";
+                header("refresh:2; ../views/productos.php");
             } else {
                 echo "Error al guardar el detalle del producto.";
             }
