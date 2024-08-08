@@ -179,17 +179,13 @@ try {
     </div>
     </aside>
     <div class="main p-3">
-      <div class="text-center">
-        <div class="busqueda mx-auto">
-          <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
-          <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
-        </div>
-      </div>
+
       <div class="main p-3">
             <div class="text-center">
                 <h1>Gestión de Roles</h1>
                 <div class="container mt-5">
                     <div class="row">
+                      
                         <!-- Columna para Asignar Rol -->
                         <div class="col-md-6">
                             <h2>Asignar Rol</h2>

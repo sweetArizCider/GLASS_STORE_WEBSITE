@@ -126,13 +126,13 @@
                 </a>
             </div>
         </aside>
-        <div class="main p-3">
+        <!--<div class="main p-3">
             <div class="text-center">
                 <div class="busqueda mx-auto">
                     <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
                     <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
                 </div>
-            </div>
+            </div>-->
             <div class="container mt-5">
                 <h2 class="text-center mb-4">Ingresar o Actualizar Datos Laborales del Instalador</h2>
 
@@ -147,9 +147,10 @@
 
                 <form action="../../scripts/administrador/procesar_datos_laborales.php" method="POST" class="needs-validation" novalidate>
                     <div class="mb-3">
-                        <label for="nombre_completo" class="form-label">Nombre Completo</label>
-                        <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" required>
-                        <div class="invalid-feedback">Por favor, ingrese el nombre completo.</div>
+                        <label for="usuario" class="form-label">Usuario</label>
+                        <input type="text" class="form-control" id="usuario" name="usuario" required>
+                        <div class="invalid-feedback">Por favor, ingrese su nombre de usuario.</div>
+                        <input type="hidden" name="rol" value="3"> <!-- 3 porque es instalador -->
                     </div>
                     <div class="mb-3">
                         <label for="rfc" class="form-label">RFC</label>
