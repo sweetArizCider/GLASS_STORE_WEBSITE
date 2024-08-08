@@ -273,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
 
     if (!empty($resultados)) {
         foreach ($resultados as $producto) {
-            $imagen = $producto->imagen ? '../img/index/' . $producto->imagen : '../img/index/default.png';
+            $imagen = $producto->imagen ? '../img/productos/' . $producto->imagen : '../img/productos/default.png';
             $id_producto = $producto->id_producto;
             $esFavorito = $db->esFavorito($id_producto, $id_usuario);
             $iconoFavorito = $esFavorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
@@ -304,7 +304,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
 
     if (!empty($resultados)) {
         foreach ($resultados as $producto) {
-            $imagen = $producto->imagen ? '../img/index/' . $producto->imagen : '../img/index/default.png';
+            $imagen = $producto->imagen ? '../img/productos/' . $producto->imagen : '../img/productos/default.png';
             $id_producto = $producto->id_producto;
             $esFavorito = $db->esFavorito($id_producto, $id_usuario);
             $iconoFavorito = $esFavorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
