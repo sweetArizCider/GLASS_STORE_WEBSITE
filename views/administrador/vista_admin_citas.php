@@ -1,0 +1,458 @@
+<?php
+session_start();
+
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION["nom_usuario"])) {
+    error_log("Usuario no autenticado. Redirigiendo a iniciarSesion.php");
+    header("Location: ../iniciarSesion.php");
+    exit();
+}
+
+include '../../class/database.php';
+
+$db = new database();
+$db->conectarDB();
+$user = $_SESSION["nom_usuario"];
+
+try {
+    $stmt = $db->getPDO()->prepare("CALL roles_usuario(?)");
+    $stmt->execute([$user]);
+    $roles = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $isAdmin = false;
+
+    foreach ($roles as $role) {
+        if ($role->nombre_rol == 'administrador') {
+            $isAdmin = true;
+            break;
+        }
+    }
+
+    if ($isAdmin) {
+        $_SESSION["nombre_rol"] = 'administrador';
+        error_log("Usuario autenticado como Administrador: " . $user);
+    } else {
+        error_log("Usuario sin privilegios de Administrador. Redirigiendo a iniciarSesion.php");
+        header("Location: ../iniciarSesion.php");
+        exit();
+    }
+} catch (Exception $e) {
+    error_log("Error al ejecutar el procedimiento almacenado: " . $e->getMessage());
+    header("Location: ../iniciarSesion.php");
+    exit();
+}
+
+$db = new Database();
+$db->conectarDB();
+
+$cadena = "SELECT
+    c.id_cita,
+    CONCAT(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) AS nombre_cliente,
+    c.fecha,
+    c.hora,
+    CONCAT(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. Referencias: ', d.referencias) AS direccion,
+    c.notas,
+    IFNULL(
+        REPLACE(
+            (SELECT GROUP_CONCAT(
+                CONCAT(
+                    prod.nombre, ': $', dp.monto,
+                    IF(dp.alto IS NOT NULL, CONCAT(', Alto: ', dp.alto), ''),
+                    IF(dp.largo IS NOT NULL, CONCAT(', Largo: ', dp.largo), ''),
+                    IF(dp.cantidad IS NOT NULL, CONCAT(', Cantidad: ', dp.cantidad), ''),
+                    IF(dp.grosor IS NOT NULL, CONCAT(', Grosor: ', dp.grosor), ''),
+                    IF(dp.tipo_tela IS NOT NULL, CONCAT(', Tipo de Tela: ', dp.tipo_tela), ''),
+                    IF(dp.marco IS NOT NULL, CONCAT(', Marco: ', dp.marco), ''),
+                    IF(dp.tipo_cadena IS NOT NULL, CONCAT(', Tipo de Cadena: ', dp.tipo_cadena), ''),
+                    IF(dp.color IS NOT NULL, CONCAT(', Color: ', dp.color), ''),
+                    IF(dp.diseno IS NOT NULL, CONCAT(', Diseño: ', dis.codigo), '')
+                ) SEPARATOR '\n'
+            ) FROM DETALLE_CITA dc 
+            JOIN DETALLE_PRODUCTO dp ON dc.detalle_producto = dp.id_detalle_producto 
+            JOIN PRODUCTOS prod ON dp.producto = prod.id_producto 
+            LEFT JOIN DISENOS dis ON dp.diseno = dis.id_diseno
+            WHERE dc.cita = c.id_cita), 
+            ',', '\n'
+        ),
+        'No hay cotizaciones'
+    ) AS cotizaciones
+FROM
+    CITAS c
+JOIN
+    CLIENTE_DIRECCIONES cd ON c.cliente_direccion = cd.id_cliente_direcciones
+JOIN
+    CLIENTE cli ON cd.cliente = cli.id_cliente
+JOIN
+    PERSONA p ON cli.persona = p.id_persona
+JOIN
+    DIRECCIONES d ON cd.direccion = d.id_direccion
+WHERE
+    c.estatus = 'en espera';";
+
+$result = $db->ejecutar($cadena, []);
+
+if ($result === false) {
+    echo "Error en la consulta.";
+    $db->desconectarDB();
+    exit();
+}
+
+$instaladoresQuery = "
+    SELECT
+        i.id_instalador,
+        p.nombres,
+        p.apellido_p,
+        p.apellido_m
+    FROM INSTALADOR i
+    JOIN PERSONA p ON i.persona = p.id_persona;
+";
+
+$instaladoresResult = $db->ejecutar($instaladoresQuery, []);
+$instaladores = $instaladoresResult ? $instaladoresResult->fetchAll(PDO::FETCH_ASSOC) : [];
+
+$verificarAsignacionesQuery = "
+    SELECT cita, COUNT(*) AS total_asignados
+    FROM INSTALADOR_CITA
+    GROUP BY cita
+";
+
+$asignacionesResult = $db->ejecutar($verificarAsignacionesQuery, []);
+$asignaciones = $asignacionesResult ? $asignacionesResult->fetchAll(PDO::FETCH_ASSOC) : [];
+
+$asignacionesArray = [];
+foreach ($asignaciones as $asignacion) {
+    $asignacionesArray[$asignacion['cita']] = $asignacion['total_asignados'];
+}
+
+$db->desconectarDB();
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Store</title>
+  <link rel="shortcut icon" href="../../img/index/logoVarianteSmall.png" type="image/x-icon">
+  <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../css/normalized.css">
+  <link rel="stylesheet" href="../../css/style_admin.css">
+  <style>
+    .accordion-button::after {
+      filter: invert(1);
+    }
+  </style>
+</head>
+<body>
+  <!--Logo flotante del negocio-->
+  <div id="logotipo-flotante">
+    <img src="../../img/index/GLASS.png" alt="Glass store">
+  </div>
+
+  <!--Barra lateral-->
+  <div class="wrapper">
+    <aside id="sidebar">
+      <div class="d-flex">
+        <button class="toggle-btn" type="button">
+          <img src="../../img/index/menu.svg" alt="Menu">
+        </button>
+        <div class="sidebar-logo">
+          <a href="#">GLASS STORE</a>
+        </div>
+      </div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
+            <img src="../../img/admin/admin_icon.svg" alt="Personal">
+            <span>Personal</span>
+          </a>
+          <ul id="personal" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="./vista_admin_gestionainstalador.php" class="sidebar-link">Registrar</a>
+            </li>
+            <li class="sidebar-item">
+              <a href="./vista_admin_darRol.php" class="sidebar-link">Gestionar</a>
+            </li>
+          </ul>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#citas" aria-expanded="false" aria-controls="citas">
+            <img src="../../img/admin/calendar.svg" alt="Citas">
+            <span>Citas</span>
+          </a>
+          <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="./vista_admin_citas.php" class="sidebar-link">Gestionar citas</a>
+            </li>
+          </ul>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+            data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
+            <img src="../../img/admin/clipboard.svg" alt="Cotizaciones">
+            <span>Cotizaciones</span>
+          </a>
+          <ul id="cotizaciones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="./vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
+            </li>
+          </ul>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+            data-bs-target="#recibos" aria-expanded="false" aria-controls="recibos">
+            <img src="../../img/admin/recibos.svg" alt="Recibos">
+            <span>Recibos</span>
+          </a>
+          <ul id="recibos" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="../../views/recibos.php" class="sidebar-link">Buscar recibos</a>
+            </li>
+          </ul>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+            data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
+            <img src="../../img/admin/products.svg" alt="Productos">
+            <span>Productos</span>
+          </a>
+          <ul id="productos" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="./vista_admin_productos.php" class="sidebar-link">Gestionar productos</a>
+            </li>
+            <li class="sidebar-item">
+              <a href="./vista_admin_disenos.php" class="sidebar-link">Diseños</a>
+            </li>
+          </ul>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+            data-bs-target="#promociones" aria-expanded="false" aria-controls="promociones">
+            <img src="../../img/admin/off.svg" alt="Promociones">
+            <span>Promociones</span>
+          </a>
+          <ul id="promociones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="./vista_admin_promos.php" class="sidebar-link">Añadir</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="./vista_admin.php" class="sidebar-link">
+          <img src="../../img/admin/home.svg" alt="Volver"><!--PONER UNA IMAGEN COMO DE VOLVER-->
+          <span>Volver</span>
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+        <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+        <span>Cerrar Sesión</span>
+        </a>
+    </div>
+    </aside>
+    <div class="main p-3">
+      <div class="text-center">
+        
+      </div>
+      <br>
+      
+      <div id="contenido" class="text-center">
+    <div class="accordion" id="citasAccordion">
+        <?php while ($row = $result->fetch(PDO::FETCH_ASSOC)) { ?>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading<?php echo $row['id_cita']; ?>">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $row['id_cita']; ?>" aria-expanded="false" aria-controls="collapse<?php echo $row['id_cita']; ?>">
+                    <?php echo htmlspecialchars($row['nombre_cliente']) . ' - ' . htmlspecialchars($row['fecha']) . ' - ' . htmlspecialchars($row['hora']); ?>
+                </button>
+            </h2>
+            <div id="collapse<?php echo $row['id_cita']; ?>" class="accordion-collapse collapse" aria-labelledby="heading<?php echo $row['id_cita']; ?>" data-bs-parent="#citasAccordion">
+                <div class="accordion-body">
+                    <p><?php echo htmlspecialchars($row['direccion']); ?></p>
+                    <p><?php echo nl2br(htmlspecialchars($row['cotizaciones'])); ?></p>
+                    <div class="text-end">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#asignarModal<?php echo $row['id_cita']; ?>" id="asignarButton<?php echo $row['id_cita']; ?>">Asignar</button>
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rechazarModal<?php echo $row['id_cita']; ?>" id="rechazarButton<?php echo $row['id_cita']; ?>">Rechazar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <!-- Modal para Asignar Instaladores -->
+        <div class="modal fade" id="asignarModal<?php echo $row['id_cita']; ?>" tabindex="-1" aria-labelledby="asignarModalLabel<?php echo $row['id_cita']; ?>" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="asignarModalLabel<?php echo $row['id_cita']; ?>">Asignar Instaladores</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="formAsignar<?php echo $row['id_cita']; ?>" method="POST" action="../../scripts/administrador/asignarInstalador.php">
+                        <div class="modal-body">
+                            <input type="hidden" name="id_cita" value="<?php echo $row['id_cita']; ?>">
+                            <?php foreach ($instaladores as $instalador): ?>
+                                <div class="form-check">
+                                    <input class="form-check-input instalador-checkbox" type="checkbox" name="instaladores[]" value="<?php echo $instalador['id_instalador']; ?>" id="instalador<?php echo $instalador['id_instalador']; ?>" data-cita-id="<?php echo $row['id_cita']; ?>">
+                                    <label class="form-check-label" for="instalador<?php echo $instalador['id_instalador']; ?>">
+                                        <?php echo $instalador['nombres'] . ' ' . $instalador['apellido_p'] . ' ' . $instalador['apellido_m']; ?>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" id="submitAsignar<?php echo $row['id_cita']; ?>">Asignar Instaladores</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Rechazar -->
+        <div class="modal fade" id="rechazarModal<?php echo $row['id_cita']; ?>" tabindex="-1" aria-labelledby="rechazarModalLabel<?php echo $row['id_cita']; ?>" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rechazarModalLabel<?php echo $row['id_cita']; ?>">Rechazar Cita</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="../../scripts/administrador/rechazarCitas.php">
+                        <div class="modal-body">
+                            <textarea class="form-control" name="motivo" rows="3" placeholder="Escribe el motivo del rechazo..." required></textarea>
+                            <input type="hidden" name="id_cita" value="<?php echo $row['id_cita']; ?>">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-danger" id="confirmarRechazo<?php echo $row['id_cita']; ?>">Confirmar Rechazo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <?php } ?>
+    </div>
+</div>
+
+
+<script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/jquery.min.js"></script>
+
+<script>
+    function asignarInstaladores(idCita) {
+        const instaladores = Array.from(document.getElementById(`instaladores${idCita}`).selectedOptions).map(option => option.value);
+        
+        if (instaladores.length === 0) {
+            alert('Debes seleccionar al menos un instalador.');
+            return;
+        }
+
+        $.ajax({
+            url: '../../scripts/administrador/asignarInstalador.php',
+            type: 'POST',
+            data: {
+                id_cita: idCita,
+                instaladores: instaladores
+            },
+            success: function(response) {
+                alert('Instaladores asignados con éxito.');
+                location.reload(); // Recargar la página después de asignar
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al asignar instaladores:', error);
+                alert('Ocurrió un error al asignar instaladores: ' + xhr.responseText);
+            }
+        });
+    }
+
+    document.getElementById('search-button').addEventListener('click', function() {
+        const searchValue = document.getElementById('search-input').value.toLowerCase();
+        const citas = document.querySelectorAll('.accordion-item');
+        
+        citas.forEach(cita => {
+            const header = cita.querySelector('.accordion-button').textContent.toLowerCase();
+            if (header.includes(searchValue)) {
+                cita.style.display = '';
+            } else {
+                cita.style.display = 'none';
+            }
+        });
+    });
+    $(document).ready(function() {
+    function updateAceptarButtonVisibility() {
+        document.querySelectorAll('.accordion-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const idCita = this.getAttribute('data-bs-target').replace('#collapse', '');
+                const aceptarButton = document.getElementById('aceptarButton' + idCita);
+                const checkboxes = document.querySelectorAll(`#asignarModal${idCita} .instalador-checkbox`);
+                const tieneAsignados = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                
+                aceptarButton.style.display = tieneAsignados ? 'block' : 'none';
+            });
+        });
+    }
+
+    updateAceptarButtonVisibility();
+
+    document.querySelectorAll('form[id^="formAsignar"]').forEach(form => {
+        form.addEventListener('submit', function () {
+            const idCita = this.querySelector('input[name="id_cita"]').value;
+            const aceptarButton = document.getElementById('aceptarButton' + idCita);
+            const checkboxes = this.querySelectorAll('.instalador-checkbox');
+            const tieneAsignados = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            aceptarButton.style.display = tieneAsignados ? 'block' : 'none';
+        });
+    });
+});
+$(document).ready(function() {
+    function updateAceptarButtonVisibility(idCita) {
+        const aceptarButton = document.getElementById('aceptarButton' + idCita);
+        const checkboxes = document.querySelectorAll(`#asignarModal${idCita} .instalador-checkbox`);
+        const tieneAsignados = Array.from(checkboxes).some(checkbox => checkbox.checked);
+        aceptarButton.style.display = tieneAsignados ? 'block' : 'none';
+    }
+
+    document.querySelectorAll('form[id^="formAsignar"]').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const idCita = formData.get('id_cita');
+
+            $.ajax({
+                url: '../../scripts/administrador/asignarInstalador.php',
+                type: 'POST',
+                data: formData,
+                processData: false, 
+                contentType: false, 
+                success: function(response) {
+                    
+                    updateAceptarButtonVisibility(idCita);
+                    alert('Instaladores asignados con éxito.');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al asignar instaladores:', error);
+                    alert('Ocurrió un error al asignar instaladores: ' + xhr.responseText);
+                }
+            });
+        });
+    });
+
+    $('.collapse').on('shown.bs.collapse', function() {
+        const idCita = $(this).attr('id').replace('collapse', '');
+        updateAceptarButtonVisibility(idCita);
+    });
+});
+
+
+  </script>
+
+  <script>
+    const hamBurger = document.querySelector(".toggle-btn");
+
+    hamBurger.addEventListener("click", function () {
+      document.querySelector("#sidebar").classList.toggle("expand");
+    });
+  </script>
+</body>
+</html>

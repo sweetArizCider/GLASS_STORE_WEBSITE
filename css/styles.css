@@ -1,0 +1,1205 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  font-size: 1rem; 
+}
+html {
+  scroll-behavior: smooth;
+}
+
+/*  barra superior */
+
+.navbar-top{
+  width: 100%;
+  height: 8vh;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+}
+.social-link i img{
+  margin-left: 10px;
+  transition: 0.5s ease;
+  cursor: pointer;
+}
+.social-link i img:hover{
+  background-color: #132644;
+  border-radius: 50px;
+}
+.logo{
+  width: 100px;
+}
+
+.logo h3{
+  font-weight: bold;
+}
+
+.icons i img{
+  margin-left: 10px;
+  cursor: pointer;
+}
+.botonMostrarFavoritos{
+  background-color: #fff;
+  border: none;
+  padding: 0;
+}
+/*-----------------------------------------Banners------------------------------*/
+
+/* Banner del index */
+.main-content{
+  width: 100%;
+  height: 90vh;
+  background: linear-gradient(180deg, rgba(19, 38, 68, 0.26) 0%, rgba(19, 38, 68, 0.26) 100%), url(../img/index/background.jpeg)center/cover no-repeat;
+  background-size: cover;
+  background-position: 70%;
+}
+/* Banner de productos */
+.main-content-products{
+  width: 100%;
+  height: 60vh;
+  background: linear-gradient(180deg, rgba(19, 38, 68, 0.26) 0%, rgba(19, 38, 68, 0.26) 100%), url(../img/productos/tapizCremaBannerCut.jpeg)center/cover no-repeat;
+  background-size: cover;
+  background-position: 70%;
+}
+
+
+/*--------------------------------- segunda barra---------------------------- */
+#navbar-color{
+  background-color: #132644;
+}
+.navbar-nav{
+  margin: auto;
+  height: 4vh;
+  align-items: center;
+}
+.navbar {
+  position: sticky !important;
+  top: 0;
+  z-index: 1000;
+}
+.nav-link{
+  font-size: 13px !important;
+  font-weight: bold;
+  color: #fff !important;
+  transition: 0.5s ease;
+  cursor: pointer;
+  font-family: Montserrat;
+}
+.nav-left{
+  margin-left: 7em;
+}
+.offcanvas {
+  width: 250px;
+  background-color: #132644 !important;
+  color: #fff !important; 
+}
+.offcanvas-start {
+  width: 250px;
+  background-color: #132644;
+}
+.offcanvas-body {
+  padding: 0;
+}
+.offcanvas-body .nav-link {
+  color: #fff !important;
+  padding: 10px 20px;
+  font-size: 14px;
+}
+.offcanvas .btn-close {
+  background-color: white !important; 
+  border-radius: 50%;
+}
+.offcanvas-title{
+  font-family: Montserrat;
+}
+.nav-off-margin{
+  margin-left: 0;
+}
+/* --------------------------------inicio del main---------------------- */
+.content{
+  width: 50%;
+  padding-top:  150px;
+  margin-left: 60px;
+
+}
+.content h1{
+  font-size: 2rem;
+  font-weight: bolder;
+  font-family: Montserrat;
+  color: #fff;
+}
+.content p{
+  margin-top: 1em;
+  color: #fff;
+  font-family: Inter;
+  font-size: .8rem;
+}
+/* vista de productos*/
+.content-products{
+  width: 70%;
+  padding-top:  150px;
+  margin: auto;
+}
+.content-products h1{
+  font-size: 2rem;
+  font-weight: bolder;
+  font-family: 'Montserrat';
+  color: #fff;
+  text-align: center;
+}
+/* vista de productos*/
+.banner-boton{
+  width: 200px;
+  height: 42px;
+  background: transparent;
+  border: 2px solid #fff;
+  border-radius: 30px;
+  font-family: Inter;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: 0.5s ease;
+  cursor: pointer;
+  color: #fff;
+}
+.banner-boton a{
+  text-decoration: none;
+  
+}
+#btn1 button:hover{
+  background-color: rgba(19, 38, 68, 1);
+  border: none;
+  font-weight: 500;
+}
+
+/*Subtitulos dentro del contenido*/
+.subtitle-main{
+  margin-top: .9em;
+  font-family: Montserrat;
+  font-weight: 700;
+  font-size: 1.7em;
+  letter-spacing: 1px;
+
+}
+/*Cards de categorias*/
+.img-card {
+  width: 100%;
+  height: 200px !important; /* Ajusta este valor al alto deseado */
+  object-fit: cover;
+  overflow: hidden;
+}
+.categoria-title{
+  font-family: Inter;
+
+}
+.boton-mini{
+  width: 150px;
+  height: 30px;
+  background: #132644;
+  border: 1.5px solid #132644;
+  border-radius: 30px;
+  font-family: Inter;
+  font-size: .8em;
+  font-weight: 600;
+  letter-spacing: 1px ;
+  color: #fff;
+  transition: 0.5s ease;
+  cursor: pointer;
+}
+#btn2 button:hover{
+  background: transparent;
+  color: #132644;
+}
+
+/*Detalles*/
+.font-mont{
+  font-family: Montserrat;
+}
+/*Detalles*/
+
+
+/*Pedidos personalizados*/
+.background-cover{
+  background-color: #132644;
+  opacity: 1;
+  background-image:  radial-gradient(#4AB3D5 0.65px, transparent 0.65px), radial-gradient(#4AB3D5 0.65px, #132644 0.65px);
+  background-size: 26px 26px;
+  background-position: 0 0,13px 13px;
+  margin-top: 4em;
+  padding-top: .7em;
+  padding-bottom: 4em;
+  color: #fff;
+}
+.subtitle-main-invert{
+  margin-top: .9em;
+  font-family: Montserrat;
+  font-weight: 700;
+  font-size: 1.7em;
+  letter-spacing: 1px;
+}
+.img-agendar{
+  width: 90%;
+  align-items: center;
+  border-radius: 8px;
+}
+.agendar-title{
+  font-size: 2em;
+  font-weight: 700;
+}
+.stars{
+  margin-bottom: 1em;
+}
+
+
+.agendar-boton{
+  width: 150px;
+  height: 30px;
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 30px;
+  font-family: Inter;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #fff;
+  transition: 0.5s ease;
+  cursor: pointer;
+}
+#btn4 button:hover{
+  background-color: #fff;
+  color: #132644;
+}
+
+/*Seccion de productos mas vendidos*/
+.pad{
+  width: 90%;
+  height: 190px !important;
+  margin: auto; /* Ajusta este valor al alto deseado */
+  margin-top: .8em;
+  object-fit: cover;
+  overflow: hidden;
+}
+.icon-overlay-container {
+  position: absolute;
+  top: 9.5em;
+  right: 10px;
+  width: 40px; 
+  height: 40px; 
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-overlay-container:hover{
+  cursor: pointer;
+}
+.icon-overlay {
+  width: 24px; 
+  height: 24px;
+}
+.title-card-new{
+  font-family: Inter;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+.card-price{
+  font-family: Inter;
+  font-size: 1.4em;
+  font-weight: 800;
+  color: #132644;
+}
+.button-products{
+  width: 150px;
+  height: 30px;
+  background: #132644;
+  border: 1.5px solid #132644;
+  border-radius: 30px;
+  font-family: Inter;
+  font-size: .9em;
+  font-weight: 600;
+  letter-spacing: 1px ;
+  color: #fff;
+  transition: 0.5s ease;
+  cursor: pointer;
+}
+#btn3{
+  text-align: center;
+}
+#btn3 button:hover{
+  background: transparent;
+  color: #132644;
+}
+/*Sobre nosotros*/
+.img-nosotros{
+  width: 80%;
+  height: 45vh;
+  align-items: center;
+  border-radius: 8px;
+}
+.nosotros{
+  background-color: rgba(19, 38, 68, .04);
+  margin-top: 4em;
+  margin-bottom: 4em;
+  padding-bottom: 5em;
+  padding-top: 1em;
+  border-radius: 8px;
+}
+.title-nosotros{
+  font-size: 2em;
+  font-weight: 800;
+  font-family: Montserrat;
+}
+.text-nosotros{
+  font-weight: 600;
+  padding-right: 3em;
+}
+mark{
+  background: #4AB3D5 !important;
+  color: #fff !important;
+}
+
+/*historias de clientes*/
+.container-historias{
+  border: #d8d8d8 solid 1px;
+  border-radius: 8px;
+  padding: 2em;
+  height: 50vh;
+  margin-top: 3.5em;
+  margin-bottom: 4em;
+}
+.carousel-control-next{
+  margin-right: -7em;
+}
+.carousel-control-prev{
+  margin-left: -7em;
+}
+.carousel-control-next-icon{
+  background-image: url(../img/index/arrowNext.svg) !important;
+  width: 100px; 
+  height: 100px; 
+  border-radius: 50%; 
+  background-color: #e1e1e1; 
+  transition: background-color 0.3s ease; 
+}
+.carousel-control-prev-icon{
+  background-image: url(../img/index/arrowPrev.svg) !important;
+  width: 100px; 
+  height: 100px; 
+  border-radius: 50%; 
+  background-color: #e1e1e1; 
+  transition: background-color 0.3s ease; 
+}
+.testimonyImg{
+  width: 100%;
+  height: 40vh !important;
+  border-radius: 8px;
+}
+.subtitle{
+  font-family: Montserrat;
+  font-weight: 800;
+}
+.testimonyReview{
+  font-weight: 600;
+  padding-right: 3em;
+}
+
+/*footer*/
+
+.footer{
+  width: 100%;
+  background-color: #132644;
+  margin-right: 0;
+  margin-left: 0;
+  padding-top: 2em;
+  background-size: cover;
+  background-position: 70%;
+  font-family: Inter;
+}
+.footer h5{
+  color: white;
+  padding-top: 30px;
+  font-family: Montserrat;
+  font-weight: 800;
+
+}
+.footer p{
+  color: white;
+  font-size: .8em;
+}
+.footer a{
+  font-size: .8em;
+}
+.copy{
+  background-color: #4AB3D5;
+  margin-top: 1em;
+}
+
+/* boton flotante de whatsapp */
+#wa-button {
+  position: fixed; 
+  bottom: 20px; 
+  right: 20px; 
+  z-index: 100; 
+}
+
+#wa-button a {
+  display: block; 
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
+  background-color: #25d365; 
+  text-decoration: none;
+  color: white; 
+  transition: background-color 0.3s ease; 
+}
+
+#wa-button a:hover {
+  background-color: #4AB3D5; 
+}
+
+#wa-button img {
+  width: 100%; 
+  height: auto; 
+}
+
+/*----------------------------------------------detalles------------------------------------------------------*/
+
+/*sombras en las cards*/
+.shadow{
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.55);
+}
+@media (max-width: 767.98px) {
+  .offcanvas {
+      width: 250px;
+  }
+  .container-historias{
+    height: 115vh;
+  }
+  .busqueda {
+    background-color: #fff;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    height: 6vh;
+    
+  }
+  .main-content{
+    width: 100%;
+    height: 60vh;
+    background: linear-gradient(180deg, rgba(19, 38, 68, 0.26) 0%, rgba(19, 38, 68, 0.26) 100%), url(../img/index/background.jpeg)center/cover no-repeat;
+    background-size: cover;
+    background-position: 70%;
+  }
+  .main-content h1{
+    margin-top: -50px !important;
+  }
+  /* Banner de productos */
+  .main-content-products{
+    width: 100%;
+    height: 60vh;
+    background: linear-gradient(180deg, rgba(19, 38, 68, 0.26) 0%, rgba(19, 38, 68, 0.26) 100%), url(../img/productos/tapizCremaBannerCut.jpeg)center/cover no-repeat;
+    background-size: cover;
+    background-position: 70%;
+  }
+  .content-products h1{
+    margin-top: -50px !important;
+  }
+  .back-left{
+    height: 100% !important;
+    overflow: hidden !important;
+    position: relative;
+  }
+  .formulario-registro h1{
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+  }
+  .button-continue span{
+    font-size: .7em !important;  
+  }
+  .cardpersonal{
+    max-width: 100% !important;
+    margin-bottom: 1em;
+  }
+
+}
+@media (max-width: 992px) {
+  .container-historias{
+    height: 90vh;
+  }
+  .nav-left{
+    margin-left: 4em;
+  }
+  .main-content{
+    width: 100%;
+    height: 60vh;
+    background: linear-gradient(180deg, rgba(19, 38, 68, 0.26) 0%, rgba(19, 38, 68, 0.26) 100%), url(../img/index/background.jpeg)center/cover no-repeat;
+    background-size: cover;
+    background-position: 70%;
+  }
+  .main-content h1{
+    margin-top: -50px !important;
+  }
+  .back-left{
+    height: 10% !important;
+  }
+  
+
+}
+
+
+/*---------------------------------------------Navegacion--------------------------------------------------*/
+.login-form {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+  text-align: center;
+}
+.login-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.login-form button {
+  width: 150px;
+  height: 30px;
+  background: #132644;
+  border: 1.5px solid #132644;
+  border-radius: 30px;
+  font-family: Inter;
+  font-size: .9em;
+  font-weight: 600;
+  letter-spacing: 1px ;
+  color: #fff;
+  transition: 0.5s ease;
+  cursor: pointer;
+}
+.pop-login-p{
+  font-size: .7rem;
+  font-family: Inter;
+  text-align: center;
+}
+.pop-login-create{
+  font-size: .8rem;
+  color: #4AB3D5 !important;
+  text-decoration: none !important;
+  text-align: center;
+}
+.space-cero{
+  margin-top: -1em;
+}
+/*modal*/
+.boton-modal{
+  padding: 10px 10px;
+  height: 6vh;
+  width: 200px;
+  font-size: .9rem;
+}
+
+
+
+/*-----------------------------------------------------------------------------
+------------------------------SECCION PRODUCTOS-------------------------------
+-------------------------------------------------------------------------------*/
+.busqueda {
+  background-color: #fff;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60%;
+  height: 6vh;
+}
+.buscar-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  margin: auto;
+  font-family: 'Montserrat';
+  font-size: 13px;
+  color: #132644;
+}
+/*cards dentro del modal*/
+.cardpersonal{
+  width: 33.33% !important;
+  margin-bottom: 1em;
+}
+.modal-body{
+  padding: 5% !important;
+}
+
+/*-------------------------------registro-----------------------------------------*/
+
+/*titulos*/
+.formulario-registro{
+  width: 90% !important;
+  margin: auto !important;
+}
+.formulario-registro h1{
+  font-family: 'Montserrat';
+  color: #132644;
+  margin-top: 30px;
+  font-size: 2.9rem;
+  font-weight: 800 !important;
+}
+.formulario-registro p{
+  font-family: 'Inter';
+  color: #132644;
+  font-size: .9rem !important ; 
+}
+/*continuar con */
+.button-continue{
+  width: 70% !important;
+  height: 6vh;
+  margin: auto;
+  border:1px solid rgba(19, 38, 68, 0.53);
+  border-radius: 30px;
+  align-items: center;
+  text-decoration: none;
+  padding: 5px;
+  margin-bottom: .5em;
+  color: #132644;
+}
+.button-continue img{
+  padding-left: 20px;
+}
+.button-continue span{
+  font-family: 'Inter' !important;
+  
+}
+/*formulario*/
+
+.form-register .form-floating{
+  width: 75%;
+  margin: auto;
+  border: 1px solid rgba(19, 38, 68, 0.53);
+  margin-bottom: 0px !important;
+  font-size: .8rem !important;
+  font-family: 'Inter';
+  padding-top: 0px !important;
+  border-radius: 8px;
+  overflow: hidden; 
+}
+
+.submit-button-register{
+  background-color: #132644;
+  color: #fff;
+  font-family: 'Montserrat';
+  font-weight: 700;
+  height: 7vh;
+  width: 75%;
+  margin: auto;
+  border: none;
+  border-radius: 30px;
+  letter-spacing: 2px;
+  margin-bottom: 3em;
+}
+.submit-button-register:hover{
+  background-color: #4AB3D5;
+}
+.background-left-image {
+  background: linear-gradient(180deg, rgba(19, 38, 68, 0.26) 0%, rgba(19, 38, 68, 0.26) 100%), url(../img/index/persianaFondoNaranja.jpeg) center/cover no-repeat;
+  background-size: cover;
+  background-position: 70%;
+}
+.logotipo-glass{
+  width: 100px;
+  margin-top: 20px;
+  margin-bottom: -25px;
+}
+/*modal del login*/
+.formulario-registro .login-form {
+  display: none;
+  position: absolute;
+  top: 20vh;
+  right: 20vh;
+}
+.close-btn {
+  width: 30px !important;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 20px;
+  cursor: pointer;
+  border: none !important;
+  background: none !important;
+  padding: 0; 
+  line-height: 1;
+}
+/*--------------------------------------AGENDAR CITAS-------------------------------------------------*/
+/*lado izquierdo- calendario*/
+.blue-left-citas{
+  background-color: #132644;
+  opacity: 1;
+  background-image:  radial-gradient(#4AB3D5 0.65px, transparent 0.65px), radial-gradient(#4AB3D5 0.65px, #132644 0.65px);
+  background-size: 26px 26px;
+  background-position: 0 0,13px 13px;
+  margin-top: 4em;
+  padding-top: .7em;
+  padding-bottom: 4em;
+  color: #fff;
+  align-items: center;
+  text-align: center;
+}
+.logo-citas{
+  width: 100px;
+  margin-top: 5em;
+}
+.subtitle-agendar{
+  font-family: 'Montserrat';
+  font-size: 1em;
+  margin-top: 3em;
+}
+/*  CALENDARIO PARA AGENDAR LAS CITAS  */
+.calendar {
+  margin-top: 3em !important;
+  margin-bottom: 5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #4ab2d515;
+  width: 70%;
+  margin: auto;
+  padding:1.5em;
+  padding-right: 2em;
+  border-radius: 8px;
+}
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 10px;
+  align-items: center;
+  font-family: 'Inter';
+  font-weight: 700;
+}
+.calendar-header p {
+  margin: 0;
+}
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  max-width: 300px;
+}
+.calendar-day {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px; /* Redondeo */
+  background-color: rgba(198, 202, 237, 0.19); /* Color de fondo */
+}
+.calendar-day:hover {
+  background-color: rgba(198, 202, 237, 0.5); /* Color de fondo al pasar el ratón */
+}
+.calendar-day.selected {
+  background-color: #4AB3D5;
+  color: white;
+}
+.calendar-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+/* FIN DEL CALENDARIO*/
+
+/*lado derecho*/
+.title-agendar{
+  font-family: 'Montserrat';
+  font-size: 1.7em !important;
+  margin-bottom: .5em;
+}
+.form-select-custom {
+  border: none;
+  padding: 0;
+}
+.form-select-custom:focus {
+  outline: none;
+  box-shadow: 0 0 2px 2px #132644 !important;
+}
+.form-select-custom option {
+  display: block;
+  border: 1px solid rgba(19, 38, 68, 0.53);
+  padding: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: center;
+}
+.form-select-custom option:hover{
+  background-color: #4ab2d5b1 !important;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #132644 transparent;
+  max-height: 150px; 
+  overflow-y: auto;
+}
+.text-motivo {
+  resize: none;
+}
+.agendar{
+  text-align: center !important;
+  margin-top: 3.5em;
+
+}
+.agendar textarea{
+  width: 75%;
+  border: 1px solid rgba(19, 38, 68, 0.53);
+  border-radius: 8px;
+  padding: 1em;
+  font-family: 'Inter';
+  
+}
+.agendar select{
+  width: 75%;
+  margin: auto;
+}
+.submit-button-register{
+  margin-top: 2.5em;
+}
+
+.container-select{
+  margin-top: 2em !important;
+}
+.agendar label{
+ font-family: 'Inter';
+ font-weight: 600;
+ font-size: 1em ;
+}
+/*---------------------------PERFIL DEL PRODUCTO----------------------------------------*/
+
+.sub-imgs {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.container-sub-img img {
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.button-product {
+  margin-right: 10px;
+}
+.main-img{
+  min-width: 100%;
+  min-height: 400px;
+}
+
+.design-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.design-item {
+  position: relative;
+  display: inline-block; /* Asegura que las imágenes no se alineen en una sola línea */
+  padding: 1px; /* Aumenta el área de clic */
+ 
+}
+
+.design-item img {
+  width: 45px; /* Aumenta el tamaño de las imágenes para hacerlas más accesibles */
+  height: 45px;
+  cursor: pointer;
+  transition: transform 0.3s ease, border 0.3s ease; 
+  border-radius: 4px;/* Agrega transición a la transformación */
+}
+
+.design-item img:hover {
+  transform: scale(1.2); /* Aumenta la escala de la imagen al pasar el cursor */
+}
+
+#cotizacionContainer {
+  display: block !important;
+}
+
+.design-image {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.design-image:hover {
+  transform: scale(1.2);
+}
+
+.selected {
+  transform: scale(1.2);
+}
+
+.design-item,
+.design-image,
+.carousel-control-prev,
+.carousel-control-next {
+  position: relative;
+  z-index: 1;
+}
+
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: -.7em;
+  
+}
+.inputPerfilProductoCont{
+  border: 1px solid rgba(19, 38, 68, 0.53) !important;
+}
+.inputPerfil{
+  margin-top: -1.3em;
+}
+.input-group .form-control {
+  width: 150px;
+}
+.titleProductPerfil{
+  color: #132644;
+  font-family: 'Montserrat';
+  font-weight: 700;
+  font-size: 2.2em;
+  margin-bottom: .3em;
+
+}
+.precioPerfil{
+  font-family: 'Montserrat';
+  color: #4AB3D5;
+  font-size: 1.4em;
+  font-weight:600;
+  margin-bottom: 1em;
+
+}
+.descripcionPerfil{
+  font-family: 'Montserrat';
+  
+}
+.disenosPerfil{
+  font-family: 'Inter';
+  font-weight: 600;
+  font-size: 1em;
+}
+.labelPerfilProduct{
+  font-family: 'Inter';
+  font-weight: 700;
+  font-size: .8em;
+}
+.buttonPerfilProducto{
+  background-color: #132644;
+  border: none;
+  padding: 10px 20px;
+  font-family: 'Inter';
+  font-size: .9em;
+  letter-spacing: 1px;
+  font-weight: 500;
+  color: #fff;
+  border-radius: 30px;
+
+  
+}
+#product-profile{
+margin-bottom: 3em;
+}
+
+/*--------------------------------------AGENDAR CITAS-------------------------------------------------*/
+/*lado izquierdo- calendario*/
+.blue-left-citas{
+  background-color: #132644;
+  opacity: 1;
+  background-image:  radial-gradient(#4AB3D5 0.65px, transparent 0.65px), radial-gradient(#4AB3D5 0.65px, #132644 0.65px);
+  background-size: 26px 26px;
+  background-position: 0 0,13px 13px;
+  margin-top: 4em;
+  padding-top: .7em;
+  padding-bottom: 4em;
+  color: #fff;
+  align-items: center;
+  text-align: center;
+}
+.logo-citas{
+  width: 100px;
+  margin-top: 5em;
+}
+.subtitle-agendar{
+  font-family: 'Montserrat';
+  font-size: 1em;
+  margin-top: 3em;
+}
+/*  CALENDARIO PARA AGENDAR LAS CITAS  */
+.calendar {
+  margin-top: 3em !important;
+  margin-bottom: 5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #4ab2d515;
+  width: 70%;
+  margin: auto;
+  padding:1.5em;
+  padding-right: 2em;
+  border-radius: 8px;
+}
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 10px;
+  align-items: center;
+  font-family: 'Inter';
+  font-weight: 700;
+}
+.calendar-header p {
+  margin: 0;
+}
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  max-width: 300px;
+}
+.calendar-day {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px; /* Redondeo */
+  background-color: rgba(198, 202, 237, 0.19); /* Color de fondo */
+}
+.calendar-day:hover {
+  background-color: rgba(198, 202, 237, 0.5); /* Color de fondo al pasar el ratón */
+}
+.calendar-day.selected {
+  background-color: #4AB3D5;
+  color: white;
+}
+.calendar-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+/* FIN DEL CALENDARIO*/
+
+/*lado derecho*/
+.title-agendar{
+  font-family: 'Montserrat';
+  font-size: 1.7em !important;
+  margin-bottom: .5em;
+}
+.form-select-custom {
+  border: none;
+  padding: 0;
+}
+.form-select-custom:focus {
+  outline: none;
+  box-shadow: 0 0 2px 2px #132644 !important;
+}
+.form-select-custom option {
+  display: block;
+  border: 1px solid rgba(19, 38, 68, 0.53);
+  padding: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: center;
+}
+.form-select-custom option:hover{
+  background-color: #4ab2d5b1 !important;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #132644 transparent;
+  max-height: 150px; 
+  overflow-y: auto;
+}
+.text-motivo {
+  resize: none;
+}
+.agendar{
+  text-align: center !important;
+  margin-top: 3.5em;
+
+}
+.agendar textarea{
+  width: 75%;
+  border: 1px solid rgba(19, 38, 68, 0.53);
+  border-radius: 8px;
+  padding: 1em;
+  font-family: 'Inter';
+  
+}
+.agendar select{
+  width: 75%;
+  margin: auto;
+}
+.submit-button-register{
+  margin-top: 2.5em;
+}
+
+.container-select{
+  margin-top: 2em !important;
+}
+.agendar label{
+font-family: 'Inter';
+font-weight: 600;
+font-size: 1em ;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+}
+
+.user-icon {
+  margin-left: 10px;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%; 
+  right: 0; 
+  z-index: 1050 !important; 
+}
+#navbar-color {
+  z-index: 1000;
+}
+/*--------------------------------modal de notificaciones ----------------------------*/
+
+

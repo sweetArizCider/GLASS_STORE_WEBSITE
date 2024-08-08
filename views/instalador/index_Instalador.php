@@ -1,0 +1,224 @@
+
+<?php
+session_start();
+include '../../class/database.php';
+
+// Crear instancia de la clase y conectar a la base de datos
+$db = new database();
+$db->conectarDB();
+$pdo = $db->getPDO();
+
+try {
+    // Consultar el ID del instalador basado en la sesión
+    $user = $_SESSION["nom_usuario"];
+    $stmt = $pdo->prepare("
+        SELECT i.id_instalador
+        FROM INSTALADOR i
+        JOIN PERSONA p ON i.persona = p.id_persona
+        JOIN USUARIOS u ON p.usuario = u.id_usuario
+        WHERE u.nom_usuario = ?
+    ");
+    $stmt->execute([$user]);
+    $result = $stmt->fetch(PDO::FETCH_OBJ);
+
+    if ($result) {
+        $_SESSION["id_instalador"] = $result->id_instalador;
+        
+        $stmt = $pdo->prepare("CALL instalador_mas_instalaciones()");
+        $stmt->execute();
+        
+        $instaladorDelMes = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($instaladorDelMes) {
+            $nombreCompleto = htmlspecialchars($instaladorDelMes['nombres'] . ' ' . $instaladorDelMes['apellido_p']);
+            $instalaciones = htmlspecialchars($instaladorDelMes['instalaciones_realizadas']);
+        } else {
+            $nombreCompleto = "No hay datos disponibles";
+            $instalaciones = "";
+        }
+    } else {
+        echo 'No se encontró el ID del instalador para el usuario.';
+        $nombreCompleto = "";
+        $instalaciones = "";
+    }
+} catch (PDOException $e) {
+    echo "Error al obtener datos: " . $e->getMessage();
+}
+
+$stmt = $db->getPDO()->prepare("CALL ObtenerTotalCitas(:id_instalador)");
+$stmt->bindParam(':id_instalador', $idInstalador, PDO::PARAM_INT);
+$stmt->execute();
+
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+$totalCitas = $result['TotalCitas'] ?? 0;
+
+$stmt = $db->getPDO()->prepare("CALL ObtenerMaxMinCitasPorSemana(:id_instalador)");
+$stmt->bindParam(':id_instalador', $idInstalador, PDO::PARAM_INT);
+$stmt->execute();
+
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+$maxCitas = $result['MaxCitasPorSemana'] ?? 0;
+$minCitas = $result['MinCitasPorSemana'] ?? 0;
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Store</title>
+  <link rel="shortcut icon" href="../../img/index/logoVarianteSmall.png" type="image/x-icon">
+  <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../css/normalized.css">
+  <link rel="stylesheet" href="../../css/style_admin.css">
+</head>
+<body>
+  <!--Logo flotante del negocio-->
+  <div id="logotipo-flotante">
+    <img src="../../img/index/GLASS.png" alt="Glass store">
+  </div>
+
+  <!--Barra lateral-->
+  <div class="wrapper">
+    <aside id="sidebar">
+      <div class="d-flex">
+        <button class="toggle-btn" type="button">
+          <img src="../../img/index/menu.svg" alt="Menu">
+        </button>
+        <div class="sidebar-logo">
+          <a href="#">GLASS STORE</a>
+        </div>
+      </div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#inicio" aria-expanded="false" aria-controls="inicio">
+             <img src="../../img/instalador/home.svg" alt="Perfil">
+            <span>Inicio</span>
+          </a>
+          <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="#" class="sidebar-link">Volver al Inicio</a>
+            </li>
+          </ul>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#notificaciones" aria-expanded="false" aria-controls="notificaciones">
+            <img src="../../img/instalador/notificacion.svg" alt="Notificaciones">
+            <span>Notificaciones</span>
+          </a>
+          <ul id="notificaciones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="./vista_instalador_notificaciones.php" class="sidebar-link">Ver Notificaciones</a>
+            </li>
+          </ul>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#citas" aria-expanded="false" aria-controls="citas">
+            <img src="../../img/admin/calendar.svg" alt="citas">
+            <span>Citas</span>
+          </a>
+          <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="../../views/instalador/vista_instalador_citas.php" class="sidebar-link">Ver Citas</a>
+            </li>
+          </ul>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#reporte" aria-expanded="false" aria-controls="reporte">
+            <img src="../../img/admin/clipboard.svg" alt="citas">
+            <span>Reportes</span>
+          </a>
+          <ul id="reporte" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="../../views/instalador/vista_instalador_reportes.php" class="sidebar-link">Hacer reporte</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="../../index.php" class="sidebar-link">
+          <img src="../../img/admin/home.svg" alt="Volver">
+          <span>Volver</span>
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="#" class="sidebar-link">
+          <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+          <span>Cerrar Sesión</span>
+        </a>
+      </div>
+    </aside>
+    <div class="main p-3">
+      <!-- contenido general-->
+      <div class="contenidoGeneral mt-4">
+        <div class="container">
+          <div class="row">
+            <!-- Tarjeta de Estadísticas -->
+            <div class="col-md-6 mb-4">
+              <div class="card card-custom text-center" style="border-color: #0e2238;">
+                <div class="card-header" style="background-color: #0e2238; color: white;">
+                  <h5 class="card-title mb-0">Instalador del Mes</h5>
+                </div>
+                <div class="card-body">
+                  <h4 class="card-title"><?php echo $nombreCompleto; ?></h4>
+                  <p class="card-text"><strong>Instalaciones Realizadas:</strong> <?php echo $instalaciones; ?></p>
+                </div>
+                <div class="card-footer text-muted" style="background-color: #0e2238;">
+                  <i class="bi bi-star-fill text-primary" style="font-size: 2rem;"></i>
+                </div>
+              </div>
+            </div>
+            <!-- Tarjeta de Total de Citas Asignadas -->
+            <div class="col-md-6 mb-4">
+              <div class="card card-custom text-center" style="border-color: #28a745;">
+                <div class="card-header" style="background-color: #28a745; color: white;">
+                  <h5 class="card-title mb-0">Total de Citas Asignadas</h5>
+                </div>
+                <div class="card-body">
+                  <h4 class="card-title"><?php echo $totalCitas; ?></h4>
+                  <p class="card-text">Citas asignadas en el mes actual</p>
+                </div>
+                <div class="card-footer text-muted" style="background-color: #f8f9fa;">
+                  <i class="bi bi-calendar-check-fill text-success" style="font-size: 2rem;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+  </div>
+  <!-- Tarjeta de Max/Min Citas por Semana -->
+  <div class="row justify-content-center">
+              <div class="col-md-4 mb-4">
+                <div class="card card-custom text-center" style="border-color: #007bff;">
+                  <div class="card-header" style="background-color: #007bff; color: white;">
+                    <h5 class="card-title mb-0">Citas por Semana</h5>
+                  </div>
+                  <div class="card-body">
+                    <h4 class="card-title"><?php echo $maxCitas; ?> / <?php echo $minCitas; ?></h4>
+                    <p class="card-text">Mayor y menor de asignacion de citas por semana</p>
+                  </div>
+                  <div class="card-footer text-muted" style="background-color: #f8f9fa;">
+                    <i class="bi bi-calendar-week-fill text-primary" style="font-size: 2rem;"></i>
+                  </div>
+                </div>
+              </div>
+           </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const hamBurger = document.querySelector(".toggle-btn");
+
+    hamBurger.addEventListener("click", function () {
+      document.querySelector("#sidebar").classList.toggle("expand");
+    });
+  </script>
+</body>
+</html>

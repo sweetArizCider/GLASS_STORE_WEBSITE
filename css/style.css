@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
+.background-cover {
+  background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../img/index/background.jpeg) center/cover no-repeat;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.login-form {
+  background-color: #fff;
+  padding: 2em;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  color: #132644;
+}
+
+.login-form h2 {
+  color: #132644;
+}
+
+.login-form label {
+  color: #132644;
+}
+
+.login-form a {
+  color: #4AB3D5;
+}
+
+.login-form a:hover {
+  color: #132644;
+}
+
+
+/* boton flotante de whatsapp */
+#wa-button {
+  position: fixed; 
+  bottom: 20px; 
+  right: 20px; 
+  z-index: 100; 
+}
+
+#wa-button a {
+  display: block; 
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
+  background-color: #25d365; 
+  text-decoration: none;
+  color: white; 
+  transition: background-color 0.3s ease; 
+}
+
+#wa-button a:hover {
+  background-color: #4AB3D5; 
+}
+
+#wa-button img {
+  width: 100%; 
+  height: auto; 
+}
+.logotipo-glass{
+  width: 100px;
+  margin: auto;
+}
+.login-form{
+  text-align: center;
+}
+.titleLogin{
+  margin-top: .2em;
+  font-family: 'Montserrat';
+  color: #132644;
+  font-size: 2rem;
+  font-weight: 800 !important;
+}
+
+.formLogin{
+  margin: auto;
+  margin-top: 1.3em;
+  width: 90%;
+  text-align: left;
+}
+
+.buttonLogin{
+  width: 100%;
+  height: 35px;
+  margin-top: 1em;
+ 
+  background: #132644;
+  border: 1.5px solid #132644;
+  border-radius: 30px;
+  font-family: Inter;
+  font-size: .9em;
+  font-weight: 600;
+  letter-spacing: 1px ;
+  color: #fff;
+  transition: 0.5s ease;
+  cursor: pointer;
+}
+.form-floating{
+  width: 95%;
+  margin: auto;
+  border: 1px solid rgba(19, 38, 68, 0.53);
+  margin-bottom: 0px !important;
+  font-size: .8rem !important;
+  font-family: 'Inter';
+  padding-top: 0px !important;
+  border-radius: 8px;
+  overflow: hidden; 
+}
+.form-floating label{
+ padding-top: 1em;
+ font-size: 1.2em;
+}
+.plogincuenta{
+  font-family: 'Inter';
+  color: #132644;
+  font-size: .9em;
+}
+.plogincuenta a{
+color: #4AB3D5;
+}
