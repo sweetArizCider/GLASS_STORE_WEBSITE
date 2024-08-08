@@ -15,7 +15,7 @@
     extract($_POST);
 
     try {
-        $cadena = "CALL crearNuevoRol(?)";
+        $cadena = "CALL crearnuevorol(?)";
         $stmt = $db->getPDO()->prepare($cadena);
         $stmt->execute([$nombre_rol]);
         

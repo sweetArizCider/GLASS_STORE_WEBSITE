@@ -38,7 +38,7 @@
 
         try {
             // Llamar al procedimiento para buscar la persona y obtener el ID
-            $stmt = $db->getPDO()->prepare("CALL buscarPersonaPorNombre(?, @id_persona)");
+            $stmt = $db->getPDO()->prepare("CALL buscarpersonapornombre(?, @id_persona)");
             $stmt->execute([$nombre_completo]);
             
             // Obtener el ID de la persona
@@ -49,7 +49,7 @@
             
             if ($id_persona) {
                 // Llamar al procedimiento para actualizar los datos laborales
-                $stmt = $db->getPDO()->prepare("CALL actualizarDatosLaborales(?, ?, ?, ?)");
+                $stmt = $db->getPDO()->prepare("CALL actualizardatoslaborales(?, ?, ?, ?)");
                 $stmt->execute([$id_persona, $rfc, $nss, $curp]);
                 $message = "DATOS ACTUALIZADOS CORRECTAMENTE";
                 $alert_class = "alert-success";

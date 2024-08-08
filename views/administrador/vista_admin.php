@@ -85,7 +85,7 @@ try {
   $productoMenosVendidos = [];
 }
 try {
-  $stmt = $db->getPDO()->prepare("CALL CalcularPromedioTotalVentasSaldoCero()");
+  $stmt = $db->getPDO()->prepare("CALL calcularpromediototalventassaldocero()");
   $stmt->execute();
   $result = $stmt->fetch(PDO::FETCH_ASSOC);
   
@@ -95,7 +95,7 @@ try {
   $promedioTotalVentasSaldoCero = 0; 
 }
 try {
-  $stmt = $db->getPDO()->prepare("CALL CalcularMaxMinTotalVentasSaldoCero()");
+  $stmt = $db->getPDO()->prepare("CALL calcularmaxmintotalventassaldocero()");
   $stmt->execute();
   $result = $stmt->fetch(PDO::FETCH_ASSOC);
   
@@ -227,6 +227,10 @@ try {
             <li class="sidebar-item">
               <a href="./vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
             </li>
+
+            <li class="sidebar-item">
+              <a href="./vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
+            </li>
           </ul>
         </li>
         <li class="sidebar-item">
@@ -290,12 +294,7 @@ try {
     </aside>
     <div class="main p-3">
       <!-- Área de búsqueda -->
-      <div class="text-center">
-        <div class="busqueda mx-auto">
-          <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
-          <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
-        </div>
-      </div>
+      
       <div class="text-center my-4">
     <h2>Productos Más Vendidos</h2>
   </div>

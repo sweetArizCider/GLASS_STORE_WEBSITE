@@ -199,7 +199,7 @@ try {
     $database = new Database();
     $database->conectarDB();
 
-    $query = "SELECT nombre_promocion, valor, estatus FROM PROMOCIONES";
+    $query = "SELECT nombre_promocion, valor, estatus FROM promociones";
     $promociones = $database->seleccionar($query);
 
     $database->desconectarDB();

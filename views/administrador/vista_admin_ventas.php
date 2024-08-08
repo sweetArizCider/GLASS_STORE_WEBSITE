@@ -42,7 +42,7 @@ try {
     }
 
     // Consultar la vista VentasConAbonos
-    $query = "SELECT * FROM VentasConAbonos";
+    $query = "SELECT * FROM ventasconabonos";
     $resultados = $db->seleccionar($query);
 
 } catch (Exception $e) {
@@ -53,7 +53,7 @@ try {
 
 // Consultar las promociones activas
 try {
-    $query = "SELECT id_promocion, nombre_promocion FROM PROMOCIONES WHERE estatus = 'activo'";
+    $query = "SELECT id_promocion, nombre_promocion FROM promociones WHERE estatus = 'activo'";
     $promociones = $db->seleccionar($query);
 } catch (Exception $e) {
     error_log("Error al ejecutar la consulta de promociones: " . $e->getMessage());

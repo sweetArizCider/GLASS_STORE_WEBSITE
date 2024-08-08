@@ -15,7 +15,7 @@
     extract($_POST);
 
     try {
-        $cadena = "call AplicarPromocion('$id_venta', '$promocion');";
+        $cadena = "call aplicarpromocion('$id_venta', '$promocion');";
         $db->ejecuta($cadena);
         $db->desconectarDB();
         echo "<div class='alert alert-success'> PROMOCION AÑADIDA CORRECTAMENTE</div>";

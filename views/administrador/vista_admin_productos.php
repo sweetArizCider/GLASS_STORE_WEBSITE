@@ -50,7 +50,7 @@ $database = new Database();
 $database->conectarDB();
 
 // Obtener las categorías para el filtro
-$categorias = $database->seleccionar("SELECT id_categoria, nombre FROM CATEGORIAS");
+$categorias = $database->seleccionar("SELECT id_categoria, nombre FROM categorias");
 
 // Inicializar la categoría seleccionada
 $categoriaSeleccionada = isset($_GET['categoria']) ? $_GET['categoria'] : '';
@@ -58,13 +58,13 @@ $categoriaSeleccionada = isset($_GET['categoria']) ? $_GET['categoria'] : '';
 // Preparar la consulta según la categoría seleccionada
 if ($categoriaSeleccionada) {
     // Consulta con parámetros para filtrar por categoría
-    $query = "CALL FiltrarProductosPorNombreCategoria(:categoria)";
+    $query = "CALL filtrarproductospornombrecategoria(:categoria)";
     $productos = $database->seleccionar($query, [':categoria' => $categoriaSeleccionada]);
 } else {
     // Consulta sin parámetros para obtener todos los productos
     $query = "SELECT p.id_producto, p.nombre, p.descripcion, p.precio, p.estatus, p.categoria AS id_categoria, c.nombre AS categoria 
-              FROM PRODUCTOS p 
-              JOIN CATEGORIAS c ON p.categoria = c.id_categoria";
+              FROM productos p 
+              JOIN categorias c ON p.categoria = c.id_categoria";
     $productos = $database->seleccionar($query);
 }
 ?>

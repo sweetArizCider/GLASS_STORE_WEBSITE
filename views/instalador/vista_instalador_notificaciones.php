@@ -21,9 +21,9 @@ $user = $_SESSION["nom_usuario"];
 // Consulta para obtener el id_instalador
 $stmt = $db->getPDO()->prepare("
     SELECT i.id_instalador
-FROM INSTALADOR i
-JOIN PERSONA p ON i.persona = p.id_persona
-JOIN USUARIOS u ON p.usuario = u.id_usuario
+FROM instalador
+JOIN persona ON i.persona = p.id_persona
+JOIN usuarios u ON p.usuario = u.id_usuario
 WHERE u.nom_usuario = ?
 ");
 $stmt->execute([$user]);

@@ -156,12 +156,12 @@
 
         if ($criterio === 'nombre' && $nombre_completo) {
             // Llamada al procedimiento almacenado para filtrar por nombre
-            $query = "CALL BuscarRecibosPorNombreCliente(:nombre_cliente)";
+            $query = "CALL buscarrecibospornombrecliente(:nombre_cliente)";
             $params = [':nombre_cliente' => $nombre_completo];
             $resultados = $database->ejecutarProcedimiento($query, $params);
         } elseif ($criterio === 'fecha' && $fecha_pago_1 && $fecha_pago_2) {
             // Llamada al procedimiento almacenado para filtrar por fecha
-            $query = "CALL BuscarRecibosPorFecha(:fecha_pago_1, :fecha_pago_2)";
+            $query = "CALL buscarrecibosporfecha(:fecha_pago_1, :fecha_pago_2)";
             $params = [
                 ':fecha_pago_1' => $fecha_pago_1,
                 ':fecha_pago_2' => $fecha_pago_2

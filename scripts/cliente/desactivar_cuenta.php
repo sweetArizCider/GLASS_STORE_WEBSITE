@@ -23,7 +23,7 @@ if (isset($_SESSION["nom_usuario"])) {
     try {
         echo "Nombre de usuario actual: " . $nombre_usuario_actual . "<br>";
 
-        $cadena = "CALL ObtenerIdUsuarioPorNombre(:nombre_usuario)";
+        $cadena = "CALL obteneridusuariopornombre(:nombre_usuario)";
         $params = [':nombre_usuario' => $nombre_usuario_actual];
         $stmt = $db->ejecutarcita($cadena, $params);
         $id_usuario = $stmt->fetchColumn();
@@ -35,7 +35,7 @@ if (isset($_SESSION["nom_usuario"])) {
             $stmt = $db->ejecutarcita("SET @session_user_id = :id_usuario", [':id_usuario' => $id_usuario]);
             $stmt->closeCursor();
 
-            $stmt = $db->ejecutarcita("CALL DesactivarCuenta()");
+            $stmt = $db->ejecutarcita("CALL desactivarcuenta()");
             $resultado = $stmt->fetch();
             
             echo "Resultado: " . $resultado['mensaje'] . "<br>";

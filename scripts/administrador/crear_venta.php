@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente_venta"
     $db->conectarDB();
 
     try {
-        $stmt = $db->getPDO()->prepare("CALL CrearVentaPorClienteYCita(?, ?)");
+        $stmt = $db->getPDO()->prepare("CALL crearventaporclienteycita(?, ?)");
         $stmt->execute([$nombre_cliente, $cita_id]);
 
         echo "<div class='alert alert-success'> VENTA CREADA EXITOSAMENTE</div>";

@@ -15,7 +15,7 @@
     extract($_POST);
 
     try {
-        $cadena = "call AgregarExtras('$id_venta', '$extras');";
+        $cadena = "call agregarextras('$id_venta', '$extras');";
         $db->ejecuta($cadena);
         $db->desconectarDB();
         echo "<div class='alert alert-success'> EXTRA AÑADIDO CORRECTAMENTE</div>";

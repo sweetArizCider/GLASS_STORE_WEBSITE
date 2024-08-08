@@ -17,7 +17,7 @@
         extract($_POST);
 
         // Llamar al procedimiento almacenado para actualizar el producto
-        $cadena = "CALL EditarProducto('$nombre_actual', '$nuevo_nombre', '$categoria', '$descripcion', '$precio', '$estatus', NULL);";
+        $cadena = "CALL editarproducto('$nombre_actual', '$nuevo_nombre', '$categoria', '$descripcion', '$precio', '$estatus', NULL);";
         $db->ejecuta($cadena);
 
         // Manejo de la carga de la imagen
@@ -63,7 +63,7 @@
                     $imagen = basename($_FILES["fileToUpload"]["name"]);
 
                     // Actualizar la imagen del producto en la base de datos
-                    $cadena = "UPDATE PRODUCTOS SET imagen = '$imagen' WHERE nombre = '$nuevo_nombre';";
+                    $cadena = "UPDATE productos SET imagen = '$imagen' WHERE nombre = '$nuevo_nombre';";
                     $db->ejecuta($cadena);
                 } else {
                     echo "<div class='alert alert-danger'>Lo siento, hubo un error al subir tu archivo.</div>";

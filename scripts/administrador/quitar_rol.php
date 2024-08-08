@@ -15,7 +15,7 @@
     extract($_POST);
 
     try {
-        $cadena = "CALL quitarRolUsuarioPorNombre(?, ?)";
+        $cadena = "CALL quitarrolusuariopornombre(?, ?)";
         $stmt = $db->getPDO()->prepare($cadena);
         $stmt->execute([$nom_usuario_quitar, $nombre_rol_quitar]);
         

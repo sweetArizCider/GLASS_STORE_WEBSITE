@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $consulta_existencia = "
                 SELECT COUNT(*) as count 
-                FROM DISENOS_PRODUCTOS 
+                FROM disenos_productos
                 WHERE diseno = $id_diseno 
                 AND producto = $id_producto
             ";
@@ -216,13 +216,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($resultado_existencia[0]->count == 0) {
                 $consulta_insercion = "
-                    INSERT INTO DISENOS_PRODUCTOS (diseno, producto, estatus) 
+                    INSERT INTO disenos_productos (diseno, producto, estatus) 
                     VALUES ($id_diseno, $id_producto, '$nuevo_estatus_DP')
                 ";
                 $conexion->seleccionar($consulta_insercion);
             } else {
                 $consulta_actualizacion = "
-                    UPDATE DISENOS_PRODUCTOS 
+                    UPDATE disenos_productos
                     SET estatus = '$nuevo_estatus_DP'
                     WHERE diseno = '$id_diseno'
                     AND producto = '$id_producto'
@@ -311,7 +311,7 @@ $menu = $conexion->seleccionar($consulta);
 
                         if ($id_diseno > 0) {
                             $consulta_productos = "
-                                CALL Obtener_Diseno_Producto($id_diseno);
+                                CALL obtener_diseno_producto($id_diseno);
                             ";
                             $productos = $conexion->seleccionar($consulta_productos);
 

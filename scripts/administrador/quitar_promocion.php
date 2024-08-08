@@ -20,7 +20,7 @@
 
         try {
             // Consultar el id_promocion
-            $query = "SELECT id_promocion FROM PROMOCIONES WHERE nombre_promocion = :nombre_promocion";
+            $query = "SELECT id_promocion FROM promociones WHERE nombre_promocion = :nombre_promocion";
             $stmt = $db->getPDO()->prepare($query);
             $stmt->execute([':nombre_promocion' => $nombre_promocion]);
             $result = $stmt->fetch(PDO::FETCH_OBJ);
@@ -29,7 +29,7 @@
                 $id_promocion = $result->id_promocion;
 
                 // Llamar al procedimiento almacenado
-                $query = "CALL QuitarPromocionPorVenta(:id_venta, :nombre_promocion)";
+                $query = "CALL quitarpromocionporventa(:id_venta, :nombre_promocion)";
                 $stmt = $db->getPDO()->prepare($query);
                 $stmt->execute([':id_venta' => $id_venta, ':nombre_promocion' => $nombre_promocion]);
 

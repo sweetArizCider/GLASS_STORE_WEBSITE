@@ -34,7 +34,7 @@ if (isset($_SESSION["nom_usuario"])) {
                 $id_cliente = $fila->id_cliente;
                 $id_usuario = $id_cliente;
 
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM NOTIFICACIONES_CLIENTE WHERE cliente = ?";
+                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
                 $paramsNotificaciones = [$id_cliente];
                 $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
 
@@ -42,7 +42,7 @@ if (isset($_SESSION["nom_usuario"])) {
                 $id_instalador = $fila->id_instalador;
                 $id_usuario = $id_instalador;
 
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM NOTIFICACIONES_INSTALADOR WHERE instalador = ?";
+                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_instalador WHERE instalador = ?";
                 $paramsNotificaciones = [$id_instalador];
                 $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
             }
@@ -74,28 +74,28 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
 if (isset($_GET['id'])) {
     $productId = $_GET['id'];
 
-    $stmt = $pdo->prepare("SELECT * FROM PRODUCTOS WHERE id_producto = :id");
+    $stmt = $pdo->prepare("SELECT * FROM productos WHERE id_producto = :id");
     $stmt->bindParam(':id', $productId, PDO::PARAM_INT);
     $stmt->execute();
     $producto = $stmt->fetch(PDO::FETCH_OBJ);
 
     if ($producto) {
-        $stmtImg = $pdo->prepare("SELECT * FROM IMAGEN WHERE producto = :id");
+        $stmtImg = $pdo->prepare("SELECT * FROM imagen WHERE producto = :id");
         $stmtImg->bindParam(':id', $productId, PDO::PARAM_INT);
         $stmtImg->execute();
         $imagenes = $stmtImg->fetchAll(PDO::FETCH_OBJ);
 
         $stmtCategory = $pdo->prepare("
             SELECT c.nombre
-            FROM CATEGORIAS c
-            JOIN PRODUCTOS p ON c.id_categoria = p.categoria
+            FROM categorias c
+            JOIN productos p ON c.id_categoria = p.categoria
             WHERE p.id_producto = :id
         ");
         $stmtCategory->bindParam(':id', $productId, PDO::PARAM_INT);
         $stmtCategory->execute();
         $categoria = $stmtCategory->fetchColumn();
 
-        $stmtDisenos = $pdo->prepare("SELECT id_diseno, codigo, file_path FROM DISENOS WHERE muestrario = :id");
+        $stmtDisenos = $pdo->prepare("SELECT id_diseno, codigo, file_path FROM disenos WHERE muestrario = :id");
         $stmtDisenos->bindParam(':id', $productId, PDO::PARAM_INT);
         $stmtDisenos->execute();
         $disenos = $stmtDisenos->fetchAll(PDO::FETCH_OBJ);

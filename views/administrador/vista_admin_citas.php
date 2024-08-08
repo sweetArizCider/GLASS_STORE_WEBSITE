@@ -44,49 +44,48 @@ try {
 
 $db = new Database();
 $db->conectarDB();
-
-$cadena = "SELECT
+$cadena = "select
     c.id_cita,
-    CONCAT(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) AS nombre_cliente,
+    concat(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) as nombre_cliente,
     c.fecha,
     c.hora,
-    CONCAT(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. Referencias: ', d.referencias) AS direccion,
+    concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
     c.notas,
-    IFNULL(
-        REPLACE(
-            (SELECT GROUP_CONCAT(
-                CONCAT(
+    ifnull(
+        replace(
+            (select group_concat(
+                concat(
                     prod.nombre, ': $', dp.monto,
-                    IF(dp.alto IS NOT NULL, CONCAT(', Alto: ', dp.alto), ''),
-                    IF(dp.largo IS NOT NULL, CONCAT(', Largo: ', dp.largo), ''),
-                    IF(dp.cantidad IS NOT NULL, CONCAT(', Cantidad: ', dp.cantidad), ''),
-                    IF(dp.grosor IS NOT NULL, CONCAT(', Grosor: ', dp.grosor), ''),
-                    IF(dp.tipo_tela IS NOT NULL, CONCAT(', Tipo de Tela: ', dp.tipo_tela), ''),
-                    IF(dp.marco IS NOT NULL, CONCAT(', Marco: ', dp.marco), ''),
-                    IF(dp.tipo_cadena IS NOT NULL, CONCAT(', Tipo de Cadena: ', dp.tipo_cadena), ''),
-                    IF(dp.color IS NOT NULL, CONCAT(', Color: ', dp.color), ''),
-                    IF(dp.diseno IS NOT NULL, CONCAT(', Diseño: ', dis.codigo), '')
-                ) SEPARATOR '\n'
-            ) FROM DETALLE_CITA dc 
-            JOIN DETALLE_PRODUCTO dp ON dc.detalle_producto = dp.id_detalle_producto 
-            JOIN PRODUCTOS prod ON dp.producto = prod.id_producto 
-            LEFT JOIN DISENOS dis ON dp.diseno = dis.id_diseno
-            WHERE dc.cita = c.id_cita), 
+                    if(dp.alto is not null, concat(', alto: ', dp.alto), ''),
+                    if(dp.largo is not null, concat(', largo: ', dp.largo), ''),
+                    if(dp.cantidad is not null, concat(', cantidad: ', dp.cantidad), ''),
+                    if(dp.grosor is not null, concat(', grosor: ', dp.grosor), ''),
+                    if(dp.tipo_tela is not null, concat(', tipo de tela: ', dp.tipo_tela), ''),
+                    if(dp.marco is not null, concat(', marco: ', dp.marco), ''),
+                    if(dp.tipo_cadena is not null, concat(', tipo de cadena: ', dp.tipo_cadena), ''),
+                    if(dp.color is not null, concat(', color: ', dp.color), ''),
+                    if(dp.diseno is not null, concat(', diseño: ', dis.codigo), '')
+                ) separator '\n'
+            ) from detalle_cita dc 
+            join detalle_producto dp on dc.detalle_producto = dp.id_detalle_producto 
+            join productos prod on dp.producto = prod.id_producto 
+            left join disenos dis on dp.diseno = dis.id_diseno
+            where dc.cita = c.id_cita), 
             ',', '\n'
         ),
-        'No hay cotizaciones'
-    ) AS cotizaciones
-FROM
-    CITAS c
-JOIN
-    CLIENTE_DIRECCIONES cd ON c.cliente_direccion = cd.id_cliente_direcciones
-JOIN
-    CLIENTE cli ON cd.cliente = cli.id_cliente
-JOIN
-    PERSONA p ON cli.persona = p.id_persona
-JOIN
-    DIRECCIONES d ON cd.direccion = d.id_direccion
-WHERE
+        'no hay cotizaciones'
+    ) as cotizaciones
+from
+    citas c
+join
+    cliente_direcciones cd on c.cliente_direccion = cd.id_cliente_direcciones
+join
+    cliente cli on cd.cliente = cli.id_cliente
+join
+    persona p on cli.persona = p.id_persona
+join
+    direcciones d on cd.direccion = d.id_direccion
+where
     c.estatus = 'en espera';";
 
 $result = $db->ejecutar($cadena, []);
@@ -103,8 +102,8 @@ $instaladoresQuery = "
         p.nombres,
         p.apellido_p,
         p.apellido_m
-    FROM INSTALADOR i
-    JOIN PERSONA p ON i.persona = p.id_persona;
+    FROM instalador i
+    JOIN persona p ON i.persona = p.id_persona;
 ";
 
 $instaladoresResult = $db->ejecutar($instaladoresQuery, []);
@@ -112,7 +111,7 @@ $instaladores = $instaladoresResult ? $instaladoresResult->fetchAll(PDO::FETCH_A
 
 $verificarAsignacionesQuery = "
     SELECT cita, COUNT(*) AS total_asignados
-    FROM INSTALADOR_CITA
+    FROM instalador_cita
     GROUP BY cita
 ";
 

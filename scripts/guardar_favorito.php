@@ -56,7 +56,7 @@ try {
         }
     } else {
         // Insertar en favoritos
-        $consulta = "CALL InsertarFavorito(?, ?)";
+        $consulta = "CALL insertarfavorito(?, ?)";
         $params = [$id_usuario, $id_producto];
         $resultado = $conexion->ejecutar($consulta, $params);
 

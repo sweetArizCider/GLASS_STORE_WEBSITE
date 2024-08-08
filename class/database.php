@@ -3,8 +3,8 @@
 class database{
     // paramentros que le voy a enviar al objeto pdo
     private $PDOlocal;
-    private $user = 'arizpe1';
-    private $password = "arizpe1";
+    private $user = 'root';
+    private $password = "";
     private $server = "mysql:host=localhost;dbname=glass_store_ana";
 
     // le ponemos la sig cadena: host, base de datos
@@ -179,7 +179,7 @@ class database{
     // Método para buscar productos por nombre
     function BuscarProductoPorNombre($nombreBuscado) {
         try {
-            $stmt = $this->PDOlocal->prepare("CALL BuscarProductoPorNombre(:nombreBuscado)");
+            $stmt = $this->PDOlocal->prepare("CALL buscarproductopornombre(:nombreBuscado)");
             $stmt->bindParam(':nombreBuscado', $nombreBuscado, PDO::PARAM_STR);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_OBJ); // Asegúrate de que los resultados se obtienen como objetos
@@ -232,14 +232,14 @@ class database{
     }
     
     public function agregarFavorito($id_usuario, $id_producto) {
-        $consulta = "CALL InsertarFavorito(?, ?)";
+        $consulta = "CALL insertarfavorito(?, ?)";
         $params = [$id_usuario, $id_producto];
         return $this->ejecutar($consulta, $params);
     }
 
     function eliminarFavorito($id_producto, $id_usuario) {
         try {
-            $stmt = $this->PDOlocal->prepare("DELETE FROM FAVORITOS WHERE cliente = :id_usuario AND producto = :id_producto");
+            $stmt = $this->PDOlocal->prepare("DELETE FROM favoritos WHERE cliente = :id_usuario AND producto = :id_producto");
             $stmt->bindParam(':id_producto', $id_producto, PDO::PARAM_INT);
             $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
             return $stmt->execute();
@@ -251,7 +251,7 @@ class database{
     
     function esFavorito($id_producto, $id_usuario) {
         try {
-            $stmt = $this->PDOlocal->prepare("SELECT COUNT(*) as count FROM FAVORITOS WHERE cliente = :id_usuario AND producto = :id_producto");
+            $stmt = $this->PDOlocal->prepare("SELECT COUNT(*) as count FROM favoritos WHERE cliente = :id_usuario AND producto = :id_producto");
             $stmt->bindParam(':id_producto', $id_producto, PDO::PARAM_INT);
             $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
             $stmt->execute();

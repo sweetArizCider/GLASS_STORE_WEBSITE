@@ -27,7 +27,7 @@
         $resultado = 0;
 
         // Llamar al procedimiento almacenado
-        $query = "CALL CrearPromocion(:nombre_promocion, :tipo_promocion, :valor, @resultado)";
+        $query = "CALL crearpromocion(:nombre_promocion, :tipo_promocion, :valor, @resultado)";
         $params = array(
             ':nombre_promocion' => $nombre_promocion,
             ':tipo_promocion' => $tipo_promocion,

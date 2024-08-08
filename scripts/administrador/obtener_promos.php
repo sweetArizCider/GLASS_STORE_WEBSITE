@@ -13,7 +13,7 @@ header('Content-Type: application/json');
 
 if ($idVenta) {
     try {
-        $query = "CALL VerPromocionesPorVenta(:idVenta)";
+        $query = "CALL verpromocionesporventa(:idVenta)";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':idVenta', $idVenta, PDO::PARAM_INT);
         $stmt->execute();

@@ -16,7 +16,7 @@
         $db-> conectarDB();
         extract($_POST);
 
-        $cadena = "call AñadirCategoria('$nombre');";
+        $cadena = "call añadircategoria('$nombre');";
         $db->ejecuta($cadena);
         $db->desconectarDB();
 

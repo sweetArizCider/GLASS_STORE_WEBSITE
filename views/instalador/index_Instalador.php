@@ -13,9 +13,9 @@ try {
     $user = $_SESSION["nom_usuario"];
     $stmt = $pdo->prepare("
         SELECT i.id_instalador
-        FROM INSTALADOR i
-        JOIN PERSONA p ON i.persona = p.id_persona
-        JOIN USUARIOS u ON p.usuario = u.id_usuario
+        FROM instalador i
+        JOIN persona p ON i.persona = p.id_persona
+        JOIN usuarios u ON p.usuario = u.id_usuario
         WHERE u.nom_usuario = ?
     ");
     $stmt->execute([$user]);
@@ -45,14 +45,14 @@ try {
     echo "Error al obtener datos: " . $e->getMessage();
 }
 
-$stmt = $db->getPDO()->prepare("CALL ObtenerTotalCitas(:id_instalador)");
+$stmt = $db->getPDO()->prepare("CALL obtenertotalcitas(:id_instalador)");
 $stmt->bindParam(':id_instalador', $idInstalador, PDO::PARAM_INT);
 $stmt->execute();
 
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 $totalCitas = $result['TotalCitas'] ?? 0;
 
-$stmt = $db->getPDO()->prepare("CALL ObtenerMaxMinCitasPorSemana(:id_instalador)");
+$stmt = $db->getPDO()->prepare("CALL obtenermaxmincitasporsemana(:id_instalador)");
 $stmt->bindParam(':id_instalador', $idInstalador, PDO::PARAM_INT);
 $stmt->execute();
 

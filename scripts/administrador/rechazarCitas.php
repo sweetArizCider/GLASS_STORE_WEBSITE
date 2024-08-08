@@ -17,7 +17,7 @@ if (isset($_POST['id_cita']) && isset($_POST['motivo'])) {
     $motivo = $_POST['motivo'];
 
     try {
-        $db->ejecutar("CALL RechazarCita(:id_cita, :motivo)", [
+        $db->ejecutar("CALL rechazarcita(:id_cita, :motivo)", [
             ':id_cita' => $id_cita,
             ':motivo' => $motivo
         ]);

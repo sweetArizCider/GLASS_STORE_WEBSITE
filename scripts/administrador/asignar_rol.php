@@ -15,7 +15,7 @@
     extract($_POST);
 
     try {
-        $cadena = "CALL añadirRolUsuarioPorNombre(?, ?)";
+        $cadena = "CALL añadirrolusuariopornombre(?, ?)";
         $stmt = $db->getPDO()->prepare($cadena);
         $stmt->execute([$nom_usuario, $nombre_rol]);
         if ($stmt->rowCount() > 0) {

@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Preparar la consulta SQL para insertar los datos en la tabla
-    $sql = "INSERT INTO DISENOS (codigo, file_path, file_name, descripcion) VALUES (?, ?, ?, ?)";
+    $sql = "INSERT INTO disenos (codigo, file_path, file_name, descripcion) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
     if ($stmt) {
