@@ -107,8 +107,8 @@ if ($result) {
         </a>
       </div>
       <div class="sidebar-footer">
-        <a href="#" class="sidebar-link">
-          <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+      <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+      <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
           <span>Cerrar Sesión</span>
         </a>
       </div>
@@ -210,8 +210,8 @@ if ($result) {
   function ordenarCitas(orden) {
       const citas = Array.from(document.querySelectorAll('.cita-item'));
       citas.sort((a, b) => {
-          const fechaA = new Date(a.querySelector('.fecha').textContent);
-          const fechaB = new Date(b.querySelector('.fecha').textContent);
+          const fechaA = convertirFecha(a.querySelector('.fecha').textContent);
+          const fechaB = convertirFecha(b.querySelector('.fecha').textContent);
 
           return orden === 'recientes' ? fechaB - fechaA : fechaA - fechaB;
       });
@@ -221,6 +221,32 @@ if ($result) {
       citas.forEach(cita => {
           container.appendChild(cita);
       });
+  }
+
+  function convertirFecha(fechaTexto) {
+      const partes = fechaTexto.split(' ');
+      const dia = partes[0];
+      const mes = partes[2];
+      const anio = partes[4];
+
+      const meses = {
+          'enero': '01',
+          'febrero': '02',
+          'marzo': '03',
+          'abril': '04',
+          'mayo': '05',
+          'junio': '06',
+          'julio': '07',
+          'agosto': '08',
+          'septiembre': '09',
+          'octubre': '10',
+          'noviembre': '11',
+          'diciembre': '12'
+      };
+
+      const mesNumero = meses[mes.toLowerCase()];
+
+      return new Date(`${anio}-${mesNumero}-${dia}`);
   }
   </script>
 

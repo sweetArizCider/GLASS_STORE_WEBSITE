@@ -80,7 +80,7 @@ if ($result) {
       </div>
       <ul class="sidebar-nav">
         <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+          <a href="../" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#inicio" aria-expanded="false" aria-controls="inicio">
             <img src="../../img/instalador/home.svg" alt="Inicio">
             <span>Inicio</span>
@@ -135,8 +135,8 @@ if ($result) {
         </a>
       </div>
       <div class="sidebar-footer">
-        <a href="#" class="sidebar-link">
-          <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+      <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+      <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
           <span>Cerrar Sesión</span>
         </a>
       </div>
@@ -169,7 +169,7 @@ if ($result) {
         <div class="accordion-item" data-cliente="<?= htmlspecialchars($cita->nombre_cliente) ?>" data-fecha="<?= htmlspecialchars($cita->fecha) ?>">
             <h2 class="accordion-header" id="heading<?= htmlspecialchars($cita->id_cita) ?>">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= htmlspecialchars($cita->id_cita) ?>" aria-expanded="true" aria-controls="collapse<?= htmlspecialchars($cita->id_cita) ?>">
-                    <?= htmlspecialchars($cita->nombre_cliente) ?> - <?= htmlspecialchars($cita->fecha) ?> <?= htmlspecialchars($cita->hora) ?>
+                    <?= htmlspecialchars($cita->cliente) ?> - <?= htmlspecialchars($cita->fecha) ?> <?= htmlspecialchars($cita->hora) ?>
                 </button>
             </h2>
             <div id="collapse<?= htmlspecialchars($cita->id_cita) ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= htmlspecialchars($cita->id_cita) ?>" data-bs-parent="#accordionCitas">

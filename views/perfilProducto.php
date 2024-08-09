@@ -211,7 +211,7 @@ if (isset($_GET['id'])) {
             <div class="offcanvas-body">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link"  href="/">Inicio</a>
+                        <a class="nav-link"  href="./productos.php">Volver</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link nav-left" href="https://api.whatsapp.com/send?phone=8717843809" target="_blank">Contacto</a>

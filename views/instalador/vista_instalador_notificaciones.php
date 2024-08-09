@@ -21,8 +21,8 @@ $user = $_SESSION["nom_usuario"];
 // Consulta para obtener el id_instalador
 $stmt = $db->getPDO()->prepare("
     SELECT i.id_instalador
-FROM instalador
-JOIN persona ON i.persona = p.id_persona
+FROM instalador i
+JOIN persona p ON i.persona = p.id_persona
 JOIN usuarios u ON p.usuario = u.id_usuario
 WHERE u.nom_usuario = ?
 ");
@@ -40,27 +40,27 @@ if ($result) {
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-  <!--Barra lateral-->
-  <div class="wrapper">
+ <!-- Barra lateral -->
+ <div class="wrapper">
     <aside id="sidebar">
-      <div class="d-flex">
+    <div class="d-flex">
         <button class="toggle-btn" type="button">
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="#">GLASS STORE</a>
+          <a href="../../../../">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#inicio" aria-expanded="false" aria-controls="inicio">
-             <img src="../../img/instalador/home.svg" alt="Perfil">
+            <img src="../../img/instalador/home.svg" alt="Inicio">
             <span>Inicio</span>
           </a>
-          <ul id="home" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+          <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./index_Instalador.php" class="sidebar-link">Inicio</a>
+              <a href="index_instalador.php" class="sidebar-link">Volver al Inicio</a>
             </li>
           </ul>
         </li>
@@ -79,12 +79,24 @@ if ($result) {
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#citas" aria-expanded="false" aria-controls="citas">
-            <img src="../../img/admin/calendar.svg" alt="citas">
+            <img src="../../img/admin/calendar.svg" alt="Citas">
             <span>Citas</span>
           </a>
           <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
               <a href="../../views/instalador/vista_instalador_citas.php" class="sidebar-link">Ver Citas</a>
+            </li>
+          </ul>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#reporte" aria-expanded="false" aria-controls="reporte">
+            <img src="../../img/admin/clipboard.svg" alt="Reportes">
+            <span>Reportes</span>
+          </a>
+          <ul id="reporte" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="../../views/instalador/vista_instalador_reportes.php" class="sidebar-link">Hacer Reporte</a>
             </li>
           </ul>
         </li>
@@ -96,35 +108,22 @@ if ($result) {
         </a>
       </div>
       <div class="sidebar-footer">
-        <a href="#" class="sidebar-link">
-          <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+      <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+      <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
           <span>Cerrar Sesión</span>
         </a>
       </div>
     </aside>
     <div class="main p-3">
       <div class="text-center">
-        <div class="busqueda mx-auto">
-          <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
-          <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
-        </div>
+
       </div>
 
       <!-- contenido general-->
 
       <div class="contenidoGeneral mt-4">
       
-        <div class="general-container">
-          <div class="d-flex justify-content-end mt-4">
-            <div class="dropdown">
-              <button class="btn btn-secondary filters" type="button" id="dropdownOrdenar" data-bs-toggle="dropdown" aria-expanded="false"> Ordenar <img src="../../img/instalador/filter.svg" alt="Filtrar" class="icono-filtro">
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
-                <li><a class="dropdown-item" href="#">Recientes</a></li>
-                <li><a class="dropdown-item" href="#">Antiguos</a></li>
-              </ul>
-            </div>
-          </div>
+
 
           <?php
 

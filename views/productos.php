@@ -1,8 +1,11 @@
 <?php
 session_start();
 include '../class/database.php';
+
 $id_usuario = 0;
 $notificaciones = [];
+$productos_por_pagina = 12; // Número de productos por página
+$pagina_actual = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Página actual
 
 if (isset($_SESSION["nom_usuario"])) {
     $user = $_SESSION["nom_usuario"];
@@ -54,33 +57,47 @@ if (!isset($_SESSION['nombre_producto'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
     $nombreBuscado = trim($_POST['nombre_producto']);
-    
-    // Guardar el término de búsqueda en la sesión
     $_SESSION['nombre_producto'] = $nombreBuscado;
-
-    // Redirigir a la misma página para evitar el reenvío del formulario
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
-}
-
-$productos_espera = [];
-if ($id_usuario != 0) {
-    // Obtener los detalles del producto en espera
-    $consulta_productos = "CALL carrito(?)";
-    $params_productos = [$id_usuario];
-    $productos_espera = $conexion->seleccionar($consulta_productos, $params_productos);
 }
 
 function esReciente($fecha){
     $fechaNotif = new DateTime($fecha);
     $fechaActual = new DateTime();
     $intervalo = $fechaActual->diff($fechaNotif);
-    return ($intervalo->d < 30); // Considera reciente si es de los últimos 30 días
+    return ($intervalo->d < 30); 
 }
 
 $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     return esReciente($notif->fecha);
 });
+
+$conexion = new database();
+$conexion->conectarDB();
+
+// Obtener todos los productos para paginación si no se está buscando
+if (!isset($_SESSION['nombre_producto'])) {
+    $offset = ($pagina_actual - 1) * $productos_por_pagina;
+
+    $consulta_productos_total = "SELECT COUNT(*) as total FROM productos";
+    $total_productos = $conexion->seleccionar($consulta_productos_total)[0]->total;
+    $total_paginas = ceil($total_productos / $productos_por_pagina);
+
+   $consulta_productos = "
+    SELECT p.id_producto, p.nombre, p.precio, i.imagen
+    FROM PRODUCTOS p
+    LEFT JOIN IMAGEN i ON p.id_producto = i.producto
+    WHERE p.estatus = 'activo'
+    LIMIT ? OFFSET ?
+";
+    $productos_espera = $conexion->seleccionar($consulta_productos);
+} else {
+    $nombreBuscado = trim($_SESSION['nombre_producto']);
+    unset($_SESSION['nombre_producto']);
+    $productos_espera = $conexion->BuscarProductoPorNombre($nombreBuscado);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -124,7 +141,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
               <img src="../img/index/GLASS.png" alt="" class="logo">
           </div>
           <div class="icons">
-                <a href="productos.php"><img src="../img/index/search.svg" alt="" width="25px"></a>
+                <a href="../../"><img src="../img/index/home.svg" alt="" width="25px"></a>
                 <button class="botonMostrarFavoritos" data-bs-toggle="modal" data-bs-target="#favoritosModal"><img src="../img/index/favorites.svg" alt="" width="25px"></button>
 
                 <a id="carrito" data-bs-toggle="modal" data-bs-target="#carritoModal"><img src="../img/index/clip.svg" alt="" width="25px"></a>
@@ -190,7 +207,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                         <a class="nav-link nav-left" href="https://api.whatsapp.com/send?phone=8717843809" target="_blank">Contacto</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-left" href="/citas">Agendar</a>
+                        <a class="nav-link nav-left" href="/views/citas.php">Agendar</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link nav-left" href="/#about-us">Nosotros</a>
@@ -303,6 +320,19 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
         ?>
     </div>
 </div>
+
+<!-- Paginación -->
+<?php if (!isset($_SESSION['nombre_producto']) && $total_paginas > 1): ?>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
+                <li class="page-item <?php if ($i == $pagina_actual) echo 'active'; ?>">
+                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
+<?php endif; ?>
 
   <!-- detalles producto en el carrito -->
   <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
