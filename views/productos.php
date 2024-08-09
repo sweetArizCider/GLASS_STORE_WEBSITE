@@ -1,9 +1,8 @@
 <?php
 session_start();
 include '../class/database.php';
-
 $id_usuario = 0;
-$nombreBuscado = '';
+$notificaciones = [];
 
 if (isset($_SESSION["nom_usuario"])) {
     $user = $_SESSION["nom_usuario"];
@@ -29,13 +28,53 @@ if (isset($_SESSION["nom_usuario"])) {
             $fila = $resultado_ids[0];
 
             if ($nombre_rol == 'cliente' && isset($fila->id_cliente)) {
-                $id_usuario = $fila->id_cliente;
+                $id_cliente = $fila->id_cliente;
+                $id_usuario = $id_cliente;
+
+                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
+                $paramsNotificaciones = [$id_cliente];
+                $notificaciones = $conexion->seleccionar($consultaNotificaciones, $paramsNotificaciones);
+
             } elseif ($nombre_rol == 'instalador' && isset($fila->id_instalador)) {
-                $id_usuario = $fila->id_instalador;
-            } 
+                $id_instalador = $fila->id_instalador;
+                $id_usuario = $id_instalador;
+
+                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_instalador WHERE instalador = ?";
+                $paramsNotificaciones = [$id_instalador];
+                $notificaciones = $conexion->seleccionar($consultaNotificaciones, $paramsNotificaciones);
+            }
         }
     }
 }
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
+    $nombreBuscado = trim($_POST['nombre_producto']);
+    
+    // Guardar el término de búsqueda en la sesión
+    $_SESSION['nombre_producto'] = $nombreBuscado;
+
+    // Redirigir a la misma página para evitar el reenvío del formulario
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
+$productos_espera = [];
+if ($id_usuario != 0) {
+    // Obtener los detalles del producto en espera
+    $consulta_productos = "CALL carrito(?)";
+    $params_productos = [$id_usuario];
+    $productos_espera = $conexion->seleccionar($consulta_productos, $params_productos);
+}
+
+function esReciente($fecha){
+    $fechaNotif = new DateTime($fecha);
+    $fechaActual = new DateTime();
+    $intervalo = $fechaActual->diff($fechaNotif);
+    return ($intervalo->d < 30); // Considera reciente si es de los últimos 30 días
+}
+
+$notificacionesRecientes = array_filter($notificaciones, function($notif) {
+    return esReciente($notif->fecha);
+});
 ?>
 
 <!DOCTYPE html>
@@ -48,13 +87,22 @@ if (isset($_SESSION["nom_usuario"])) {
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../css/normalized.css">
+<style>
+    .card-img-left {
+    border-radius: 10px;
+}
 
+.card {
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+</style>
 
 </head>
 <body>
 <!-- whatsapp flotante -->
   <div id="wa-button">
-    <a href="https://api.whatsapp.com/send?phone=8717843809" target="_blank">
+    <a href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">
       <img src="../img/index/whatsappFloat.svg" alt="Contáctanos por WhatsApp">
     </a>
   </div>
@@ -62,7 +110,7 @@ if (isset($_SESSION["nom_usuario"])) {
     <div class="container blue">
       <div class="navbar-top">
           <div class="social-link">
-              <a href="https://api.whatsapp.com/send?phone=8717843809" target="_blank" ><img src="../img/index/whatsapp.svg" alt="" width="30px"></a>
+              <a href="https://api.whatsapp.com/send?phone=528717843809" target="_blank" ><img src="../img/index/whatsapp.svg" alt="" width="30px"></a>
               <a href="https://www.facebook.com/profile.php?id=100064181314031" target="_blank"><img src="../img/index/facebook.svg" alt="" width="30px"></a>
               <a href="https://www.instagram.com/glassstoretrc?igsh=MXVhdHh1MDVhOGxzeA==" target="_blank"><img src="../img/index/instagram.svg" alt="" width="30px"></a>
           </div>
@@ -73,7 +121,9 @@ if (isset($_SESSION["nom_usuario"])) {
           <div class="icons">
                 <a href="productos.php"><img src="../img/index/search.svg" alt="" width="25px"></a>
                 <button class="botonMostrarFavoritos" data-bs-toggle="modal" data-bs-target="#favoritosModal"><img src="../img/index/favorites.svg" alt="" width="25px"></button>
-                <a href=""><img src="../img/index/clip.svg" alt="" width="25px"></a>
+
+                <a id="carrito" data-bs-toggle="modal" data-bs-target="#carritoModal"><img src="../img/index/clip.svg" alt="" width="25px"></a>
+
                 <div class="dropdown">
                     <a href="#" id="user-icon" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="../img/index/user.svg" alt="" width="25px" style="cursor: pointer">
@@ -145,6 +195,32 @@ if (isset($_SESSION["nom_usuario"])) {
         </div>
     </div>
 </nav>
+<!-- modal notificaciones-->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Notificaciones</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <?php
+                if (!empty($notificacionesRecientes)) {
+                    foreach ($notificacionesRecientes as $notif) {
+                        echo '<div class="notification">';
+                        echo '<p>' . htmlspecialchars($notif->notificacion) . '</p>';
+                        echo '<small>' . htmlspecialchars($notif->fecha) . '</small>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo '<p>No tienes notificaciones recientes.</p>';
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- nuevo Modal de Favoritos, se estarian cargando abajo con js -->
 <div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -168,27 +244,26 @@ if (isset($_SESSION["nom_usuario"])) {
 
     <!-- banner -->
     <main>
-    <div class="main-content-products">
+      <div class="main-content-products">
         <div class="content-products">
-            <h1>" TRANSFORMA TU ESPACIO CON ESTILO Y DISTINCIÓN "</h1><br>
-            <form method="POST" action="">
-                <div class="busqueda mx-auto">
-                    <input type="text" placeholder="Buscar" class="buscar-input" id="search-input" autocomplete="off" name="nombre_producto" value="<?php echo isset($_POST['nombre_producto']) ? htmlspecialchars($_POST['nombre_producto']) : ''; ?>">
-                    <button type="submit" id="search-button" style="background: none; border: none; padding: 0; cursor: pointer;">
-                        <img src="../img/productos/search.svg" alt="">
-                    </button>
-                </div>
-            </form>
+          <h1>" TRANSFORMA TU ESPACIO CON ESTILO Y DISTINCIÓN "</h1><br>
+          <div class="busqueda mx-auto">
+                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="display: flex; align-items: center; width: 100%;">
+                    <input type="text" placeholder="Buscar" class="buscar-input" id="search-input" autocomplete="off" name="nombre_producto" value="<?php echo isset($_SESSION['nombre_producto']) ? htmlspecialchars($_SESSION['nombre_producto']) : ''; ?>">
+                    <img src="../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer; margin-left: 10px;" onclick="this.closest('form').submit();">
+                </form>
+            </div>
         </div> 
-    </div>
-</main>
+      </div>
+    </main>
 
     <!-- aquí se cargan los productos con imágenes -->
     <div class="container">
     <div class="row" style="margin-top: 50px;" id="product-list">
     <?php
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
-    $nombreBuscado = trim($_POST['nombre_producto']);
+if (isset($_SESSION['nombre_producto'])) {
+    $nombreBuscado = trim($_SESSION['nombre_producto']);
+    unset($_SESSION['nombre_producto']);
 
     $db = new database();
     $db->conectarDB();
@@ -228,6 +303,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
 ?>
     </div>
 </div>
+
+<!-- detalles producto en el carrito -->
+<div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="carritoModalLabel">Cotizaciones</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="carrito-list" class="row">
+                    <!-- Aquí se cargarán los detalles del carrito -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 <!--Footer-->
@@ -338,6 +434,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
     }
   });
 
+
   // Cerrar el modal
   function closeForm() {
     document.getElementById('login-form').style.display = 'none';
@@ -409,6 +506,7 @@ document.getElementById('search-input').addEventListener('keypress', function(ev
     });
 });
 */
+
 $(document).ready(function() {
     $('#favoritosModal').on('shown.bs.modal', function () {
         cargarFavoritos();
@@ -451,6 +549,81 @@ $(document).ready(function() {
     }
 });
 
+
+$(document).ready(function() {
+    $('#carritoModal').on('shown.bs.modal', function () {
+        cargarCarrito();
+    });
+
+    $('#aceptar-btn').on('click', function() {
+        actualizarEstadoProductos();
+    });
+
+    function cargarCarrito() {
+        $.ajax({
+            url: '../scripts/obtener_carrito.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(carrito) {
+                var carritoList = $('#carrito-list');
+                carritoList.empty();
+                if (carrito.length > 0) {
+                    carrito.forEach(function(item) {
+                        var imagen = item.imagen_producto ? '../img/index/' + item.imagen_producto : '../img/index/default.png';
+                        var productoHtml = `
+                            <div class='col-md-12 mt-3 py-3 py-md-0'>
+                                <div class='card shadow' style='display: flex; flex-direction: row;'>
+                                    <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 15px;'>
+                                    <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
+                                    <div class='card-body'>
+                                        <h5 class='card-title'>${item.nombre_producto}</h5>
+                                        ${item.alto ? <p class='card-text'>Alto: ${item.alto}</p> : ''}
+                                        ${item.largo ? <p class='card-text'>Largo: ${item.largo}</p> : ''}
+                                        ${item.cantidad ? <p class='card-text'>Cantidad: ${item.cantidad}</p> : ''}
+                                        ${item.monto ? <p class='card-text'>Monto: ${item.monto}</p> : ''}
+                                        ${item.grosor ? <p class='card-text'>Grosor: ${item.grosor}</p> : ''}
+                                        ${item.tipo_tela ? <p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p> : ''}
+                                        ${item.marco ? <p class='card-text'>Marco: ${item.marco}</p> : ''}
+                                        ${item.tipo_cadena ? <p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p> : ''}
+                                        ${item.color ? <p class='card-text'>Color: ${item.color}</p> : ''}
+                                        ${item.codigo_diseno ? <p class='card-text'>Diseño: ${item.codigo_diseno}</p> : ''}
+                                    </div>
+                                </div>
+                            </div>`;
+                        carritoList.append(productoHtml);
+                    });
+                } else {
+                    carritoList.append("<p>No tienes productos en espera.</p>");
+                }
+            },
+            error: function(error) {
+                console.error('Error al obtener los productos del carrito:', error);
+                $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
+            }
+        });
+    }
+
+    function actualizarEstadoProductos() {
+    $('.producto-checkbox:checked').each(function() {
+        var idDetalleProducto = $(this).val(); // Este valor debe ser el ID del detalle del producto
+        $.ajax({
+            url: '../scripts/actualizar_carrito.php',
+            method: 'POST',
+            data: {
+                id_detalle_producto: idDetalleProducto
+            },
+            success: function(response) {
+                console.log('Producto actualizado:', response);
+                window.location.href = 'citas.php';
+            },
+            error: function(error) {
+                console.error('Error al actualizar el producto:', error);
+            }
+        });
+    });
+}
+
+});
 
 
   

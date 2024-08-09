@@ -55,6 +55,25 @@ try {
   <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../../css/normalized.css">
   <link rel="stylesheet" href="../../css/style_admin.css">
+  <style>
+    .promo-status {
+
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.promo-status.activo {
+    color: green;
+}
+
+.promo-status.inactivo {
+    color: red;
+}
+
+  </style>
 </head>
 <body>
   <!--Logo flotante del negocio-->
@@ -199,31 +218,39 @@ try {
     $database = new Database();
     $database->conectarDB();
 
-    $query = "SELECT nombre_promocion, valor, estatus FROM promociones";
+    $query = "SELECT id_promocion,nombre_promocion, valor, estatus FROM promociones";
     $promociones = $database->seleccionar($query);
 
     $database->desconectarDB();
     ?>
 
     <!-- Mostrar las promociones -->
-    <div class="row">
-        <?php if (!empty($promociones)): ?>
-            <?php foreach ($promociones as $promo): ?>
-                <div class="col-md-4">
-                    <div class="promo-card">
-                        <div class="promo-name"><?php echo htmlspecialchars($promo->nombre_promocion); ?></div>
-                        <div class="promo-value">Valor: <?php echo htmlspecialchars($promo->valor); ?></div>
-                        <div class="promo-status <?php echo htmlspecialchars($promo->estatus); ?>">
-                            <?php echo htmlspecialchars($promo->estatus); ?>
-                        </div>
-                    </div>
+<div class="row">
+    <?php if (!empty($promociones)): ?>
+        <?php foreach ($promociones as $promo): ?>
+            <div class="col-md-4">
+                <div class="promo-card">
+                    <div class="promo-name"><?php echo htmlspecialchars($promo->nombre_promocion); ?></div>
+                    <div class="promo-value">Valor: <?php echo htmlspecialchars($promo->valor); ?></div>
+                    
+                    <!-- Formulario para cambiar el estatus -->
+                    <form method="post" action="../../scripts/administrador/cambiar_estatus_promo.php" style="display: inline;">
+                        <input type="hidden" name="id_promocion" value="<?php echo htmlspecialchars($promo->id_promocion); ?>">
+                        <input type="hidden" name="estatus_actual" value="<?php echo htmlspecialchars($promo->estatus); ?>">
+                        <button type="submit" name="cambiar_estatus" value="cambiar_estatus" class="promo-status <?php echo htmlspecialchars($promo->estatus); ?>">
+    <?php echo htmlspecialchars($promo->estatus); ?>
+</button>
+
+                    </form>
                 </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No hay promociones disponibles.</p>
-        <?php endif; ?>
-        </div>
-      </div>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>No hay promociones disponibles.</p>
+    <?php endif; ?>
+</div>
+
+
 
        <!-- Modal agregar nueva promoción -->
 <div class="modal fade" id="modalNuevaPromocion" tabindex="-1" aria-labelledby="modalNuevaPromocionLabel" aria-hidden="true">

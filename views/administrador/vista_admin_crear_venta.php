@@ -14,7 +14,7 @@ function consultarReportesCliente($nombre_cliente) {
     $db->conectarDB();
 
     try {
-        $stmt = $db->getPDO()->prepare("CALL ConsultarReportesCliente(?)");
+        $stmt = $db->getPDO()->prepare("CALL consultarreportescliente(?)");
         $stmt->execute([$nombre_cliente]);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     } catch (Exception $e) {

@@ -347,5 +347,27 @@ class database{
             return [];
         }
     }
+
+    function ejecutarProcedimiento2($query, $params = []) {
+        $this->conectarDB();
+        try {
+            $stmt = $this->PDOlocal->prepare($query);
+            // Ajustar los índices para que comiencen en 1
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key + 1, $value);
+            }
+            $stmt->execute();
+            return $stmt->rowCount(); // Devolver el número de filas afectadas
+        } catch (PDOException $e) {
+            echo "<div class='alert alert-danger'>Error en la ejecución del procedimiento: " . $e->getMessage() . "</div>";
+            return 0;
+        } finally {
+            $this->desconectarDB();
+        }
+    }
+    
+    
+    
+    
 }
 ?>
