@@ -206,24 +206,24 @@ if ($categoriaSeleccionada) {
       </div>
 
       <br>
-      <div class="container">
+      <div class="contenidoGeneral mt-4">
         <h1 class="text-center my-4">Gestionar Productos</h1>
 
-        <div class="d-flex justify-content-end mb-3">
-          <a href="#addProductModal" class="btn btn-primary me-2" data-bs-toggle="modal">Añadir Producto</a>
-          <a href="#addCategoryModal" class="btn btn-secondary" data-bs-toggle="modal">Añadir Categoría</a>
-          <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              Filtrar por Categoría
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-              <li><a class="dropdown-item" href="?categoria=">Todas las Categorías</a></li>
-              <?php foreach ($categorias as $categoria): ?>
-              <li><a class="dropdown-item" href="?categoria=<?php echo urlencode($categoria->nombre); ?>"><?php echo htmlspecialchars($categoria->nombre); ?></a></li>
-              <?php endforeach; ?>
-            </ul>
-          </div>
-        </div>
+        <div class="d-flex justify-content-end mt-4 flex-column flex-md-row">
+  <a href="#addProductModal" class="btn btn-primary me-2 mb-2 mb-md-0" data-bs-toggle="modal">Añadir Producto</a>
+  <a href="#addCategoryModal" class="btn btn-secondary me-2 mb-2 mb-md-0" data-bs-toggle="modal">Añadir Categoría</a>
+  <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+      Filtrar por Categoría
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+      <li><a class="dropdown-item" href="?categoria=">Todas las Categorías</a></li>
+      <?php foreach ($categorias as $categoria): ?>
+      <li><a class="dropdown-item" href="?categoria=<?php echo urlencode($categoria->nombre); ?>"><?php echo htmlspecialchars($categoria->nombre); ?></a></li>
+      <?php endforeach; ?>
+    </ul>
+  </div>
+</div>
 
         <div class="table-responsive">
           <table class="table table-striped">
