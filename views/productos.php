@@ -243,6 +243,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     </div>
 </div>
 
+
   <!-- banner -->
   <main>
     <div class="main-content-products">
@@ -260,8 +261,12 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
 <div class="container">
     <div class="row" style="margin-top: 50px;" id="product-list">
         <?php
+                if (isset($_SESSION['nombre_producto'])) {
+                    $nombreBuscado = trim($_SESSION['nombre_producto']);
+                    unset($_SESSION['nombre_producto']);
         $db = new Database();
         $db->conectarDB();
+
 
         // Obtener todos los productos
         $resultados = $db->BuscarProductoPorNombre('');
@@ -270,15 +275,8 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             foreach ($resultados as $producto) {
                 $imagen = $producto->imagen ? '../img/index/' . $producto->imagen : '../img/index/default.png';
                 $id_producto = $producto->id_producto;
-
-                // Verificar si el producto es favorito para el usuario actual
-                $esFavorito = false;
-                if ($id_usuario != 0) { // Verificar solo si el usuario está autenticado
-                    $esFavorito = $db->esFavorito($id_producto, $id_usuario);
-                }
-
-                // Determinar el icono a mostrar
-                $iconoFavorito = $esFavorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
+                $esFavorito = $db->esFavorito($id_producto, $id_usuario);
+            $iconoFavorito = $esFavorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
                 echo "
                 <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='{$producto->nombre}'>
                     <div class='card shadow' id='c'>
@@ -300,6 +298,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
         } else {
             echo "<div class='col-12'><p class='text-center'>No se encontraron productos.</p></div>";
         }
+    }
         ?>
     </div>
 </div>
@@ -470,6 +469,49 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             });
         }
     });
+
+    $(document).ready(function() {
+    $('#favoritosModal').on('shown.bs.modal', function () {
+        cargarFavoritos();
+    });
+    
+    function cargarFavoritos() {
+        $.ajax({
+            url: '../scripts/obtener_favoritos.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(favoritos) {
+                var favoritosList = $('#favoritos-list');
+                favoritosList.empty();
+                if (favoritos.length > 0) {
+                    favoritos.forEach(function(favorito) {
+                        var imagen = favorito.imagen ? '../img/index/' + favorito.imagen : '../img/index/default.png';
+                        var favoritoHtml = `
+                            <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
+                                <div class='card shadow'>
+                                    <a href='./perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
+                                        <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
+                                        <div class='card-body'>
+                                            <h5 class='card-title'>${favorito.nombre}</h5>
+                                            <p class='card-text'>$ ${favorito.precio}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>`;
+                        favoritosList.append(favoritoHtml);
+                    });
+                } else {
+                    favoritosList.append("<p>No tienes productos en favoritos.</p>");
+                }
+            },
+            error: function(error) {
+                console.error('Error al obtener los favoritos:', error);
+                $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
+            }
+        });
+    }
+});
+
   </script>
 </body>
 </html>
