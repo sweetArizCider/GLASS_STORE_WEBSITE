@@ -17,24 +17,25 @@
         <img src="../../img/index/GLASS.png" alt="Glass store">
     </div>
 
-    <!--Barra lateral-->
-    <div class="wrapper">
-        <aside id="sidebar">
-            <div class="d-flex">
-                <button class="toggle-btn" type="button">
-                    <img src="../../img/index/menu.svg" alt="Menu">
-                </button>
-                <div class="sidebar-logo">
-                    <a href="#">GLASS STORE</a>
-                </div>
-            </div>
-            <ul class="sidebar-nav">
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse" data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
-                        <img src="../../img/admin/admin_icon.svg" alt="Personal">
-                        <span>Personal</span>
-                    </a>
-                    <ul id="personal" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+   <!--Barra lateral-->
+   <div class="wrapper">
+    <aside id="sidebar">
+      <div class="d-flex">
+        <button class="toggle-btn" type="button">
+          <img src="../../img/index/menu.svg" alt="Menu">
+        </button>
+        <div class="sidebar-logo">
+          <a href="#">GLASS STORE</a>
+        </div>
+      </div>
+      <ul class="sidebar-nav">
+      <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
+            <img src="../../img/admin/admin_icon.svg" alt="Personal">
+            <span>Personal</span>
+          </a>
+          <ul id="personal" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
               <a href="./vista_admin_gestionainstalador.php" class="sidebar-link">Registrar</a>
             </li>
@@ -42,8 +43,8 @@
               <a href="./vista_admin_darRol.php" class="sidebar-link">Gestionar</a>
             </li>
           </ul>
-                </li>
-                <li class="sidebar-item">
+        </li>
+        <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#citas" aria-expanded="false" aria-controls="citas">
             <img src="../../img/admin/calendar.svg" alt="Citas">
@@ -64,6 +65,10 @@
           <ul id="cotizaciones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
               <a href="./vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
+            </li>
+
+            <li class="sidebar-item">
+              <a href="./vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
             </li>
           </ul>
         </li>
@@ -112,20 +117,22 @@
             </li>
           </ul>
         </li>
-            </ul>
-            <div class="sidebar-footer">
-                <a href="./vista_admin.php" class="sidebar-link">
-                    <img src="../../img/admin/home.svg" alt="Volver">
-                    <span>Volver</span>
-                </a>
-            </div>
-            <div class="sidebar-footer">
-                <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
-                    <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
-                    <span>Cerrar Sesión</span>
-                </a>
-            </div>
-        </aside>
+        <div class="sidebar-itemr">
+        <a href="../../index.php" class="sidebar-link">
+          <img src="../../img/admin/home.svg" alt="Volver">
+          <span>Volver</span>
+        </a>
+      </div>
+      <div class="sidebar-item">
+        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+        <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+        <span>Cerrar Sesión</span>
+        </a>
+    </div>
+      </ul>
+      
+    </aside>
+
         <div class="main p-3">
             <div class="text-center">
                 <div class="busqueda mx-auto">
