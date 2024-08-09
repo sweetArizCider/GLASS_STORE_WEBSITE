@@ -204,7 +204,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                     <div class="card-body">
                         <h5 class="card-titel text-center categoria-title">Persianas</h5>
                         <p class="text-center">Mejora tu hogar con nuestras elegantes persianas, disponibles en varios estilos y colores para un control óptimo de la luz y privacidad.</p>
-                        <div id="btn2" class="text-center"> <a href="/productos"><button class="boton-mini">Ver más</button></div></a>
+                       
                     </div>
                 </div>
             </div>
@@ -214,7 +214,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                     <div class="card-body">
                         <h5 class="card-titel text-center">Vidrio Templado</h5>
                         <p class="text-center">Añade un toque moderno y seguro con nuestros productos de vidrio templado, ideales para espejos, canceles, repisas, mesas y ventanas.</p>
-                        <div id="btn2" class="text-center"><a href="/productos"><button class="boton-mini">Ver más</button> </a></div>
+                       
                     </div>
                 </div>
             </div>
@@ -224,7 +224,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                     <div class="card-body">
                         <h5 class="card-titel text-center">Papel Tapiz</h5>
                         <p class="text-center">Renueva tus espacios con nuestro papel tapiz, disponible en una variedad de diseños y colores vibrantes. Para todos los gustos.</p>
-                        <div id="btn2" class="text-center"><a href="/productos"><button class="boton-mini">Ver más</button></a></div>
+                        
                     </div>
                 </div>
             </div>
@@ -235,7 +235,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                   <div class="card-body">
                       <h5 class="card-titel text-center">Herreria</h5>
                       <p class="text-center">Combina funcionalidad y estilo con nuestros productos de herrería, ideales para pasamanos y puertas. Perfectas para espacios sociales.</p>
-                      <div id="btn2" class="text-center"><a href="/productos"><button class="boton-mini">Ver más</button></a></div>
+                      
                   </div>
               </div>
           </div>

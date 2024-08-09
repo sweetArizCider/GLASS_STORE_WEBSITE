@@ -157,7 +157,7 @@ if ($result) {
         <div class="accordion-item">
             <h2 class="accordion-header" id="heading<?= htmlspecialchars($cita->id_cita) ?>">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= htmlspecialchars($cita->id_cita) ?>" aria-expanded="true" aria-controls="collapse<?= htmlspecialchars($cita->id_cita) ?>">
-                    <?= htmlspecialchars($cita->nombre_cliente) ?> - <?= htmlspecialchars($cita->fecha) ?> <?= htmlspecialchars($cita->hora) ?>
+                    <?= htmlspecialchars($cita->cliente) ?> - <?= htmlspecialchars($cita->fecha) ?> <?= htmlspecialchars($cita->hora) ?>
                 </button>
             </h2>
             <div id="collapse<?= htmlspecialchars($cita->id_cita) ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= htmlspecialchars($cita->id_cita) ?>" data-bs-parent="#accordionCitas">
@@ -229,25 +229,7 @@ if ($result) {
       document.querySelector("#sidebar").classList.toggle("expand");
     });
 
-    function obtenerDetallesProductosPorCita($id_cita) {
-    $conn = new mysqli("localhost", "usuario", "contraseña", "basededatos");
-
-    $sql = "SELECT * FROM detalles_producto WHERE id_cita = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id_cita);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $productos = [];
-    while ($row = $result->fetch_object()) {
-        $productos[] = $row;
-    }
-
-    $stmt->close();
-    $conn->close();
-
-    return $productos;
-}
+    
 
   </script>
 </body>

@@ -139,7 +139,7 @@ if (isset($_SESSION["id_instalador"])) {
 
             echo '<div class="secc-sub-general">';
             echo '<p class="fecha">' . $fecha . '</p>';
-            echo '<p><mark class="marklued">' . htmlspecialchars($cita->cliente) . '</mark><br> Requiere <span class="bueld">una Instalación</span> en el domicilio: <span class="bueld">' . htmlspecialchars($cita->calle) . ' #' . htmlspecialchars($cita->numero) . ' ' . htmlspecialchars($cita->numero_int) . ', ' . htmlspecialchars($cita->colonia) . ', ' . htmlspecialchars($cita->ciudad) . ' referencias: ' . htmlspecialchars($cita->referencias) . '</span> <br> el día <span class="bueld">' . $fecha . '</span> a las <span class="bueld">' . $hora . '</span></p>';
+            echo '<p><mark class="marklued">' . htmlspecialchars($cita->cliente) . '</mark><br> Requiere <span class="bueld">una Instalación</span> en el domicilio: <span class="bueld">' . htmlspecialchars($cita->direccion) . '</span> <br> el día <span class="bueld">' . $fecha . '</span> a las <span class="bueld">' . $hora . '</span></p>';
             echo '</div> <br>';
 
         }

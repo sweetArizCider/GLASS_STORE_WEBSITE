@@ -1,80 +1,59 @@
 <?php
 session_start();
 include '../class/database.php';
+
 $id_usuario = 0;
 $notificaciones = [];
+$productos_por_pagina = 12; // Número de productos por página
+$pagina_actual = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Página actual
 
 if (isset($_SESSION["nom_usuario"])) {
-    $user = $_SESSION["nom_usuario"];
-
-    // Crear conexión a la base de datos
-    $conexion = new database();
-    $conexion->conectarDB();
-
-    // Consulta para obtener el rol del usuario basado en el nombre de usuario
-    $consulta_rol = "CALL roles_usuario(?)";
-    $params_rol = [$user];
-    $resultado_rol = $conexion->seleccionar($consulta_rol, $params_rol);
-
-    if ($resultado_rol && !empty($resultado_rol)) {
-        $nombre_rol = $resultado_rol[0]->nombre_rol;
-
-        // Consulta para obtener los IDs del cliente e instalador basado en el nombre de usuario
-        $consulta_ids = "CALL obtener_id_por_nombre_usuario(?)";
-        $params_ids = [$user];
-        $resultado_ids = $conexion->seleccionar($consulta_ids, $params_ids);
-
-        if ($resultado_ids && !empty($resultado_ids)) {
-            $fila = $resultado_ids[0];
-
-            if ($nombre_rol == 'cliente' && isset($fila->id_cliente)) {
-                $id_cliente = $fila->id_cliente;
-                $id_usuario = $id_cliente;
-
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
-                $paramsNotificaciones = [$id_cliente];
-                $notificaciones = $conexion->seleccionar($consultaNotificaciones, $paramsNotificaciones);
-
-            } elseif ($nombre_rol == 'instalador' && isset($fila->id_instalador)) {
-                $id_instalador = $fila->id_instalador;
-                $id_usuario = $id_instalador;
-
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_instalador WHERE instalador = ?";
-                $paramsNotificaciones = [$id_instalador];
-                $notificaciones = $conexion->seleccionar($consultaNotificaciones, $paramsNotificaciones);
-            }
-        }
-    }
+    // [Código para obtener el rol del usuario y las notificaciones...]
 }
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
     $nombreBuscado = trim($_POST['nombre_producto']);
-    
-    // Guardar el término de búsqueda en la sesión
     $_SESSION['nombre_producto'] = $nombreBuscado;
-
-    // Redirigir a la misma página para evitar el reenvío del formulario
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
-}
-
-$productos_espera = [];
-if ($id_usuario != 0) {
-    // Obtener los detalles del producto en espera
-    $consulta_productos = "CALL carrito(?)";
-    $params_productos = [$id_usuario];
-    $productos_espera = $conexion->seleccionar($consulta_productos, $params_productos);
 }
 
 function esReciente($fecha){
     $fechaNotif = new DateTime($fecha);
     $fechaActual = new DateTime();
     $intervalo = $fechaActual->diff($fechaNotif);
-    return ($intervalo->d < 30); // Considera reciente si es de los últimos 30 días
+    return ($intervalo->d < 30); 
 }
 
 $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     return esReciente($notif->fecha);
 });
+
+$conexion = new database();
+$conexion->conectarDB();
+
+// Obtener todos los productos para paginación si no se está buscando
+if (!isset($_SESSION['nombre_producto'])) {
+    $offset = ($pagina_actual - 1) * $productos_por_pagina;
+
+    $consulta_productos_total = "SELECT COUNT(*) as total FROM productos";
+    $total_productos = $conexion->seleccionar($consulta_productos_total)[0]->total;
+    $total_paginas = ceil($total_productos / $productos_por_pagina);
+
+   $consulta_productos = "
+    SELECT p.id_producto, p.nombre, p.precio, i.imagen
+    FROM PRODUCTOS p
+    LEFT JOIN IMAGEN i ON p.id_producto = i.producto
+    WHERE p.estatus = 'activo'
+    LIMIT ? OFFSET ?
+";
+    $productos_espera = $conexion->seleccionar($consulta_productos);
+} else {
+    $nombreBuscado = trim($_SESSION['nombre_producto']);
+    unset($_SESSION['nombre_producto']);
+    $productos_espera = $conexion->BuscarProductoPorNombre($nombreBuscado);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -257,52 +236,54 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
       </div>
     </main>
 
-    <!-- aquí se cargan los productos con imágenes -->
-    <div class="container">
+   
+<!-- Mostrar productos -->
+<div class="container">
     <div class="row" style="margin-top: 50px;" id="product-list">
-    <?php
-if (isset($_SESSION['nombre_producto'])) {
-    $nombreBuscado = trim($_SESSION['nombre_producto']);
-    unset($_SESSION['nombre_producto']);
-
-    $db = new database();
-    $db->conectarDB();
-    $resultados = $db->BuscarProductoPorNombre($nombreBuscado);
-
-    if (!empty($resultados)) {
-        foreach ($resultados as $producto) {
-            $imagen = $producto->imagen ? '../img/index/' . $producto->imagen : '../img/index/default.png';
-            $id_producto = $producto->id_producto;
-            $esFavorito = $db->esFavorito($id_producto, $id_usuario);
-            $iconoFavorito = $esFavorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
-            echo "
-            <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='{$producto->nombre}'>
-                <div class='card shadow' id='c'>
-                    <a href='./perfilProducto.php?id={$id_producto}' style='text-decoration: none; color: inherit;'>
-                        <img src='{$imagen}' alt='{$producto->nombre}' class='card image-top pad'>
-                    </a>
-                    
-                    <div class='icon-overlay-container' onclick='changeIcon(this, {$id_producto})'>
-                        <img src='{$iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
-                    </div>
-                    <div class='card-body'>
-                        <h3 class='card-title text-center title-card-new'>{$producto->nombre}</h3>
-                        <p class='card-text text-center card-price'>\${$producto->precio}</p>
+        <?php
+        if (!empty($productos_espera)) {
+            foreach ($productos_espera as $producto) {
+                $imagen = $producto->imagen ? '../img/index/' . $producto->imagen : '../img/index/default.png';
+                $id_producto = $producto->id_producto;
+                $esFavorito = $conexion->esFavorito($id_producto, $id_usuario);
+                $iconoFavorito = $esFavorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
+                echo "
+                <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='{$producto->nombre}'>
+                    <div class='card shadow' id='c'>
+                        <a href='./perfilProducto.php?id={$id_producto}' style='text-decoration: none; color: inherit;'>
+                            <img src='{$imagen}' alt='{$producto->nombre}' class='card image-top pad'>
+                        </a>
+                        
+                        <div class='icon-overlay-container' onclick='changeIcon(this, {$id_producto})'>
+                            <img src='{$iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
+                        </div>
+                        <div class='card-body'>
+                            <h3 class='card-title text-center title-card-new'>{$producto->nombre}</h3>
+                            <p class='card-text text-center card-price'>\${$producto->precio}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            ";
-            /*arriba cambie img src='{$imagen} y la hice variable*/
+                ";
+            }
+        } else {
+            echo "<div class='col-12'><p class='text-center'>No se encontraron productos.</p></div>";
         }
-    } else {
-        echo "<div class='col-12'><p class='text-center'>No se encontraron productos.</p></div>";
-    }
-} else {
-    echo "<div class='col-12'><p class='text-center'>Ingrese un nombre de producto para buscar.</p></div>";
-}
-?>
+        ?>
     </div>
 </div>
+
+<!-- Paginación -->
+<?php if (!isset($_SESSION['nombre_producto']) && $total_paginas > 1): ?>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
+                <li class="page-item <?php if ($i == $pagina_actual) echo 'active'; ?>">
+                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
+<?php endif; ?>
 
 <!-- detalles producto en el carrito -->
 <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
@@ -360,37 +341,6 @@ if (isset($_SESSION['nombre_producto'])) {
 <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-    
-    /*cambie esto para agregar unos mensanjes, pq no se estaban cargando*/
-    $(document).ready(function() {
-        console.log('jQuery version:', $.fn.jquery);
-        console.log('jQuery UI version:', $.ui ? $.ui.version : 'jQuery UI no se ha cargado');
-
-        $('#search-input').autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: '../class/database.php',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'autocomplete',
-                        term: request.term
-                    },
-                    success: function(data) {
-                        response(data);
-                    }
-                });
-            },
-            minLength: 2,
-        });
-
-        $('#search-input').on('input', function() {
-            var value = $(this).val().replace(/\s+/g, ' ').trim();
-            $(this).val(value);
-        });
-    });
-
-
   document.getElementById('user-icon').addEventListener('click', function() {
     var loginForm = document.getElementById('login-form');
     if (loginForm.style.display === 'none' || loginForm.style.display === '') {

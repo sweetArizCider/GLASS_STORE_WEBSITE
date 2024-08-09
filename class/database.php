@@ -225,7 +225,7 @@ class database{
         }
     }
     public function obtenerCitasInstalador($id_instalador) {
-        $sql = "CALL obtener_citas_instalador(?)";
+        $sql = "CALL obtenercitasinstalador(?)";
         $stmt = $this->getPDO()->prepare($sql);
         $stmt->execute([$id_instalador]);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -308,7 +308,6 @@ class database{
             return false; // Asegúrate de devolver un valor en caso de error
         }
     }
-    
 
 }
 ?>
