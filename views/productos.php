@@ -243,7 +243,7 @@ if (!isset($_SESSION['nombre_producto'])) {
     </div>
 </div>
 
-<!-- nuevo Modal de Favoritos, se estarian cargando abajo con js -->
+<!-- nuevo Modal de Favoritos -->
 <div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -500,6 +500,56 @@ if (!isset($_SESSION['nombre_producto'])) {
             });
         }
     });
+
+
+    $(document).ready(function() {
+        $('#favoritosModal').on('shown.bs.modal', function () {
+            cargarFavoritos();
+        });
+
+        function cargarFavoritos() {
+            <?php if (isset($_SESSION["nom_usuario"])): ?>
+                $.ajax({
+                    url: '../scripts/obtener_favoritos.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(favoritos) {
+                        var favoritosList = $('#favoritos-list');
+                        favoritosList.empty();
+                        if (favoritos.length > 0) {
+                            favoritos.forEach(function(favorito) {
+                                var imagen = favorito.imagen ? '../img/index/' + favorito.imagen : '../img/index/default.png';
+                                var favoritoHtml = `
+                                    <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
+                                        <div class='card shadow'>
+                                            <a href='./views/perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
+                                                <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
+                                                <div class='card-body'>
+                                                    <h5 class='card-title'>${favorito.nombre}</h5>
+                                                    <p class='card-text'>$ ${favorito.precio}</p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>`;
+                                favoritosList.append(favoritoHtml);
+                            });
+                        } else {
+                            favoritosList.append("<p>No tienes productos en favoritos.</p>");
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error al obtener los favoritos:', error);
+                        $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
+                    }
+                });
+            <?php else: ?>
+                var favoritosList = $('#favoritos-list');
+                favoritosList.empty();
+                favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
+            <?php endif; ?>
+        }
+    });
+
   </script>
 </body>
 </html>
