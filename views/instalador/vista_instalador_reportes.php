@@ -40,37 +40,42 @@ if ($result) {
     $stmt_citas->closeCursor();
 
     foreach ($citas as $cita) {
-      if (isset($cita->id_cita)) {
-          $stmt_detalles = $db->getPDO()->prepare("CALL obtener_detalles_producto_cita(?)");
-          $stmt_detalles->execute([$cita->id_cita]);
-          $detalles_producto = $stmt_detalles->fetchAll(PDO::FETCH_OBJ);
-  
-          $cita->productos = $detalles_producto;
-  
-          $stmt_detalles->closeCursor();
-      } else {
-          $cita->productos = [];
-      }
-  }
+        $cita->nombre_cliente = isset($cita->cliente) ? $cita->cliente : 'Cliente Desconocido';
+        $cita->direccion = isset($cita->direccion) ? $cita->direccion : 'Dirección no disponible';
+        $cita->tipo = isset($cita->tipo) ? $cita->tipo : 'Tipo no disponible';
+
+        if (isset($cita->id_cita)) {
+            $stmt_detalles = $db->getPDO()->prepare("CALL obtener_detalles_producto_cita(?)");
+            $stmt_detalles->execute([$cita->id_cita]);
+            $detalles_producto = $stmt_detalles->fetchAll(PDO::FETCH_OBJ);
+
+            $cita->productos = $detalles_producto;
+
+            $stmt_detalles->closeCursor();
+        } else {
+            $cita->productos = [];
+        }
+    }
 } else {
     echo 'No se encontró el ID del instalador para el usuario.';
     $citas = []; 
 }
 ?>
+
   <!-- Logo flotante del negocio -->
   <div id="logotipo-flotante">
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-  <!-- Barra lateral -->
-  <div class="wrapper">
+ <!-- Barra lateral -->
+ <div class="wrapper">
     <aside id="sidebar">
     <div class="d-flex">
         <button class="toggle-btn" type="button">
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="#">GLASS STORE</a>
+          <a href="../../../../">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
@@ -82,7 +87,7 @@ if ($result) {
           </a>
           <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="#" class="sidebar-link">Volver al Inicio</a>
+              <a href="index_instalador.php" class="sidebar-link">Volver al Inicio</a>
             </li>
           </ul>
         </li>
@@ -137,6 +142,13 @@ if ($result) {
       </div>
     </aside>
     <div class="main p-3">
+    <div class="main p-3">
+      <div class="text-center">
+        <div class="busqueda mx-auto">
+          <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
+          <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
+        </div>
+      </div>
       <!-- Contenido general -->
       <div class="contenidoGeneral mt-4">
         <div class="general-container">
@@ -146,15 +158,15 @@ if ($result) {
                 Ordenar <img src="../../img/instalador/filter.svg" alt="Filtrar" class="icono-filtro">
               </button>
               <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
-                <li><a class="dropdown-item" href="#">Recientes</a></li>
-                <li><a class="dropdown-item" href="#">Antiguos</a></li>
+                <li><a class="dropdown-item" href="#" onclick="sortCitas('recientes')">Recientes</a></li>
+                <li><a class="dropdown-item" href="#" onclick="sortCitas('antiguos')">Antiguos</a></li>
               </ul>
             </div>
           </div>
           <!-- Acordeón de Citas -->
           <div class="accordion" id="accordionCitas">
     <?php foreach ($citas as $index => $cita): ?>
-        <div class="accordion-item">
+        <div class="accordion-item" data-cliente="<?= htmlspecialchars($cita->nombre_cliente) ?>" data-fecha="<?= htmlspecialchars($cita->fecha) ?>">
             <h2 class="accordion-header" id="heading<?= htmlspecialchars($cita->id_cita) ?>">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= htmlspecialchars($cita->id_cita) ?>" aria-expanded="true" aria-controls="collapse<?= htmlspecialchars($cita->id_cita) ?>">
                     <?= htmlspecialchars($cita->cliente) ?> - <?= htmlspecialchars($cita->fecha) ?> <?= htmlspecialchars($cita->hora) ?>
@@ -176,36 +188,7 @@ if ($result) {
                                         <?php if (!empty($producto->producto_nombre)): ?>
                                             <p><strong>Nombre:</strong> <?= htmlspecialchars($producto->producto_nombre) ?></p>
                                         <?php endif; ?>
-                                        <?php if (!empty($producto->producto_monto)): ?>
-                                            <p><strong>Monto:</strong> <?= htmlspecialchars($producto->producto_monto) ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($producto->producto_alto)): ?>
-                                            <p><strong>Alto:</strong> <?= htmlspecialchars($producto->producto_alto) ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($producto->producto_largo)): ?>
-                                            <p><strong>Largo:</strong> <?= htmlspecialchars($producto->producto_largo) ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($producto->producto_cantidad)): ?>
-                                            <p><strong>Cantidad:</strong> <?= htmlspecialchars($producto->producto_cantidad) ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($producto->producto_grosor)): ?>
-                                            <p><strong>Grosor:</strong> <?= htmlspecialchars($producto->producto_grosor) ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($producto->producto_tipo_tela)): ?>
-                                            <p><strong>Tipo de Tela:</strong> <?= htmlspecialchars($producto->producto_tipo_tela) ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($producto->producto_marco)): ?>
-                                            <p><strong>Marco:</strong> <?= htmlspecialchars($producto->producto_marco) ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($producto->producto_tipo_cadena)): ?>
-                                            <p><strong>Tipo de Cadena:</strong> <?= htmlspecialchars($producto->producto_tipo_cadena) ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($producto->producto_color)): ?>
-                                            <p><strong>Color:</strong> <?= htmlspecialchars($producto->producto_color) ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($producto->producto_diseno)): ?>
-                                            <p><strong>Diseño:</strong> <?= htmlspecialchars($producto->producto_diseno) ?></p>
-                                        <?php endif; ?>
+                                        <!-- Other product properties -->
                                     </div>
                                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalReporte<?= htmlspecialchars($producto->id_detalle) ?>">Generar Reporte</button>
                                 </li>
@@ -223,32 +206,43 @@ if ($result) {
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const hamBurger = document.querySelector(".toggle-btn");
-    hamBurger.addEventListener("click", function () {
-      document.querySelector("#sidebar").classList.toggle("expand");
-    });
+<script>
+  const hamBurger = document.querySelector(".toggle-btn");
+  hamBurger.addEventListener("click", function () {
+    document.querySelector("#sidebar").classList.toggle("expand");
+  });
 
-    function obtenerDetallesProductosPorCita($id_cita) {
-    $conn = new mysqli("localhost", "usuario", "contraseña", "basededatos");
+  // Búsqueda por nombre de cliente
+  document.getElementById('search-input').addEventListener('input', function() {
+      const searchValue = this.value.toLowerCase();
+      const citas = document.querySelectorAll('.accordion-item');
 
-    $sql = "SELECT * FROM detalles_producto WHERE id_cita = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id_cita);
-    $stmt->execute();
-    $result = $stmt->get_result();
+      citas.forEach(cita => {
+          const cliente = cita.querySelector('.accordion-button').textContent.toLowerCase();
+          if (cliente.includes(searchValue)) {
+              cita.style.display = '';  // Muestra la cita
+          } else {
+              cita.style.display = 'none';  // Oculta la cita
+          }
+      });
+  });
 
-    $productos = [];
-    while ($row = $result->fetch_object()) {
-        $productos[] = $row;
-    }
+  // Ordenar citas por fecha
+  function sortCitas(order) {
+      const accordion = document.getElementById('accordionCitas');
+      const citas = Array.from(accordion.querySelectorAll('.accordion-item'));
 
-    $stmt->close();
-    $conn->close();
+      citas.sort((a, b) => {
+          const dateA = new Date(a.getAttribute('data-fecha'));
+          const dateB = new Date(b.getAttribute('data-fecha'));
 
-    return $productos;
-}
+          return order === 'recientes' ? dateB - dateA : dateA - dateB;
+      });
 
-  </script>
+      citas.forEach(cita => accordion.appendChild(cita));
+  }
+</script>
+
+
 </body>
 </html>

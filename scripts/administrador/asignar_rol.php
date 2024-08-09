@@ -1,36 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
-    <title>Document</title>
-</head>
-<body>
-<div class="container">
-    <?php
-    include '../../class/database.php';
-    $db = new Database();
-    $db->conectarDB();
-    extract($_POST);
+<?php
+session_start();
 
-    try {
-        $cadena = "CALL añadirrolusuariopornombre(?, ?)";
-        $stmt = $db->getPDO()->prepare($cadena);
-        $stmt->execute([$nom_usuario, $nombre_rol]);
-        if ($stmt->rowCount() > 0) {
-            echo "<div class='alert alert-success'>ROL ASIGNADO EXITOSAMENTE</div>";
-        } else {
-            echo "<div class='alert alert-warning'>No se pudo asignar el rol. Verifica el nombre de usuario y el rol.</div>";
-        }
-    } catch (PDOException $e) {
-        echo "<div class='alert alert-danger'>Error al asignar rol: " . htmlspecialchars($e->getMessage()) . "</div>";
-    } finally {
-        $db->desconectarDB();
+if (!isset($_SESSION["nom_usuario"])) {
+    header("Location: ../../views/iniciarSesion.php");
+    exit();
+}
+
+include '../../class/database.php';
+
+$db = new database();
+$db->conectarDB();
+
+$nom_usuario = $_POST['nom_usuario'];
+$nombre_rol = $_POST['nombre_rol'];
+
+try {
+    // Obtener ID del usuario
+    $stmt = $db->getPDO()->prepare("SELECT id_usuario FROM usuarios WHERE nom_usuario = ?");
+    $stmt->execute([$nom_usuario]);
+    $usuario = $stmt->fetch(PDO::FETCH_OBJ);
+
+    if (!$usuario) {
+        echo "<script>alert('Usuario no encontrado.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
+        exit();
     }
 
-    header("refresh:3;../../views/administrador/vista_admin_darRol.php");
-    ?>
-</div>
-</body>
-</html>
+    // Obtener ID del rol
+    $stmt = $db->getPDO()->prepare("SELECT id_rol FROM roles WHERE nombre_rol = ?");
+    $stmt->execute([$nombre_rol]);
+    $rol = $stmt->fetch(PDO::FETCH_OBJ);
+
+    if (!$rol) {
+        echo "<script>alert('Rol no encontrado.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
+        exit();
+    }
+
+    // Verificar si el usuario ya tiene el rol asignado
+    $stmt = $db->getPDO()->prepare("SELECT * FROM rol_usuario WHERE usuario = ? AND rol = ?");
+    $stmt->execute([$usuario->id_usuario, $rol->id_rol]);
+    $rol_usuario = $stmt->fetch(PDO::FETCH_OBJ);
+
+    if ($rol_usuario) {
+        echo "<script>alert('El usuario ya tiene este rol asignado.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
+        exit();
+    }
+
+    // Asignar el rol al usuario
+    $stmt = $db->getPDO()->prepare("INSERT INTO rol_usuario (rol, usuario, estatus) VALUES (?, ?, 'activo')");
+    $stmt->execute([$rol->id_rol, $usuario->id_usuario]);
+
+    echo "<script>alert('Rol asignado exitosamente.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
+} catch (Exception $e) {
+    error_log("Error al asignar el rol: " . $e->getMessage());
+    echo "<script>alert('Error al asignar el rol.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
+}

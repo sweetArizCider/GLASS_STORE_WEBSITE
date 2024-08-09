@@ -86,7 +86,7 @@ $minCitas = $result['MinCitasPorSemana'] ?? 0;
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="#">GLASS STORE</a>
+          <a href="../../../">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
@@ -98,7 +98,7 @@ $minCitas = $result['MinCitasPorSemana'] ?? 0;
           </a>
           <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="#" class="sidebar-link">Volver al Inicio</a>
+              <a href="../../../" class="sidebar-link">Volver al Inicio</a>
             </li>
           </ul>
         </li>
@@ -140,17 +140,18 @@ $minCitas = $result['MinCitasPorSemana'] ?? 0;
         </li>
       </ul>
       <div class="sidebar-footer">
-        <a href="../../index.php" class="sidebar-link">
+        <a href="../../../" class="sidebar-link">
           <img src="../../img/admin/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
       </div>
       <div class="sidebar-footer">
-        <a href="#" class="sidebar-link">
-          <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
-          <span>Cerrar Sesión</span>
-        </a>
-      </div>
+    <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+        <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+        <span>Cerrar Sesión</span>
+    </a>
+</div>
+
     </aside>
     <div class="main p-3">
       <!-- contenido general-->

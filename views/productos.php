@@ -46,6 +46,12 @@ if (isset($_SESSION["nom_usuario"])) {
         }
     }
 }
+
+if (!isset($_SESSION['nombre_producto'])) {
+    $_SESSION['nombre_producto'] = '';
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
     $nombreBuscado = trim($_POST['nombre_producto']);
     
@@ -655,6 +661,7 @@ $(document).ready(function() {
 }
 
 });
+
 
 
   

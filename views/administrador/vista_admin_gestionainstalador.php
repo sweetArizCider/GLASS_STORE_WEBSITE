@@ -1,3 +1,13 @@
+<?php if (isset($_SESSION['message'])): ?>
+    <div class="container mt-3">
+        <?php 
+        echo $_SESSION['message']; 
+        unset($_SESSION['message']); // Limpiar el mensaje después de mostrarlo
+        ?>
+    </div>
+<?php endif; ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -128,27 +138,15 @@
         </aside>
         <div class="main p-3">
             <div class="text-center">
-                <div class="busqueda mx-auto">
-                    <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
-                    <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
-                </div>
+
             </div>
             <div class="container mt-5">
                 <h2 class="text-center mb-4">Ingresar o Actualizar Datos Laborales del Instalador</h2>
 
-                <?php if (isset($_SESSION['message'])): ?>
-                    <div class="alert alert-info">
-                        <?php 
-                        echo htmlspecialchars($_SESSION['message']); 
-                        unset($_SESSION['message']);
-                        ?>
-                    </div>
-                <?php endif; ?>
-
                 <form action="../../scripts/administrador/procesar_datos_laborales.php" method="POST" class="needs-validation" novalidate>
                     <div class="mb-3">
-                        <label for="nombre_completo" class="form-label">Nombre Completo</label>
-                        <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" required>
+                        <label for="usuario" class="form-label">USUARIO</label>
+                        <input type="text" class="form-control" id="usuario" name="usuario" required>
                         <div class="invalid-feedback">Por favor, ingrese el nombre completo.</div>
                     </div>
                     <div class="mb-3">
