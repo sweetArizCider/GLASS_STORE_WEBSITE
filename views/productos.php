@@ -93,20 +93,19 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../css/normalized.css">
-<style>
+  <style>
     .card-img-left {
-    border-radius: 10px;
-}
+        border-radius: 10px;
+    }
 
-.card {
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-</style>
-
+    .card {
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-<!-- whatsapp flotante -->
+    <!-- whatsapp flotante -->
   <div id="wa-button">
     <a href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">
       <img src="../img/index/whatsappFloat.svg" alt="Contáctanos por WhatsApp">
@@ -244,74 +243,69 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     </div>
 </div>
 
+  <!-- banner -->
+  <main>
+    <div class="main-content-products">
+      <div class="content-products">
+        <h1>" TRANSFORMA TU ESPACIO CON ESTILO Y DISTINCIÓN "</h1><br>
+        <div class="busqueda mx-auto">
+          <input type="text" placeholder="Buscar" class="buscar-input" id="search-input" autocomplete="off" name="nombre_producto" style="display: flex; align-items: center; width: 100%;">
+          <img src="../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer; margin-left: 10px;">
+        </div>
+      </div> 
+    </div>
+  </main>
 
-
-
-
-    <!-- banner -->
-    <main>
-      <div class="main-content-products">
-        <div class="content-products">
-          <h1>" TRANSFORMA TU ESPACIO CON ESTILO Y DISTINCIÓN "</h1><br>
-          <div class="busqueda mx-auto">
-                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" style="display: flex; align-items: center; width: 100%;">
-                    <input type="text" placeholder="Buscar" class="buscar-input" id="search-input" autocomplete="off" name="nombre_producto" value="<?php echo isset($_SESSION['nombre_producto']) ? htmlspecialchars($_SESSION['nombre_producto']) : ''; ?>">
-                    <img src="../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer; margin-left: 10px;" onclick="this.closest('form').submit();">
-                </form>
-            </div>
-        </div> 
-      </div>
-    </main>
-
-    <!-- aquí se cargan los productos con imágenes -->
-    <div class="container">
+  <!-- aquí se cargan los productos con imágenes -->
+<div class="container">
     <div class="row" style="margin-top: 50px;" id="product-list">
-    <?php
-if (isset($_SESSION['nombre_producto'])) {
-    $nombreBuscado = trim($_SESSION['nombre_producto']);
-    unset($_SESSION['nombre_producto']);
+        <?php
+        $db = new Database();
+        $db->conectarDB();
 
-    $db = new database();
-    $db->conectarDB();
-    $resultados = $db->BuscarProductoPorNombre($nombreBuscado);
+        // Obtener todos los productos
+        $resultados = $db->BuscarProductoPorNombre('');
 
-    if (!empty($resultados)) {
-        foreach ($resultados as $producto) {
-            $imagen = $producto->imagen ? '../img/index/' . $producto->imagen : '../img/index/default.png';
-            $id_producto = $producto->id_producto;
-            $esFavorito = $db->esFavorito($id_producto, $id_usuario);
-            $iconoFavorito = $esFavorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
-            echo "
-            <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='{$producto->nombre}'>
-                <div class='card shadow' id='c'>
-                    <a href='./perfilProducto.php?id={$id_producto}' style='text-decoration: none; color: inherit;'>
-                        <img src='{$imagen}' alt='{$producto->nombre}' class='card image-top pad'>
-                    </a>
-                    
-                    <div class='icon-overlay-container' onclick='changeIcon(this, {$id_producto})'>
-                        <img src='{$iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
-                    </div>
-                    <div class='card-body'>
-                        <h3 class='card-title text-center title-card-new'>{$producto->nombre}</h3>
-                        <p class='card-text text-center card-price'>\${$producto->precio}</p>
+        if (!empty($resultados)) {
+            foreach ($resultados as $producto) {
+                $imagen = $producto->imagen ? '../img/index/' . $producto->imagen : '../img/index/default.png';
+                $id_producto = $producto->id_producto;
+
+                // Verificar si el producto es favorito para el usuario actual
+                $esFavorito = false;
+                if ($id_usuario != 0) { // Verificar solo si el usuario está autenticado
+                    $esFavorito = $db->esFavorito($id_producto, $id_usuario);
+                }
+
+                // Determinar el icono a mostrar
+                $iconoFavorito = $esFavorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
+                echo "
+                <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='{$producto->nombre}'>
+                    <div class='card shadow' id='c'>
+                        <a href='./perfilProducto.php?id={$id_producto}' style='text-decoration: none; color: inherit;'>
+                            <img src='{$imagen}' alt='{$producto->nombre}' class='card image-top pad'>
+                        </a>
+                        
+                        <div class='icon-overlay-container' onclick='changeIcon(this, {$id_producto})'>
+                            <img src='{$iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
+                        </div>
+                        <div class='card-body'>
+                            <h3 class='card-title text-center title-card-new'>{$producto->nombre}</h3>
+                            <p class='card-text text-center card-price'>\${$producto->precio}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            ";
-            /*arriba cambie img src='{$imagen} y la hice variable*/
+                ";
+            }
+        } else {
+            echo "<div class='col-12'><p class='text-center'>No se encontraron productos.</p></div>";
         }
-    } else {
-        echo "<div class='col-12'><p class='text-center'>No se encontraron productos.</p></div>";
-    }
-} else {
-    echo "<div class='col-12'><p class='text-center'>Ingrese un nombre de producto para buscar.</p></div>";
-}
-?>
+        ?>
     </div>
 </div>
 
-<!-- detalles producto en el carrito -->
-<div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
+  <!-- detalles producto en el carrito -->
+  <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -328,11 +322,9 @@ if (isset($_SESSION['nombre_producto'])) {
             </div>
         </div>
     </div>
-</div>
+  </div>
 
-
-
-<!--Footer-->
+  <!--Footer-->
   <footer class="footer">
     <div class="container">
       <div class="row">
@@ -356,283 +348,128 @@ if (isset($_SESSION['nombre_producto'])) {
               <p><i class="bi bi-phone"></i> +52 123 4564 456</p>
           </div>
       </div>
-  </div>
-  <div class="copy text-center py-3 w-100">
-    <p class="mb-0">&copy; 2024 Glass Store. All rights reserved.</p>
-  </div>
+    </div>
+    <div class="copy text-center py-3 w-100">
+      <p class="mb-0">&copy; 2024 Glass Store. All rights reserved.</p>
+    </div>
   </footer>
-</body>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script>
-    
-    /*cambie esto para agregar unos mensanjes, pq no se estaban cargando*/
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+  <script>
     $(document).ready(function() {
-        console.log('jQuery version:', $.fn.jquery);
-        console.log('jQuery UI version:', $.ui ? $.ui.version : 'jQuery UI no se ha cargado');
-
-        $('#search-input').autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: '../class/database.php',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'autocomplete',
-                        term: request.term
-                    },
-                    success: function(data) {
-                        response(data);
-                    }
-                });
-            },
-            minLength: 2,
-        });
-
+        // Filtro en tiempo real
         $('#search-input').on('input', function() {
-            var value = $(this).val().replace(/\s+/g, ' ').trim();
-            $(this).val(value);
+            var searchValue = $(this).val().toLowerCase();
+            $('.product-item').each(function() {
+                var productName = $(this).data('name').toLowerCase();
+                if (productName.includes(searchValue)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
         });
+
+        // Código adicional para funcionalidades específicas...
     });
 
-
-  document.getElementById('user-icon').addEventListener('click', function() {
-    var loginForm = document.getElementById('login-form');
-    if (loginForm.style.display === 'none' || loginForm.style.display === '') {
-        loginForm.style.display = 'block';
-    } else {
-        loginForm.style.display = 'none';
-    }
-  });
-
-  document.getElementById('link-nosotros').addEventListener('click', function(event) {
-    event.preventDefault();
-    document.querySelector('#about-us').scrollIntoView({
-        behavior: 'smooth'
-    });
-  });
-
-  // Manejar el click en el botón de búsqueda
-  document.getElementById('search-button').addEventListener('click', function() {
-    var nombreProducto = document.getElementById('search-input').value;
-    if (nombreProducto.trim() !== '') {
-      var form = document.createElement('form');
-      form.method = 'POST';
-      form.action = ''; // Enviar al mismo archivo
-
-      var input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'nombre_producto';
-      input.value = nombreProducto;
-
-      form.appendChild(input);
-      document.body.appendChild(form);
-      form.submit();
-    }
-  });
-
-  // Manejar la búsqueda al presionar la tecla Enter
-  document.getElementById('search-input').addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      document.getElementById('search-button').click();
-    }
-  });
-
-
-  // Cerrar el modal
-  function closeForm() {
-    document.getElementById('login-form').style.display = 'none';
-  }
-
-  function changeIcon(element, id_producto) {
-            var icon = element.querySelector('.icon-overlay');
-            var isFavorite = icon.getAttribute('src') === '../img/index/heartCover.svg';
-            if (isFavorite) {
-                icon.setAttribute('src', '../img/index/addFavorites.svg');
-            } else {
-                icon.setAttribute('src', '../img/index/heartCover.svg');
-            }
-            saveToFavorites(id_producto);
+    function changeIcon(element, id_producto) {
+        var icon = element.querySelector('.icon-overlay');
+        var isFavorite = icon.getAttribute('src') === '../img/index/heartCover.svg';
+        if (isFavorite) {
+            icon.setAttribute('src', '../img/index/addFavorites.svg');
+        } else {
+            icon.setAttribute('src', '../img/index/heartCover.svg');
         }
+        saveToFavorites(id_producto);
+    }
 
-function saveToFavorites(id_producto) {
+    function saveToFavorites(id_producto) {
+        $.ajax({
+            url: '../scripts/guardar_favorito.php',
+            method: 'POST',
+            data: { id_producto: id_producto },
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('#carritoModal').on('shown.bs.modal', function () {
+            cargarCarrito();
+        });
+
+        $('#aceptar-btn').on('click', function() {
+            actualizarEstadoProductos();
+        });
+
+        function cargarCarrito() {
             $.ajax({
-                url: '../scripts/guardar_favorito.php',
-                method: 'POST',
-                data: {
-                    id_producto: id_producto
-                },
-                success: function(response) {
-                    console.log(response);
+                url: '../scripts/obtener_carrito.php',
+                method: 'GET',
+                dataType: 'json',
+                success: function(carrito) {
+                    var carritoList = $('#carrito-list');
+                    carritoList.empty();
+                    if (carrito.length > 0) {
+                        carrito.forEach(function(item) {
+                            var imagen = item.imagen_producto ? '../img/index/' + item.imagen_producto : '../img/index/default.png';
+                            var productoHtml = `
+                                <div class='col-md-12 mt-3 py-3 py-md-0'>
+                                    <div class='card shadow' style='display: flex; flex-direction: row;'>
+                                        <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 15px;'>
+                                        <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
+                                        <div class='card-body'>
+                                            <h5 class='card-title'>${item.nombre_producto}</h5>
+                                            ${item.alto ? `<p class='card-text'>Alto: ${item.alto}</p>` : ''}
+                                            ${item.largo ? `<p class='card-text'>Largo: ${item.largo}</p>` : ''}
+                                            ${item.cantidad ? `<p class='card-text'>Cantidad: ${item.cantidad}</p>` : ''}
+                                            ${item.monto ? `<p class='card-text'>Monto: ${item.monto}</p>` : ''}
+                                            ${item.grosor ? `<p class='card-text'>Grosor: ${item.grosor}</p>` : ''}
+                                            ${item.tipo_tela ? `<p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p>` : ''}
+                                            ${item.marco ? `<p class='card-text'>Marco: ${item.marco}</p>` : ''}
+                                            ${item.tipo_cadena ? `<p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p>` : ''}
+                                            ${item.color ? `<p class='card-text'>Color: ${item.color}</p>` : ''}
+                                            ${item.codigo_diseno ? `<p class='card-text'>Diseño: ${item.codigo_diseno}</p>` : ''}
+                                        </div>
+                                    </div>
+                                </div>`;
+                            carritoList.append(productoHtml);
+                        });
+                    } else {
+                        carritoList.append("<p>No tienes productos en espera.</p>");
+                    }
                 },
                 error: function(error) {
-                    console.error('Error:', error);
+                    console.error('Error al obtener los productos del carrito:', error);
+                    $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
                 }
             });
         }
 
-
-document.getElementById('search-input').addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      document.getElementById('search-button').click();
-    }
-  });
-  /*
-  document.addEventListener('DOMContentLoaded', () => {
-    // Manejar clic en el icono de favoritos
-    document.querySelectorAll('.favorito-icon').forEach(icon => {
-        icon.addEventListener('click', function() {
-            const idProducto = this.getAttribute('data-id-producto');
-            const isFavorite = this.classList.contains('favorito');
-
-            fetch('../scripts/guardar_favorito.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    id_producto: idProducto
-                })
-            }).then(response => response.json())
-              .then(result => {
-                  if (result.success) {
-                      if (isFavorite) {
-                          this.src = '../img/index/addFavorites.svg'; // Cambiar icono para no favorito
-                          this.classList.remove('favorito');
-                      } else {
-                          this.src = '../img/index/favoriteFilled.svg'; // Cambiar icono para favorito
-                          this.classList.add('favorito');
-                      }
-                  } else {
-                      alert(result.error || 'No se pudo actualizar el estado del favorito.');
-                  }
-              });
-        });
+        function actualizarEstadoProductos() {
+            $('.producto-checkbox:checked').each(function() {
+                var idDetalleProducto = $(this).val();
+                $.ajax({
+                    url: '../scripts/actualizar_carrito.php',
+                    method: 'POST',
+                    data: { id_detalle_producto: idDetalleProducto },
+                    success: function(response) {
+                        console.log('Producto actualizado:', response);
+                        window.location.href = 'citas.php';
+                    },
+                    error: function(error) {
+                        console.error('Error al actualizar el producto:', error);
+                    }
+                });
+            });
+        }
     });
-});
-*/
-
-$(document).ready(function() {
-    $('#favoritosModal').on('shown.bs.modal', function () {
-        cargarFavoritos();
-    });
-    
-    function cargarFavoritos() {
-        $.ajax({
-            url: '../scripts/obtener_favoritos.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(favoritos) {
-                var favoritosList = $('#favoritos-list');
-                favoritosList.empty();
-                if (favoritos.length > 0) {
-                    favoritos.forEach(function(favorito) {
-                        var imagen = favorito.imagen ? '../img/index/' + favorito.imagen : '../img/index/default.png';
-                        var favoritoHtml = `
-                            <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
-                                <div class='card shadow'>
-                                    <a href='./perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
-                                        <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
-                                        <div class='card-body'>
-                                            <h5 class='card-title'>${favorito.nombre}</h5>
-                                            <p class='card-text'>$ ${favorito.precio}</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>`;
-                        favoritosList.append(favoritoHtml);
-                    });
-                } else {
-                    favoritosList.append("<p>No tienes productos en favoritos.</p>");
-                }
-            },
-            error: function(error) {
-                console.error('Error al obtener los favoritos:', error);
-                $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
-            }
-        });
-    }
-});
-
-
-$(document).ready(function() {
-    $('#carritoModal').on('shown.bs.modal', function () {
-        cargarCarrito();
-    });
-
-    $('#aceptar-btn').on('click', function() {
-        actualizarEstadoProductos();
-    });
-
-    function cargarCarrito() {
-        $.ajax({
-            url: '../scripts/obtener_carrito.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(carrito) {
-                var carritoList = $('#carrito-list');
-                carritoList.empty();
-                if (carrito.length > 0) {
-                    carrito.forEach(function(item) {
-                        var imagen = item.imagen_producto ? '../img/index/' + item.imagen_producto : '../img/index/default.png';
-                        var productoHtml = `
-                            <div class='col-md-12 mt-3 py-3 py-md-0'>
-                                <div class='card shadow' style='display: flex; flex-direction: row;'>
-                                    <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 15px;'>
-                                    <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
-                                    <div class='card-body'>
-                                        <h5 class='card-title'>${item.nombre_producto}</h5>
-                                        ${item.alto ? `<p class='card-text'>Alto: ${item.alto}</p>` : ''}
-                                        ${item.largo ? `<p class='card-text'>Largo: ${item.largo}</p>` : ''}
-                                        ${item.cantidad ? `<p class='card-text'>Cantidad: ${item.cantidad}</p>` : ''}
-                                        ${item.monto ? `<p class='card-text'>Monto: ${item.monto}</p>` : ''}
-                                        ${item.grosor ? `<p class='card-text'>Grosor: ${item.grosor}</p>` : ''}
-                                        ${item.tipo_tela ? `<p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p>` : ''}
-                                        ${item.marco ? `<p class='card-text'>Marco: ${item.marco}</p>` : ''}
-                                        ${item.tipo_cadena ? `<p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p>` : ''}
-                                        ${item.color ? `<p class='card-text'>Color: ${item.color}</p>` : ''}
-                                        ${item.codigo_diseno ? `<p class='card-text'>Diseño: ${item.codigo_diseno}</p>` : ''}
-                                    </div>
-                                </div>
-                            </div>`;
-                        carritoList.append(productoHtml);
-                    });
-                } else {
-                    carritoList.append("<p>No tienes productos en espera.</p>");
-                }
-            },
-            error: function(error) {
-                console.error('Error al obtener los productos del carrito:', error);
-                $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
-            }
-        });
-    }
-
-    function actualizarEstadoProductos() {
-    $('.producto-checkbox:checked').each(function() {
-        var idDetalleProducto = $(this).val(); // Este valor debe ser el ID del detalle del producto
-        $.ajax({
-            url: '../scripts/actualizar_carrito.php',
-            method: 'POST',
-            data: {
-                id_detalle_producto: idDetalleProducto
-            },
-            success: function(response) {
-                console.log('Producto actualizado:', response);
-                window.location.href = 'citas.php';
-            },
-            error: function(error) {
-                console.error('Error al actualizar el producto:', error);
-            }
-        });
-    });
-}
-
-});
-
-
-
-  
-</script>
+  </script>
+</body>
 </html>

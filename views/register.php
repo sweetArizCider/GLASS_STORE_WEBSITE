@@ -28,18 +28,8 @@
                     <div class="mb-5 d-flex flex-column align-items-center">
                         <img src="../img/register/GLASS.png" alt="" class="logotipo-glass">
                         <h1 class="display-5 fw-bold text-center bienvenido">CREAR CUENTA</h1>
-                        <p class="text-center m-0">¿Ya tienes una cuenta? <a style="cursor: pointer;" class="link-primary text-decoration-none" id="iniciar-sesion">Iniciar sesión</a></p>
-                    </div>
-                    <div class="login-form" id="login-form">
-                        <button class="close-btn" onclick="closeForm()"><img src="../img/register/close.svg" alt=""></button>
-                        <h6>Iniciar Sesión</h6>
-                        <form action="/login">
-                            <input type="email" placeholder="Correo" required name="correo" id="correo">
-                            <input type="password" placeholder="Contraseña" required name="contraseña" id="contraseña">
-                            <p class="pop-login-p">¿No tienes cuenta?</p>
-                            <p class="space-cero"><a href="../html/register.html" class="pop-login-create">Crea una</a></p>
-                            <button type="submit">Aceptar</button>
-                        </form>
+                        <p class="text-center m-0">¿Ya tienes una cuenta? 
+    <a href="iniciarSesion.php" class="link-primary text-decoration-none">Iniciar sesión</a></p>
                     </div>
                 </div>
                 <div class="form-register">
