@@ -188,6 +188,7 @@ class database{
             return [];
         }
     }
+
     
 
     function ejecutarProcedimiento($query, $params = []) {
@@ -309,14 +310,17 @@ class database{
         }
     }
     
-    public function ObtenerProductosPredeterminados() {
-    
+    public function ObtenerProductosPredeterminados($excluidos = []) {
         try {
             $query = "
-                SELECT P.id_producto, P.nombre, P.precio, I.imagen
+                SELECT DISTINCT P.id_producto, P.nombre, P.precio, 
+                    (SELECT I.imagen 
+                     FROM imagen I 
+                     WHERE I.producto = P.id_producto 
+                     LIMIT 1) AS imagen
                 FROM productos P
-                INNER JOIN imagen I ON P.id_producto = I.producto
                 WHERE P.estatus = 'activo'
+                " . (!empty($excluidos) ? "AND P.id_producto NOT IN (" . implode(',', $excluidos) . ")" : "") . "
                 ORDER BY RAND()
                 LIMIT 16
             ";
@@ -328,6 +332,7 @@ class database{
             return []; // Devuelve un array vacío en caso de error
         } 
     }
+    
     public function buscarProductos($termino) {
     
         try {
