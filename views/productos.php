@@ -87,7 +87,7 @@ if (!isset($_SESSION['nombre_producto'])) {
    $consulta_productos = "
     SELECT p.id_producto, p.nombre, p.precio, i.imagen
     FROM productos p
-    LEFT JOIN IMAGEN i ON p.id_producto = i.producto
+    LEFT JOIN imagen i ON p.id_producto = i.producto
     WHERE p.estatus = 'activo'
     LIMIT ? OFFSET ?
 ";
