@@ -40,23 +40,29 @@ if ($result) {
     $stmt_citas->closeCursor();
 
     foreach ($citas as $cita) {
-      if (isset($cita->id_cita)) {
-          $stmt_detalles = $db->getPDO()->prepare("CALL obtener_detalles_producto_cita(?)");
-          $stmt_detalles->execute([$cita->id_cita]);
-          $detalles_producto = $stmt_detalles->fetchAll(PDO::FETCH_OBJ);
-  
-          $cita->productos = $detalles_producto;
-  
-          $stmt_detalles->closeCursor();
-      } else {
-          $cita->productos = [];
-      }
-  }
+        // Verifica si cada propiedad existe y asígnala, si no, asígnale un valor predeterminado
+        $cita->nombre_cliente = isset($cita->cliente) ? $cita->cliente : 'Cliente Desconocido';
+        $cita->direccion = isset($cita->direccion) ? $cita->direccion : 'Dirección no disponible';
+        $cita->tipo = isset($cita->tipo) ? $cita->tipo : 'Tipo no disponible';
+
+        if (isset($cita->id_cita)) {
+            $stmt_detalles = $db->getPDO()->prepare("CALL obtener_detalles_producto_cita(?)");
+            $stmt_detalles->execute([$cita->id_cita]);
+            $detalles_producto = $stmt_detalles->fetchAll(PDO::FETCH_OBJ);
+
+            $cita->productos = $detalles_producto;
+
+            $stmt_detalles->closeCursor();
+        } else {
+            $cita->productos = [];
+        }
+    }
 } else {
     echo 'No se encontró el ID del instalador para el usuario.';
     $citas = []; 
 }
 ?>
+
   <!-- Logo flotante del negocio -->
   <div id="logotipo-flotante">
     <img src="../../img/index/GLASS.png" alt="Glass store">

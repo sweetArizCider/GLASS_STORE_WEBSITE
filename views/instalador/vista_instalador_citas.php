@@ -114,44 +114,51 @@ if ($result) {
       <div class="contenidoGeneral mt-4">
         <div class="general-container">
           <div class="d-flex justify-content-end mt-4">
-            <div class="dropdown">
-              <button class="btn btn-secondary filters" type="button" id="dropdownOrdenar" data-bs-toggle="dropdown" aria-expanded="false"> Ordenar <img src="../../img/instalador/filter.svg" alt="Filtrar" class="icono-filtro">
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
-                <li><a class="dropdown-item" href="#">Recientes</a></li>
-                <li><a class="dropdown-item" href="#">Antiguas</a></li>
-              </ul>
-            </div>
+          <div class="dropdown">
+          <button class="btn btn-secondary filters" type="button" id="dropdownOrdenar" data-bs-toggle="dropdown" aria-expanded="false"> Ordenar <img src="../../img/instalador/filter.svg" alt="Filtrar" class="icono-filtro">
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
+            <li><a class="dropdown-item" href="#" id="ordenar-recientes">Recientes</a></li>
+            <li><a class="dropdown-item" href="#" id="ordenar-antiguas">Antiguas</a></li>
+          </ul>
+        </div>
+
           </div>
 
-          <!-- Sección para mostrar citas -->
-          <div class="citas-container">
-          <?php
+<!-- Sección para mostrar citas -->
+<div class="citas-container" id="resultados">
+    <?php
+    if (isset($_SESSION["id_instalador"])) {
+        $id_instalador = $_SESSION["id_instalador"];
+        $citas = $db->obtenerCitasInstalador($id_instalador);
 
-if (isset($_SESSION["id_instalador"])) {
-    $id_instalador = $_SESSION["id_instalador"];
-    $citas = $db->obtenerCitasInstalador($id_instalador);
+        if ($citas) {
+            foreach ($citas as $cita) {
+                $fecha = date('d \d\e F \d\e Y', strtotime($cita->fecha));
+                $hora = date('h:i A', strtotime($cita->hora));
 
-    if ($citas) {
-        foreach ($citas as $cita) {
-            $fecha = date('d \d\e F \d\e Y', strtotime($cita->fecha));
-            $hora = date('h:i A', strtotime($cita->hora));
+                $cliente = $cita->cliente ?? 'Desconocido';
+                $calle = $cita->calle ?? 'No disponible';
+                $numero = $cita->numero ?? 'No disponible';
+                $numero_int = $cita->numero_int ?? ''; // Puede estar vacío
+                $colonia = $cita->colonia ?? 'No disponible';
+                $ciudad = $cita->ciudad ?? 'No disponible';
+                $referencias = $cita->referencias ?? 'No disponible';
 
-            echo '<div class="secc-sub-general">';
-            echo '<p class="fecha">' . $fecha . '</p>';
-            echo '<p><mark class="marklued">' . htmlspecialchars($cita->cliente) . '</mark><br> Requiere <span class="bueld">una Instalación</span> en el domicilio: <span class="bueld">' . htmlspecialchars($cita->calle) . ' #' . htmlspecialchars($cita->numero) . ' ' . htmlspecialchars($cita->numero_int) . ', ' . htmlspecialchars($cita->colonia) . ', ' . htmlspecialchars($cita->ciudad) . ' referencias: ' . htmlspecialchars($cita->referencias) . '</span> <br> el día <span class="bueld">' . $fecha . '</span> a las <span class="bueld">' . $hora . '</span></p>';
-            echo '</div> <br>';
-
+                echo '<div class="secc-sub-general">';
+                echo '<p class="fecha">' . $fecha . '</p>';
+                echo '<p><mark class="marklued">' . htmlspecialchars($cliente) . '</mark><br> Requiere <span class="bueld">una Instalación</span> en el domicilio: <span class="bueld">' . htmlspecialchars($calle) . ' #' . htmlspecialchars($numero) . ' ' . htmlspecialchars($numero_int) . ', ' . htmlspecialchars($colonia) . ', ' . htmlspecialchars($ciudad) . ' referencias: ' . htmlspecialchars($referencias) . '</span> <br> el día <span class="bueld">' . $fecha . '</span> a las <span class="bueld">' . $hora . '</span></p>';
+                echo '</div> <br>';
+            }
+        } else {
+            echo '<p>No hay citas para mostrar.</p>';
         }
     } else {
-        echo '<p>No hay citas para mostrar.</p>';
+        echo '<p>No estás autorizado para ver las citas.</p>';
     }
-} else {
-    echo '<p>No estás autorizado para ver las citas.</p>';
-}
-?>
+    ?>
+</div>
 
-          </div>
         </div>
       </div>
     </div>
@@ -160,10 +167,58 @@ if (isset($_SESSION["id_instalador"])) {
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const hamBurger = document.querySelector(".toggle-btn");
-    hamBurger.addEventListener("click", function () {
-      document.querySelector("#sidebar").classList.toggle("expand");
+  const hamBurger = document.querySelector(".toggle-btn");
+  hamBurger.addEventListener("click", function () {
+    document.querySelector("#sidebar").classList.toggle("expand");
+  });
+
+  // Función para realizar la búsqueda y ordenación
+  function realizarBusqueda(orden = 'recientes') {
+    // Obtiene el texto de búsqueda
+    var searchInput = document.getElementById('search-input').value;
+
+    // Envía una solicitud AJAX al servidor con el texto de búsqueda y el criterio de ordenación
+    fetch('buscar_citas.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'search=' + encodeURIComponent(searchInput) + '&orden=' + encodeURIComponent(orden)
+    })
+    .then(response => response.text())
+    .then(data => {
+        // Muestra los resultados de la búsqueda
+        document.getElementById('resultados').innerHTML = data;
+    })
+    .catch(error => {
+        console.error('Error en la búsqueda:', error);
+        document.getElementById('resultados').innerHTML = '<p>Error al buscar citas.</p>';
     });
-  </script>
+  }
+
+  // Agrega un evento de escucha al botón de búsqueda
+  document.getElementById('search-button').addEventListener('click', function() {
+    realizarBusqueda(); // Búsqueda con el orden por defecto (recientes)
+  });
+
+  // Agrega un evento de escucha al campo de búsqueda para detectar la tecla "Enter"
+  document.getElementById('search-input').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Evita el comportamiento por defecto del formulario
+      realizarBusqueda(); // Llama a la función de búsqueda
+    }
+  });
+
+  // Agrega eventos de escucha para los botones de ordenación
+  document.getElementById('ordenar-recientes').addEventListener('click', function() {
+    realizarBusqueda('recientes'); // Llama a la función de búsqueda con el criterio "recientes"
+  });
+
+  document.getElementById('ordenar-antiguas').addEventListener('click', function() {
+    realizarBusqueda('antiguas'); // Llama a la función de búsqueda con el criterio "antiguas"
+  });
+</script>
+
+
 </body>
 </html>

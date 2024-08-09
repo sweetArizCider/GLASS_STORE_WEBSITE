@@ -157,7 +157,7 @@ $db->desconectarDB();
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="#">GLASS STORE</a>
+          <a href="../../../">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">

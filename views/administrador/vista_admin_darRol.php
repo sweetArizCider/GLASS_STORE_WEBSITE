@@ -16,11 +16,11 @@ $user = $_SESSION["nom_usuario"];
 try {
     $stmt = $db->getPDO()->prepare("CALL roles_usuario(?)");
     $stmt->execute([$user]);
-    $roles = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $rolesUsuario = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     $isAdmin = false;
 
-    foreach ($roles as $role) {
+    foreach ($rolesUsuario as $role) {
         if ($role->nombre_rol == 'administrador') {
             $isAdmin = true;
             break;
@@ -42,7 +42,7 @@ try {
 }
 
 try {
-    $stmt = $db->getPDO()->prepare("SELECT nombre_rol FROM ROLES");
+    $stmt = $db->getPDO()->prepare("SELECT nombre_rol FROM roles");
     $stmt->execute();
     $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
@@ -178,13 +178,6 @@ try {
         </a>
     </div>
     </aside>
-    <div class="main p-3">
-      <div class="text-center">
-        <div class="busqueda mx-auto">
-          <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
-          <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
-        </div>
-      </div>
       <div class="main p-3">
             <div class="text-center">
                 <h1>Gestión de Roles</h1>
@@ -215,38 +208,32 @@ try {
 
                         <!-- Columna para Quitar Rol -->
                         <div class="col-md-6">
-    <h2>Quitar Rol</h2>
-    <form action="../../scripts/administrador/quitar_rol.php" method="POST">
-        <div class="mb-3">
-            <label for="nom_usuario_quitar" class="form-label">Nombre de Usuario</label>
-            <input type="text" class="form-control" id="nom_usuario_quitar" name="nom_usuario_quitar" required>
-        </div>
-        <div class="mb-3">
-            <label for="nombre_rol_quitar" class="form-label">Rol</label>
-            <select class="form-select" id="nombre_rol_quitar" name="nombre_rol_quitar" required>
-                <option value="">Seleccione un rol</option>
-                <?php foreach ($roles as $role): ?>
-                    <option value="<?php echo htmlspecialchars($role['nombre_rol']); ?>">
-                        <?php echo htmlspecialchars($role['nombre_rol']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-danger">Quitar Rol</button>
-    </form>
-</div>
+                            <h2>Quitar Rol</h2>
+                            <form action="../../scripts/administrador/quitar_rol.php" method="POST">
+                                <div class="mb-3">
+                                    <label for="nom_usuario_quitar" class="form-label">Nombre de Usuario</label>
+                                    <input type="text" class="form-control" id="nom_usuario_quitar" name="nom_usuario_quitar" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nombre_rol_quitar" class="form-label">Rol</label>
+                                    <select class="form-select" id="nombre_rol_quitar" name="nombre_rol_quitar" required>
+                                        <option value="">Seleccione un rol</option>
+                                        <?php foreach ($roles as $role): ?>
+                                            <option value="<?php echo htmlspecialchars($role['nombre_rol']); ?>">
+                                                <?php echo htmlspecialchars($role['nombre_rol']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-danger">Quitar Rol</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</body>
-    </div>
-  </div>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
-   
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
   <script>
