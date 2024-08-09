@@ -45,7 +45,6 @@ try {
     exit();
 }
 
-// Aquí empieza el código original después de la verificación del rol
 $database = new Database();
 $database->conectarDB();
 
