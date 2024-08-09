@@ -156,9 +156,6 @@ if (!isset($_SESSION['nombre_producto'])) {
                         echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
                         echo '<li><a class="dropdown-item" href="perfil.php">Perfil</a></li>';
                         echo '<li><a class="dropdown-item" href="#" id="notification-icon" data-bs-toggle="modal" data-bs-target="#notificationModal">Notificaciones</a></li>';
-                        require_once '../class/database.php';
-                        $conexion = new database();
-                        $conexion->conectarDB();
                         $user = $_SESSION["nom_usuario"];
                         $consulta = "CALL roles_usuario(?)";
                         $params = [$user];
