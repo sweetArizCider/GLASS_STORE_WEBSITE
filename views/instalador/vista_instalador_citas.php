@@ -21,10 +21,10 @@ $user = $_SESSION["nom_usuario"];
 // Consulta para obtener el id_instalador
 $stmt = $db->getPDO()->prepare("
     SELECT i.id_instalador
-FROM instalador i
-JOIN persona p ON i.persona = p.id_persona
-JOIN usuarios u ON p.usuario = u.id_usuario
-WHERE u.nom_usuario = ?
+    FROM instalador i
+    JOIN persona p ON i.persona = p.id_persona
+    JOIN usuarios u ON p.usuario = u.id_usuario
+    WHERE u.nom_usuario = ?
 ");
 $stmt->execute([$user]);
 $result = $stmt->fetch(PDO::FETCH_OBJ);
@@ -39,28 +39,27 @@ if ($result) {
   <div id="logotipo-flotante">
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
-
-  <!--Barra lateral-->
-  <div class="wrapper">
+ <!-- Barra lateral -->
+ <div class="wrapper">
     <aside id="sidebar">
-      <div class="d-flex">
+    <div class="d-flex">
         <button class="toggle-btn" type="button">
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="#">GLASS STORE</a>
+          <a href="../../../../">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#inicio" aria-expanded="false" aria-controls="inicio">
-             <img src="../../img/instalador/home.svg" alt="Perfil">
+            <img src="../../img/instalador/home.svg" alt="Inicio">
             <span>Inicio</span>
           </a>
-          <ul id="home" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+          <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./index_Instalador.php" class="sidebar-link">Volver al Inicio</a>
+              <a href="../../../../" class="sidebar-link">Volver al Inicio</a>
             </li>
           </ul>
         </li>
@@ -79,12 +78,24 @@ if ($result) {
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#citas" aria-expanded="false" aria-controls="citas">
-            <img src="../../img/admin/calendar.svg" alt="citas">
+            <img src="../../img/admin/calendar.svg" alt="Citas">
             <span>Citas</span>
           </a>
           <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
               <a href="../../views/instalador/vista_instalador_citas.php" class="sidebar-link">Ver Citas</a>
+            </li>
+          </ul>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#reporte" aria-expanded="false" aria-controls="reporte">
+            <img src="../../img/admin/clipboard.svg" alt="Reportes">
+            <span>Reportes</span>
+          </a>
+          <ul id="reporte" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="../../views/instalador/vista_instalador_reportes.php" class="sidebar-link">Hacer Reporte</a>
             </li>
           </ul>
         </li>
@@ -145,7 +156,7 @@ if ($result) {
                 $ciudad = $cita->ciudad ?? 'No disponible';
                 $referencias = $cita->referencias ?? 'No disponible';
 
-                echo '<div class="secc-sub-general">';
+                echo '<div class="secc-sub-general cita-item">';
                 echo '<p class="fecha">' . $fecha . '</p>';
                 echo '<p><mark class="marklued">' . htmlspecialchars($cliente) . '</mark><br> Requiere <span class="bueld">una Instalación</span> en el domicilio: <span class="bueld">' . htmlspecialchars($calle) . ' #' . htmlspecialchars($numero) . ' ' . htmlspecialchars($numero_int) . ', ' . htmlspecialchars($colonia) . ', ' . htmlspecialchars($ciudad) . ' referencias: ' . htmlspecialchars($referencias) . '</span> <br> el día <span class="bueld">' . $fecha . '</span> a las <span class="bueld">' . $hora . '</span></p>';
                 echo '</div> <br>';
@@ -172,52 +183,46 @@ if ($result) {
     document.querySelector("#sidebar").classList.toggle("expand");
   });
 
-  // Función para realizar la búsqueda y ordenación
-  function realizarBusqueda(orden = 'recientes') {
-    // Obtiene el texto de búsqueda
-    var searchInput = document.getElementById('search-input').value;
+  // Filtro de citas por nombre en tiempo real
+  document.getElementById('search-input').addEventListener('input', function() {
+      const searchValue = this.value.toLowerCase();
+      const citas = document.querySelectorAll('.cita-item');
 
-    // Envía una solicitud AJAX al servidor con el texto de búsqueda y el criterio de ordenación
-    fetch('buscar_citas.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'search=' + encodeURIComponent(searchInput) + '&orden=' + encodeURIComponent(orden)
-    })
-    .then(response => response.text())
-    .then(data => {
-        // Muestra los resultados de la búsqueda
-        document.getElementById('resultados').innerHTML = data;
-    })
-    .catch(error => {
-        console.error('Error en la búsqueda:', error);
-        document.getElementById('resultados').innerHTML = '<p>Error al buscar citas.</p>';
-    });
-  }
-
-  // Agrega un evento de escucha al botón de búsqueda
-  document.getElementById('search-button').addEventListener('click', function() {
-    realizarBusqueda(); // Búsqueda con el orden por defecto (recientes)
+      citas.forEach(cita => {
+          const cliente = cita.querySelector('.marklued').textContent.toLowerCase();
+          if (cliente.includes(searchValue)) {
+              cita.style.display = '';  // Mostrar cita si coincide
+          } else {
+              cita.style.display = 'none';  // Ocultar cita si no coincide
+          }
+      });
   });
 
-  // Agrega un evento de escucha al campo de búsqueda para detectar la tecla "Enter"
-  document.getElementById('search-input').addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      event.preventDefault(); // Evita el comportamiento por defecto del formulario
-      realizarBusqueda(); // Llama a la función de búsqueda
-    }
-  });
-
-  // Agrega eventos de escucha para los botones de ordenación
+  // Ordenar citas por fecha
   document.getElementById('ordenar-recientes').addEventListener('click', function() {
-    realizarBusqueda('recientes'); // Llama a la función de búsqueda con el criterio "recientes"
+      ordenarCitas('recientes');
   });
 
   document.getElementById('ordenar-antiguas').addEventListener('click', function() {
-    realizarBusqueda('antiguas'); // Llama a la función de búsqueda con el criterio "antiguas"
+      ordenarCitas('antiguas');
   });
-</script>
+
+  function ordenarCitas(orden) {
+      const citas = Array.from(document.querySelectorAll('.cita-item'));
+      citas.sort((a, b) => {
+          const fechaA = new Date(a.querySelector('.fecha').textContent);
+          const fechaB = new Date(b.querySelector('.fecha').textContent);
+
+          return orden === 'recientes' ? fechaB - fechaA : fechaA - fechaB;
+      });
+
+      const container = document.getElementById('resultados');
+      container.innerHTML = '';
+      citas.forEach(cita => {
+          container.appendChild(cita);
+      });
+  }
+  </script>
 
 
 </body>
