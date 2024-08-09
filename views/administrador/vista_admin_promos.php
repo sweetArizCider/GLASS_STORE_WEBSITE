@@ -240,7 +240,6 @@ try {
                         <button type="submit" name="cambiar_estatus" value="cambiar_estatus" class="promo-status <?php echo htmlspecialchars($promo->estatus); ?>">
     <?php echo htmlspecialchars($promo->estatus); ?>
 </button>
-
                     </form>
                 </div>
             </div>
