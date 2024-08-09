@@ -86,7 +86,7 @@ if (!isset($_SESSION['nombre_producto'])) {
 
    $consulta_productos = "
     SELECT p.id_producto, p.nombre, p.precio, i.imagen
-    FROM PRODUCTOS p
+    FROM productos p
     LEFT JOIN IMAGEN i ON p.id_producto = i.producto
     WHERE p.estatus = 'activo'
     LIMIT ? OFFSET ?
@@ -366,8 +366,8 @@ if (!isset($_SESSION['nombre_producto'])) {
               <h5>Links</h5>
               <ul class="list-unstyled">
                   <li><a href="https://api.whatsapp.com/send?phone=8717843809" target="_blank" class="text-white">Contacto</a></li>
-                  <li><a href="./products.html" class="text-white">Productos</a></li>
-                  <li><a href="./citas.html" class="text-white">Agendar</a></li>
+                  <li><a href="/views/productos.php" class="text-white">Productos</a></li>
+                  <li><a href="/views/citas.php" class="text-white">Agendar</a></li>
                   <li><a href="#about-us" id="link-nosotros" class="text-white">Nosotros</a></li>
               </ul>
           </div>
