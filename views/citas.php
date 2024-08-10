@@ -35,6 +35,25 @@
             background-color: #007bff;
             color: white;
         }
+        .btn-volver {
+            background-color: white;
+            color: #132644;
+            border: 2px solid #132644;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-volver:hover {
+            background-color: #132644;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -52,6 +71,7 @@
 <form id="formCita" action="../scripts/agendarCita.php" method="post"> 
     <div class="row agendar">
         <div class="col-12 col-lg-5 back-left blue-left-citas">
+        <a href="../index.php" class="btn-volver">Volver</a>
         <div id="calen">
             <img src="../img/index/GLASS.png" alt="" class="logo-citas">
             <h2 class="subtitle-agendar">¿Qué día tendremos el gusto de atenderte?</h2>
@@ -244,7 +264,6 @@
         const today = new Date();
         let selectedDayElement = null;
 
-        // Simulando horas disponibles cargadas desde PHP
         const horasDisponibles = ['09:00','09:30','10:00','10:30','11:00','11:30',
         '12:00','12:30','13:00','13:30',
         '14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
@@ -298,16 +317,6 @@
             selectedDayElement = dayElement;
         }
 
-        function updateHoraDropdown(fecha) {
-            horaSelect.innerHTML = ''; // Limpiar opciones actuales
-            horasDisponibles.forEach(hora => {
-                const option = document.createElement('option');
-                option.value = hora;
-                option.textContent = hora;
-                horaSelect.appendChild(option);
-            });
-        }
-
         function updatePrevButton() {
             if (year === today.getFullYear() && month === today.getMonth()) {
                 prevMonthBtn.disabled = true;
@@ -333,6 +342,32 @@
             }
             renderCalendar();
         });
+
+        // para sacar las horas
+
+        function updateHoraDropdown(horariosOcupados) {
+        horaSelect.innerHTML = ''; // Limpiar opciones actuales
+        horasDisponibles.forEach(hora => {
+            if (!horariosOcupados.includes(hora)) {
+                const option = document.createElement('option');
+                option.value = hora;
+                option.textContent = hora;
+                horaSelect.appendChild(option);
+            }
+        });
+    }
+
+
+    function fetchHorariosDisponibles(fecha) {
+        fetch(`../scripts/getHorariosDisponibles.php?fecha=${fecha}`)
+            .then(response => response.json())
+            .then(horariosOcupados => {
+                updateHoraDropdown(horariosOcupados);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+
 
         renderCalendar();
     });
