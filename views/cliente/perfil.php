@@ -61,10 +61,45 @@
 
 
     <!-- Barra lateral -->
-    <div class="wrapper">
-        <aside id="sidebar">
-            <!-- Contenido de la barra lateral omitido para brevedad -->
-        </aside>
+<!--Barra lateral-->
+<div class="wrapper">
+    <aside id="sidebar">
+      <div class="d-flex">
+        <button class="toggle-btn" type="button">
+          <img src="../../img/index/menu.svg" alt="Menu">
+        </button>
+        <div class="sidebar-logo">
+          <a href="../../../">GLASS STORE</a>
+        </div>
+      </div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#inicio" aria-expanded="false" aria-controls="inicio">
+             <img src="../../img/instalador/home.svg" alt="Perfil">
+            <span>Inicio</span>
+          </a>
+          <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="../../../" class="sidebar-link">Volver al Inicio</a>
+            </li>
+          </ul>
+        </li>
+        
+      </ul>
+      <div class="sidebar-footer">
+        <a href="../../../" class="sidebar-link">
+          <img src="../../img/admin/home.svg" alt="Volver">
+          <span>Volver</span>
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+            <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+            <span>Cerrar Sesión</span>
+        </a>
+    </div>
+    </aside>
 
         <div class="main p-3">
             <div class="container mt-5">
