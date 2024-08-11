@@ -161,7 +161,7 @@ if (!isset($_SESSION['nombre_producto'])) {
                     
                     if (isset($_SESSION["nom_usuario"])) {
                         echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
-                        echo '<li><a class="dropdown-item" href="perfil.php">Perfil</a></li>';
+                        echo '<li><a class="dropdown-item" href="./cliente/perfil.php">Perfil</a></li>';
                         echo '<li><a class="dropdown-item" href="#" id="notification-icon" data-bs-toggle="modal" data-bs-target="#notificationModal">Notificaciones</a></li>';
                         $user = $_SESSION["nom_usuario"];
                         $consulta = "CALL roles_usuario(?)";

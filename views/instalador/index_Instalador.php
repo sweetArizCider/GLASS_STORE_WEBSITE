@@ -25,14 +25,14 @@ try {
         $nombreCompleto = htmlspecialchars($result->nombres . ' ' . $result->apellido_p);
 
         // Obtener el total de citas asignadas en el día
-        $stmt = $pdo->prepare("CALL ContarCitasDiaInstalador(?, CURDATE(), @total_citas_dia)");
+        $stmt = $pdo->prepare("CALL contarcitasdiainstalador(?, CURDATE(), @total_citas_dia)");
         $stmt->execute([$result->id_instalador]);
 
         $stmt = $pdo->query("SELECT @total_citas_dia AS total_citas_dia");
         $totalCitasDia = $stmt->fetch(PDO::FETCH_OBJ)->total_citas_dia;
 
         // Obtener el total de citas asignadas en el mes
-        $stmt = $pdo->prepare("CALL ContarCitasMesInstalador(?, MONTH(CURDATE()), YEAR(CURDATE()), @total_citas_mes)");
+        $stmt = $pdo->prepare("CALL contarcitasmesinstalador(?, MONTH(CURDATE()), YEAR(CURDATE()), @total_citas_mes)");
         $stmt->execute([$result->id_instalador]);
 
         $stmt = $pdo->query("SELECT @total_citas_mes AS total_citas_mes");
