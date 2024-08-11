@@ -304,45 +304,40 @@ if (isset($_GET['id'])) {
             <?php endif; ?>
            
             <div id="cotizacionContainer" class="mt-5">
-                <form id="cotizacionForm" method="POST" action="../scripts/guardarDetalleProducto.php" class="formPerfil">
-                    <input type="hidden" name="producto" value="<?php echo $productId; ?>">
-                    <input type="hidden" name="diseno" id="diseno">
-                    <div class="input-group">
-                        <div class="inputPerfil mb-3">
-                            <label class="labelPerfilProduct" for="alto" class="form-label">Alto (metros)</label>
-                            <input type="number" class="form-control inputPerfilProductoCont" id="alto" name="alto" step="0.01" max="10" required>
-                        </div>
-                        <div class="inputPerfil mb-3">
-                            <label class="labelPerfilProduct" for="ancho" class="form-label">Ancho (metros)</label>
-                            <input type="number" class="form-control inputPerfilProductoCont" id="ancho" name="ancho" step="0.01" max="10" required>
-                        </div>
-                        <div class="inputPerfil mb-3">
-                            <label class="labelPerfilProduct" for="cantidad" class="form-label">Cantidad</label>
-                            <input type="number" class="form-control inputPerfilProductoCont" id="cantidad" name="cantidad" max="10" required>
-                        </div>
-                        <div class="inputPerfil total mb-3">
-                            <label class="labelPerfilProduct" for="total" class="form-label">Precio Total</label>
-                            <input type="text" class="form-control inputPerfilProductoCont total" id="total" name="total" readonly>
-                        </div>
-                    </div>
-
-                    <?php if ($categoria === 'persianas') : ?>
-                        <div class="inputPerfil mb-3">
-                            <label class="labelPerfilProduct" for="color_accesorios">Color de Accesorios</label>
-                            <select name="color_accesorios" id="color_accesorios" class="form-control inputPerfilProductoCont">
-                                <option value="blanco">Blanco</option>
-                                <option value="negro">Negro</option>
-                                <option value="gris">Gris</option>
-                                <!-- Añadir más opciones según sea necesario -->
-                            </select>
-                        </div>
-                    <?php endif; ?>
-
-                    <div class="d-grid">
-                        <button type="submit" class="buttonPerfilProducto">Solicitar Cotización</button>
-                    </div>
-                </form>
+    <form id="cotizacionForm" method="POST" action="../scripts/guardarDetalleProducto.php" class="formPerfil">
+        <input type="hidden" name="producto" value="<?php echo $productId; ?>">
+        <input type="hidden" name="diseno" id="diseno">
+        <div class="input-group">
+            <?php if (strpos(strtolower($producto->nombre), 'pasamanos') !== false) : ?>
+                <div class="inputPerfil mb-3">
+                    <label class="labelPerfilProduct" for="largo" class="form-label">Largo (metros)</label>
+                    <input type="number" class="form-control inputPerfilProductoCont" id="largo" name="largo" step="0.01" max="50" required>
+                </div>
+            <?php else : ?>
+                <div class="inputPerfil mb-3">
+                    <label class="labelPerfilProduct" for="alto" class="form-label">Alto (metros)</label>
+                    <input type="number" class="form-control inputPerfilProductoCont" id="alto" name="alto" step="0.01" max="10" required>
+                </div>
+                <div class="inputPerfil mb-3">
+                    <label class="labelPerfilProduct" for="ancho" class="form-label">Ancho (metros)</label>
+                    <input type="number" class="form-control inputPerfilProductoCont" id="ancho" name="ancho" step="0.01" max="10" required>
+                </div>
+            <?php endif; ?>
+            <div class="inputPerfil mb-3">
+                <label class="labelPerfilProduct" for="cantidad" class="form-label">Cantidad</label>
+                <input type="number" class="form-control inputPerfilProductoCont" id="cantidad" name="cantidad" max="10" required>
             </div>
+            <div class="inputPerfil total mb-3">
+                <label class="labelPerfilProduct" for="total" class="form-label">Precio Total</label>
+                <input type="text" class="form-control inputPerfilProductoCont total" id="total" name="total" readonly>
+            </div>
+        </div>
+
+        <div class="d-grid">
+            <button type="submit" class="buttonPerfilProducto">Solicitar Cotización</button>
+        </div>
+    </form>
+</div>
         </div>
     </div>
 </div>
@@ -418,33 +413,61 @@ if (isset($_GET['id'])) {
 document.addEventListener('DOMContentLoaded', function () {
     const altoInput = document.getElementById('alto');
     const anchoInput = document.getElementById('ancho');
+    const largoInput = document.getElementById('largo');
     const cantidadInput = document.getElementById('cantidad');
     const totalInput = document.getElementById('total');
     const disenoInput = document.getElementById('diseno');
     const precioPorMetroCuadrado = <?php echo $producto->precio; ?>;
 
     function actualizarPrecioTotal() {
-        let alto = parseFloat(altoInput.value) || 0;
-        let ancho = parseFloat(anchoInput.value) || 0;
+        let total = 0;
         let cantidad = parseInt(cantidadInput.value) || 0;
 
-        // Asegurarse de que los valores no excedan 10
-        alto = alto > 10 ? 10 : alto;
-        ancho = ancho > 10 ? 10 : ancho;
-        cantidad = cantidad > 10 ? 10 : cantidad;
+        if (largoInput) {
+            let largo = parseFloat(largoInput.value) || 0;
+            largo = Math.max(0, largo);
+            largo = largo > 50 ? 50 : largo;
+            cantidad = cantidad > 10 ? 10 : cantidad;
+            largoInput.value = largo;
+            cantidadInput.value = cantidad;
+            total = largo * precioPorMetroCuadrado * cantidad;
+        } else {
+            let alto = parseFloat(altoInput.value) || 0;
+            let ancho = parseFloat(anchoInput.value) || 0;
+            alto = Math.max(0, alto);
+            ancho = Math.max(0, ancho);
+            cantidad = Math.max(0, cantidad);
+            alto = alto > 50 ? 50 : alto;
+            ancho = ancho > 50 ? 50 : ancho;
+            cantidad = cantidad > 10 ? 10 : cantidad;
+            altoInput.value = alto;
+            anchoInput.value = ancho;
+            cantidadInput.value = cantidad;
+            const metrosCuadrados = alto * ancho;
+            total = (metrosCuadrados / 5) * precioPorMetroCuadrado * cantidad;
+        }
 
-        altoInput.value = alto;
-        anchoInput.value = ancho;
-        cantidadInput.value = cantidad;
-
-        const metrosCuadrados = alto * ancho;
-        const precioTotal = metrosCuadrados * precioPorMetroCuadrado * cantidad;
-        totalInput.value = precioTotal.toFixed(2) + ' MXN';
+        totalInput.value = total.toFixed(2) + ' MXN';
     }
 
-    altoInput.addEventListener('input', actualizarPrecioTotal);
-    anchoInput.addEventListener('input', actualizarPrecioTotal);
-    cantidadInput.addEventListener('input', actualizarPrecioTotal);
+    function validarInput(event) {
+        let value = event.target.value;
+        if (parseFloat(value) < 0) {
+            value = 0;
+        }
+        const partes = value.split('.');
+        if (partes.length > 1 && partes[1].length > 2) {
+            partes[1] = partes[1].slice(0, 2);
+            value = partes.join('.');
+        }
+        event.target.value = value;
+        actualizarPrecioTotal();
+    }
+
+    if (altoInput) altoInput.addEventListener('blur', validarInput);
+    if (anchoInput) anchoInput.addEventListener('blur', validarInput);
+    if (largoInput) largoInput.addEventListener('blur', validarInput);
+    cantidadInput.addEventListener('blur', validarInput);
 
     document.querySelectorAll('.design-image').forEach(function(image) {
         image.addEventListener('click', function() {
@@ -573,6 +596,5 @@ $(document).ready(function() {
     }
 });
 </script>
-
 </body>
 </html>
