@@ -83,6 +83,7 @@ $db->desconectarDB();
   </div>
 
  <!--Barra lateral-->
+ <!--Barra lateral-->
  <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
@@ -182,13 +183,13 @@ $db->desconectarDB();
             </li>
           </ul>
         </li>
-        <div class="sidebar-footer">
+        <div class="sidebar-itemr">
         <a href="../../index.php" class="sidebar-link">
-          <img src="../../img/index/home.svg" alt="Volver">
+          <img src="../../img/admin/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
       </div>
-      <div class="sidebar-footer">
+      <div class="sidebar-item">
         <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
         <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
         <span>Cerrar Sesión</span>
@@ -197,6 +198,9 @@ $db->desconectarDB();
       </ul>
       
     </aside>
+
+
+    
     <div class="main p-3">
       <div class="text-center">
         <div class="busqueda mx-auto">

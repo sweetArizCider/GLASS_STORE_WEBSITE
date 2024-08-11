@@ -79,8 +79,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
- <!--Barra lateral-->
- <div class="wrapper">
+   <!--Barra lateral-->
+   <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -179,13 +179,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
             </li>
           </ul>
         </li>
-        <div class="sidebar-footer">
+        <div class="sidebar-itemr">
         <a href="../../index.php" class="sidebar-link">
-          <img src="../../img/index/home.svg" alt="Volver">
+          <img src="../../img/admin/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
       </div>
-      <div class="sidebar-footer">
+      <div class="sidebar-item">
         <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
         <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
         <span>Cerrar Sesión</span>
@@ -196,6 +196,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
     </aside>
 
 
+    
     <div class="main p-3">
       <div class="text-center">
         <div class="busqueda mx-auto">
