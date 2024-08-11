@@ -191,50 +191,56 @@ foreach ($detalles_citas as $detalle) {
 
         <!-- Acordeón para detalles de las citas -->
         <?php foreach ($citas as $id_cita => $cita): ?>
-            <div class="secc-sub-general" style="margin-bottom:1em;">
-            <p><span style="font-size:.8em;">Elaborado por: <span class="bueld"> <?php echo htmlspecialchars($cita['nombre_instalador']); ?></span></span></p>
-                
-                <h2 class="card-custom-header" id="heading<?php echo $id_cita; ?>">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $id_cita; ?>" aria-expanded="false" aria-controls="collapse<?php echo $id_cita; ?>">
-                        <span class="marklued"style="font-size:1.1em; margin-top:-1em;">
-                            <?php echo htmlspecialchars($cita['nombre_cliente']); ?>   </span>
-                            
-                      
-                    </button>
-                </h2>
-                
-                <div id="collapse<?php echo $id_cita; ?>" class="accordion-collapse collapse" aria-labelledby="heading<?php echo $id_cita; ?>" data-bs-parent="#accordionExample">
-                    <div class="card-custom-body">
+    <div class="secc-sub-general" style="margin-bottom:1em;">
+        <p><span style="font-size:.8em;">Elaborado por: <span class="bueld"><?php echo htmlspecialchars($cita['nombre_instalador']); ?></span></span></p>
+        
+        <h2 class="card-custom-header" id="heading<?php echo $id_cita; ?>">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $id_cita; ?>" aria-expanded="false" aria-controls="collapse<?php echo $id_cita; ?>">
+                <span class="marklued" style="font-size:1.1em; margin-top:-1em;">
+                    <?php echo htmlspecialchars($cita['nombre_cliente']); ?>
+                </span>
+            </button>
+        </h2>
+        
+        <div id="collapse<?php echo $id_cita; ?>" class="accordion-collapse collapse" aria-labelledby="heading<?php echo $id_cita; ?>" data-bs-parent="#accordionExample">
+            <div class="card-custom-body">
+                <form method="post" action="../../scripts/administrador/procesar_reportes.php">
+                    <?php 
+                    $subtotal_monto = 0;
+                    $subtotal_extras = 0;
+                    ?>
+                    <?php foreach ($cita['detalles'] as $detalle): ?>
+                        <h5 class="card-title"><?php echo htmlspecialchars($detalle->producto); ?></h5>
+                        <p class="card-text"><strong>Alto:</strong> <?php echo htmlspecialchars($detalle->alto); ?></p>
+                        <p class="card-text"><strong>Largo:</strong> <?php echo htmlspecialchars($detalle->largo); ?></p>
+                        <p class="card-text"><strong>Cantidad:</strong> <?php echo htmlspecialchars($detalle->cantidad); ?></p>
+                        <p class="card-text"><strong>Monto:</strong> <?php echo htmlspecialchars($detalle->monto); ?></p>
+                        <p class="card-text"><strong>Características:</strong> <?php echo htmlspecialchars($detalle->caracteristicas); ?></p>
+                        <p class="card-text"><strong>Extras:</strong> <?php echo htmlspecialchars($detalle->extras); ?></p>
+                        <p class="card-text"><strong>Notas:</strong> <?php echo htmlspecialchars($detalle->notas); ?></p>
+
                         <?php 
-                        $subtotal_monto = 0;
-                        $subtotal_extras = 0;
+                        $subtotal_monto += $detalle->monto;
+                        $subtotal_extras += $detalle->extras;
                         ?>
-                        <?php foreach ($cita['detalles'] as $detalle): ?>
-                            <h5 class="card-title"><?php echo htmlspecialchars($detalle->producto); ?></h5>
-                            <p class="card-text"><strong>Alto:</strong> <?php echo htmlspecialchars($detalle->alto); ?></p>
-                            <p class="card-text"><strong>Largo:</strong> <?php echo htmlspecialchars($detalle->largo); ?></p>
-                            <p class="card-text"><strong>Cantidad:</strong> <?php echo htmlspecialchars($detalle->cantidad); ?></p>
-                            <p class="card-text"><strong>Monto:</strong> <?php echo htmlspecialchars($detalle->monto); ?></p>
-                            <p class="card-text"><strong>Características:</strong> <?php echo htmlspecialchars($detalle->caracteristicas); ?></p>
-                            <p class="card-text"><strong>Extras:</strong> <?php echo htmlspecialchars($detalle->extras); ?></p>
-                            <p class="card-text"><strong>Notas:</strong> <?php echo htmlspecialchars($detalle->notas); ?></p>
-                            
-                            <?php 
-                           
-                            $subtotal_monto += $detalle->monto;
-                            $subtotal_extras += $detalle->extras;
-                            ?>
-                            <button class="btn btn-secondary filters">Aceptar</button>
-                            <button class="btn btn-secondary filters" style="background: #6e6e6e;">Anterior</button>
-                            <hr>
-                        <?php endforeach; ?>
-                        <!-- Mostrar subtotal -->
                         
-                        <p class="card-text"><strong>Total:</strong> <?php echo htmlspecialchars($subtotal_monto + $subtotal_extras); ?></p>
-                    </div>
-                </div>
+                        <!-- Checkboxes para seleccionar reportes -->
+                        <input type="checkbox" name="reportes_seleccionados[]" value="<?php echo htmlspecialchars($detalle->id_reporte); ?>">
+                        <hr>
+                    <?php endforeach; ?>
+
+                    <!-- Mostrar subtotal -->
+                    <p class="card-text"><strong>Total:</strong> <?php echo htmlspecialchars($subtotal_monto + $subtotal_extras); ?></p>
+
+                    <!-- Botón para enviar reportes aceptados en este acordeón -->
+                    <input type="hidden" name="id_cita" value="<?php echo htmlspecialchars($id_cita); ?>">
+                    <button type="submit" class="btn btn-primary">Procesar Reportes</button>
+                </form>
             </div>
-        <?php endforeach; ?>
+        </div>
+    </div>
+<?php endforeach; ?>
+
 
       </div>
     </div>

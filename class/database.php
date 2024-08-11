@@ -8,7 +8,7 @@ class database{
     private $PDOlocal;
     private $user = 'arizpe1';
     private $password = "arizpe1";
-    private $server = "mysql:host=35.91.189.133;dbname=glass_store_ana";
+    private $server = "mysql:host=54.214.99.251;dbname=glass_store_ana";
 
     // le ponemos la sig cadena: host, base de datos
     function conectarDB()
@@ -191,6 +191,7 @@ class database{
             return [];
         }
     }
+
     
 
     function ejecutarProcedimiento($query, $params = []) {
@@ -312,6 +313,64 @@ class database{
         }
     }
     
+    public function ObtenerProductosPredeterminados($excluidos = []) {
+        try {
+            $query = "
+                SELECT DISTINCT P.id_producto, P.nombre, P.precio, 
+                    (SELECT I.imagen 
+                     FROM imagen I 
+                     WHERE I.producto = P.id_producto 
+                     LIMIT 1) AS imagen
+                FROM productos P
+                WHERE P.estatus = 'activo'
+                " . (!empty($excluidos) ? "AND P.id_producto NOT IN (" . implode(',', $excluidos) . ")" : "") . "
+                ORDER BY RAND()
+                LIMIT 16
+            ";
+            $stmt = $this->PDOlocal->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_OBJ); // Devuelve los resultados como objetos
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return []; // Devuelve un array vacío en caso de error
+        } 
+    }
+    
+    public function buscarProductos($termino) {
+    
+        try {
+            $query = "SELECT id_producto, nombre FROM PRODUCTOS WHERE nombre LIKE :termino AND estatus = 'activo' LIMIT 10";
+            $stmt = $this->PDOlocal->prepare($query);
+            $termino = "%$termino%";
+            $stmt->bindParam(':termino', $termino, PDO::PARAM_STR);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_OBJ); // Devuelve los resultados como objetos
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return [];
+        }
+    }
 
+    function ejecutarProcedimiento2($query, $params = []) {
+        $this->conectarDB();
+        try {
+            $stmt = $this->PDOlocal->prepare($query);
+            // Ajustar los índices para que comiencen en 1
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key + 1, $value);
+            }
+            $stmt->execute();
+            return $stmt->rowCount(); // Devolver el número de filas afectadas
+        } catch (PDOException $e) {
+            echo "<div class='alert alert-danger'>Error en la ejecución del procedimiento: " . $e->getMessage() . "</div>";
+            return 0;
+        } finally {
+            $this->desconectarDB();
+        }
+    }
+    
+    
+    
+    
 }
 ?>

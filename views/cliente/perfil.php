@@ -37,10 +37,10 @@
 
         // Obtener los datos del usuario
         $cadena = "CALL obtenerdatosusuario(:nombre_usuario)";
+
         $params = [':nombre_usuario' => $nombre_usuario];
         $stmt = $db->ejecutarcita($cadena, $params);
 
-        // Verificar si se obtuvieron resultados
         if ($stmt && $stmt->rowCount() > 0) {
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
             $nombres = $usuario['nombres'];
@@ -66,7 +66,6 @@
             <!-- Contenido de la barra lateral omitido para brevedad -->
         </aside>
 
-        <!-- Contenido principal -->
         <div class="main p-3">
             <div class="container mt-5">
                 <h2>Editar Perfil</h2>
@@ -137,7 +136,6 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -145,6 +143,16 @@
 
         hamBurger.addEventListener("click", function () {
             document.querySelector("#sidebar").classList.toggle("expand");
+        });
+
+        document.getElementById("editProfileForm").addEventListener("submit", function(event) {
+            const nuevaContrasena = document.getElementById("nueva_contrasena").value;
+            const confirmarContrasena = document.getElementById("confirmar_contrasena").value;
+
+            if (nuevaContrasena !== confirmarContrasena) {
+                event.preventDefault();
+                alert("Las contraseñas no coinciden.");
+            }
         });
     </script>
 </body>
