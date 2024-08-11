@@ -110,7 +110,6 @@ if (isset($_GET['id'])) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -290,74 +289,60 @@ if (isset($_GET['id'])) {
             <h2 class="precioPerfil">$<?php echo number_format($producto->precio, 2); ?> MXN</h2>
             <p class="descripcionPerfil"><?php echo htmlspecialchars($producto->descripcion); ?></p>
            
-
             <?php if (!empty($disenos)) : ?>
                 <h5 class="disenosPerfil">Diseños disponibles:</h5>
                 <div class="design-gallery">
-    <?php foreach ($disenos as $diseno) : ?>
-        <div class="design-item">
-            <img src="../img/disenos/<?php echo htmlspecialchars($diseno->file_path); ?>" 
-                 alt="<?php echo htmlspecialchars($diseno->codigo); ?>" 
-                 class="design-image" 
-                 data-id="<?php echo $diseno->id_diseno; ?>">
-        </div>
-    <?php endforeach; ?>
-</div>
-
-
-
+                    <?php foreach ($disenos as $diseno) : ?>
+                        <div class="design-item">
+                            <img src="../img/disenos/<?php echo htmlspecialchars($diseno->file_path); ?>" 
+                                 alt="<?php echo htmlspecialchars($diseno->codigo); ?>" 
+                                 class="design-image" 
+                                 data-id="<?php echo $diseno->id_diseno; ?>">
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
            
-           
-            <div id="cotizacionContainer" class=" mt-5">
-    <form id="cotizacionForm" method="POST" action="../scripts/guardarDetalleProducto.php" class="formPerfil">
-        
-        <input type="hidden" name="producto" value="<?php echo $productId; ?>">
-        <input type="hidden" name="diseno" id="diseno">
-            <div class="input-group">
-                <div class="inputPerfil mb-3">
-                <label class="labelPerfilProduct" for="alto" class="form-label">Alto (metros)</label>
-                    <input  type="number" class="form-control inputPerfilProductoCont " id="alto" name="alto" step="0.01" required>
-                   
-                </div>
-                <div class="inputPerfil mb-3">
-                <label class="labelPerfilProduct" for="ancho" class="form-label">Ancho (metros)</label>
-                     <input type="number" class="form-control inputPerfilProductoCont" id="ancho" name="ancho" step="0.01" required>
-                    
-                </div>
-                <div class="inputPerfil mb-3">
-                <label class="labelPerfilProduct" for="cantidad" class="form-label">Cantidad</label>
-                    <input type="number" class="form-control inputPerfilProductoCont " id="cantidad" name="cantidad" required>
-            
-        </div>
-        <div class="inputPerfil total mb-3">
-        <label class="labelPerfilProduct" for="total" class="form-label">Precio Total</label>
-            <input type="text" class="form-control inputPerfilProductoCont total" id="total" name="total" readonly>
-            
-        </div>
-            </div>
-        
-       
-        
+            <div id="cotizacionContainer" class="mt-5">
+                <form id="cotizacionForm" method="POST" action="../scripts/guardarDetalleProducto.php" class="formPerfil">
+                    <input type="hidden" name="producto" value="<?php echo $productId; ?>">
+                    <input type="hidden" name="diseno" id="diseno">
+                    <div class="input-group">
+                        <div class="inputPerfil mb-3">
+                            <label class="labelPerfilProduct" for="alto" class="form-label">Alto (metros)</label>
+                            <input type="number" class="form-control inputPerfilProductoCont" id="alto" name="alto" step="0.01" max="10" required>
+                        </div>
+                        <div class="inputPerfil mb-3">
+                            <label class="labelPerfilProduct" for="ancho" class="form-label">Ancho (metros)</label>
+                            <input type="number" class="form-control inputPerfilProductoCont" id="ancho" name="ancho" step="0.01" max="10" required>
+                        </div>
+                        <div class="inputPerfil mb-3">
+                            <label class="labelPerfilProduct" for="cantidad" class="form-label">Cantidad</label>
+                            <input type="number" class="form-control inputPerfilProductoCont" id="cantidad" name="cantidad" max="10" required>
+                        </div>
+                        <div class="inputPerfil total mb-3">
+                            <label class="labelPerfilProduct" for="total" class="form-label">Precio Total</label>
+                            <input type="text" class="form-control inputPerfilProductoCont total" id="total" name="total" readonly>
+                        </div>
+                    </div>
 
-        <?php if ($categoria === 'persianas') : ?>
-            <div class="inputPerfil mb-3">
-            <label class="labelPerfilProduct" for="color_accesorios">Color de Accesorios</label>
-                <select  name="color_accesorios" id="color_accesorios" class="form-control inputPerfilProductoCont">
-                    <option value="blanco">Blanco</option>
-                    <option value="negro">Negro</option>
-                    <option value="gris">Gris</option>
-                    <!-- Añadir más opciones según sea necesario -->
-                </select>
-                
-            </div>
-        <?php endif; ?>
+                    <?php if ($categoria === 'persianas') : ?>
+                        <div class="inputPerfil mb-3">
+                            <label class="labelPerfilProduct" for="color_accesorios">Color de Accesorios</label>
+                            <select name="color_accesorios" id="color_accesorios" class="form-control inputPerfilProductoCont">
+                                <option value="blanco">Blanco</option>
+                                <option value="negro">Negro</option>
+                                <option value="gris">Gris</option>
+                                <!-- Añadir más opciones según sea necesario -->
+                            </select>
+                        </div>
+                    <?php endif; ?>
 
-        <div class="d-grid">
-            <button type="submit" class=" buttonPerfilProducto">Solicitar Cotización</button>
-        </div>
-    </form>
-</div>
+                    <div class="d-grid">
+                        <button type="submit" class="buttonPerfilProducto">Solicitar Cotización</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -439,9 +424,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const precioPorMetroCuadrado = <?php echo $producto->precio; ?>;
 
     function actualizarPrecioTotal() {
-        const alto = parseFloat(altoInput.value) || 0;
-        const ancho = parseFloat(anchoInput.value) || 0;
-        const cantidad = parseInt(cantidadInput.value) || 0;
+        let alto = parseFloat(altoInput.value) || 0;
+        let ancho = parseFloat(anchoInput.value) || 0;
+        let cantidad = parseInt(cantidadInput.value) || 0;
+
+        // Asegurarse de que los valores no excedan 10
+        alto = alto > 10 ? 10 : alto;
+        ancho = ancho > 10 ? 10 : ancho;
+        cantidad = cantidad > 10 ? 10 : cantidad;
+
+        altoInput.value = alto;
+        anchoInput.value = ancho;
+        cantidadInput.value = cantidad;
 
         const metrosCuadrados = alto * ancho;
         const precioTotal = metrosCuadrados * precioPorMetroCuadrado * cantidad;
@@ -463,14 +457,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-
-  // Cerrar el modal
-  function closeForm() {
-    document.getElementById('login-form').style.display = 'none';
-  }
-
-
- 
 $(document).ready(function() {
     $('#favoritosModal').on('shown.bs.modal', function () {
         cargarFavoritos();
@@ -512,7 +498,6 @@ $(document).ready(function() {
         });
     }
 });
-
 
 $(document).ready(function() {
     $('#carritoModal').on('shown.bs.modal', function () {
@@ -568,28 +553,26 @@ $(document).ready(function() {
     }
 
     function actualizarEstadoProductos() {
-    $('.producto-checkbox:checked').each(function() {
-        var idDetalleProducto = $(this).val(); // Este valor debe ser el ID del detalle del producto
-        $.ajax({
-            url: '../scripts/actualizar_carrito.php',
-            method: 'POST',
-            data: {
-                id_detalle_producto: idDetalleProducto
-            },
-            success: function(response) {
-                console.log('Producto actualizado:', response);
-                window.location.href = 'citas.php';
-            },
-            error: function(error) {
-                console.error('Error al actualizar el producto:', error);
-            }
+        $('.producto-checkbox:checked').each(function() {
+            var idDetalleProducto = $(this).val(); // Este valor debe ser el ID del detalle del producto
+            $.ajax({
+                url: '../scripts/actualizar_carrito.php',
+                method: 'POST',
+                data: {
+                    id_detalle_producto: idDetalleProducto
+                },
+                success: function(response) {
+                    console.log('Producto actualizado:', response);
+                    window.location.href = 'citas.php';
+                },
+                error: function(error) {
+                    console.error('Error al actualizar el producto:', error);
+                }
+            });
         });
-    });
-}
-
+    }
 });
 </script>
-
 
 </body>
 </html>
