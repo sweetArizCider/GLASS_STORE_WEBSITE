@@ -187,7 +187,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
               ESTILO Y DISTINCIÓN
           </h1>
           <p>Dale un toque único a tu espacio con nuestros <br> productos de alta calidad. Soluciones elegantes y <br> personalizadas para tu hogar o negocio.</p>
-          <div id="btn1" ><a href="./views/productos.php" ><button class="banner-boton" >Ver Porductos</button></a></div>
+          <div id="btn1" ><a href="./views/productos.php" ><button class="banner-boton" >Ver Productos</button></a></div>
         </div> 
       </div>
      </main>

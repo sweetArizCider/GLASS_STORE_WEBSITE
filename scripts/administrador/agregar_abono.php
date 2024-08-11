@@ -14,8 +14,12 @@
     $db->conectarDB();
     extract($_POST);
 
+    // Obtener la fecha actual para p_fecha_pago
+    $fecha_pago = date('Y-m-d H:i:s');
+
     try {
-        $cadena = "call registrar_abono('$id_venta', '$abono');";
+        // Llamada al procedimiento almacenado con los 3 parámetros requeridos
+        $cadena = "call registrar_abono('$id_venta', '$abono', '$fecha_pago');";
         $db->ejecuta($cadena);
         $db->desconectarDB();
         echo "<div class='alert alert-success'> ABONO AÑADIDO CORRECTAMENTE</div>";
@@ -27,3 +31,4 @@
 </div>
 </body>
 </html>
+
