@@ -36,7 +36,7 @@
         $db->conectarDB();
 
         // Obtener los datos del usuario
-        $cadena = "CALL ObtenerDatosUsuario(:nombre_usuario)";
+        $cadena = "CALL obtenerdatosusuario(:nombre_usuario)";
         $params = [':nombre_usuario' => $nombre_usuario];
         $stmt = $db->ejecutarcita($cadena, $params);
 

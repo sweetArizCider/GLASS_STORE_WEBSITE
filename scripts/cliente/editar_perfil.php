@@ -18,7 +18,7 @@ if (isset($_SESSION["nom_usuario"])) {
     $db->conectarDB();
 
     try {
-        $cadena = "CALL ObtenerIdUsuarioPorNombre(:nombre_usuario)";
+        $cadena = "CALL obteneridusuariopornombre(:nombre_usuario)";
         $params = [':nombre_usuario' => $nombre_usuario_actual];
         $stmt = $db->ejecutarcita($cadena, $params);
         $id_usuario = $stmt->fetchColumn();
@@ -35,7 +35,7 @@ if (isset($_SESSION["nom_usuario"])) {
         $confirmar_contrasena = $_POST['confirmar_contrasena'] ?? null;
 
         if ($contrasena_actual && $contrasena_nueva && $confirmar_contrasena) {
-            $cadena = "SELECT contrasena FROM USUARIOS WHERE id_usuario = :id_usuario";
+            $cadena = "SELECT contrasena FROM usuarios WHERE id_usuario = :id_usuario";
             $params = [':id_usuario' => $id_usuario];
             $stmt = $db->ejecutarcita($cadena, $params);
             $contrasena_db = $stmt->fetchColumn();
@@ -44,7 +44,7 @@ if (isset($_SESSION["nom_usuario"])) {
             if (hash_equals($contrasena_db, $contrasena_actual_hash)) {
                 if ($contrasena_nueva === $confirmar_contrasena) {
                     $contrasena_nueva_hash = hash('sha256', $contrasena_nueva);
-                    $cadena = "CALL ActualizarUsuario(:id_usuario, :nombre_usuario, :nombres, :apellido_p, :apellido_m, :correo, :telefono, :contrasena)";
+                    $cadena = "CALL actualizarusuario(:id_usuario, :nombre_usuario, :nombres, :apellido_p, :apellido_m, :correo, :telefono, :contrasena)";
                     $params = [
                         ':id_usuario' => $id_usuario,
                         ':nombre_usuario' => $nombre_usuario_nuevo,
@@ -66,7 +66,7 @@ if (isset($_SESSION["nom_usuario"])) {
                 exit;
             }
         } else {
-            $cadena = "CALL ActualizarUsuario(:id_usuario, :nombre_usuario, :nombres, :apellido_p, :apellido_m, :correo, :telefono, NULL)";
+            $cadena = "CALL actualizarUsuario(:id_usuario, :nombre_usuario, :nombres, :apellido_p, :apellido_m, :correo, :telefono, NULL)";
             $params = [
                 ':id_usuario' => $id_usuario,
                 ':nombre_usuario' => $nombre_usuario_nuevo,
