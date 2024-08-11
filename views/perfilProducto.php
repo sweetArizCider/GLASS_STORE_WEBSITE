@@ -1,106 +1,107 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include '../class/database.php';
+
 $id_usuario = 0;
 $notificaciones = [];
 
+// Crear conexión a la base de datos
+$db = new database();
+$db->conectarDB();
+$pdo = $db->getPDO();
+
+if ($pdo === null) {
+    die("Error al conectar a la base de datos.");
+}
 
 if (isset($_SESSION["nom_usuario"])) {
     $user = $_SESSION["nom_usuario"];
-
-    // Crear conexión a la base de datos
-    $db = new database();
-    $db->conectarDB();
-
-    $pdo = $db->getPDO();
 
     // Consulta para obtener el rol del usuario basado en el nombre de usuario
     $consulta_rol = "CALL roles_usuario(?)";
     $params_rol = [$user];
     $resultado_rol = $db->seleccionar($consulta_rol, $params_rol);
 
-    if ($resultado_rol && !empty($resultado_rol)) {
-        $nombre_rol = $resultado_rol[0]->nombre_rol;
+    if (!$resultado_rol) {
+        die("Error al obtener el rol del usuario.");
+    }
 
-        // Consulta para obtener los IDs del cliente e instalador basado en el nombre de usuario
-        $consulta_ids = "CALL obtener_id_por_nombre_usuario(?)";
-        $params_ids = [$user];
-        $resultado_ids = $db->seleccionar($consulta_ids, $params_ids);
+    $nombre_rol = $resultado_rol[0]->nombre_rol;
 
-        if ($resultado_ids && !empty($resultado_ids)) {
-            $fila = $resultado_ids[0];
+    // Consulta para obtener los IDs del cliente e instalador basado en el nombre de usuario
+    $consulta_ids = "CALL obtener_id_por_nombre_usuario(?)";
+    $params_ids = [$user];
+    $resultado_ids = $db->seleccionar($consulta_ids, $params_ids);
 
-            if ($nombre_rol == 'cliente' && isset($fila->id_cliente)) {
-                $id_cliente = $fila->id_cliente;
-                $id_usuario = $id_cliente;
+    if (!$resultado_ids) {
+        die("Error al obtener los IDs.");
+    }
 
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
-                $paramsNotificaciones = [$id_cliente];
-                $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
+    $fila = $resultado_ids[0];
 
-            } elseif ($nombre_rol == 'instalador' && isset($fila->id_instalador)) {
-                $id_instalador = $fila->id_instalador;
-                $id_usuario = $id_instalador;
+    if ($nombre_rol == 'cliente' && isset($fila->id_cliente)) {
+        $id_cliente = $fila->id_cliente;
+        $id_usuario = $id_cliente;
 
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_instalador WHERE instalador = ?";
-                $paramsNotificaciones = [$id_instalador];
-                $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
-            }
-        }
+        $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
+        $paramsNotificaciones = [$id_cliente];
+        $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
+
+    } elseif ($nombre_rol == 'instalador' && isset($fila->id_instalador)) {
+        $id_instalador = $fila->id_instalador;
+        $id_usuario = $id_instalador;
+
+        $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_instalador WHERE instalador = ?";
+        $paramsNotificaciones = [$id_instalador];
+        $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
     }
 }
 
-$productos_espera = [];
-if ($id_usuario != 0) {
-    // Obtener los detalles del producto en espera
-    $consulta_productos = "CALL carrito(?)";
-    $params_productos = [$id_usuario];
-    $productos_espera = $db->seleccionar($consulta_productos, $params_productos);
-}
-
-function esReciente($fecha){
-    $fechaNotif = new DateTime($fecha);
-    $fechaActual = new DateTime();
-    $intervalo = $fechaActual->diff($fechaNotif);
-    return ($intervalo->d < 30); // Considera reciente si es de los últimos 30 días
-}
-
-$notificacionesRecientes = array_filter($notificaciones, function($notif) {
-    return esReciente($notif->fecha);
-});
-
-
-
+// Verificar si el ID del producto está presente en la URL
 if (isset($_GET['id'])) {
     $productId = $_GET['id'];
 
+    // Consultar los detalles del producto
     $stmt = $pdo->prepare("SELECT * FROM productos WHERE id_producto = :id");
-    $stmt->bindParam(':id', $productId, PDO::PARAM_INT);
-    $stmt->execute();
-    $producto = $stmt->fetch(PDO::FETCH_OBJ);
+    if ($stmt) {
+        $stmt->bindParam(':id', $productId, PDO::PARAM_INT);
+        $stmt->execute();
+        $producto = $stmt->fetch(PDO::FETCH_OBJ);
 
-    if ($producto) {
-        $stmtImg = $pdo->prepare("SELECT * FROM imagen WHERE producto = :id");
-        $stmtImg->bindParam(':id', $productId, PDO::PARAM_INT);
-        $stmtImg->execute();
-        $imagenes = $stmtImg->fetchAll(PDO::FETCH_OBJ);
+        if ($producto) {
+            // Consultar imágenes del producto
+            $stmtImg = $pdo->prepare("SELECT * FROM imagen WHERE producto = :id");
+            $stmtImg->bindParam(':id', $productId, PDO::PARAM_INT);
+            $stmtImg->execute();
+            $imagenes = $stmtImg->fetchAll(PDO::FETCH_OBJ);
 
-        $stmtCategory = $pdo->prepare("
-            SELECT c.nombre
-            FROM categorias c
-            JOIN productos p ON c.id_categoria = p.categoria
-            WHERE p.id_producto = :id
-        ");
-        $stmtCategory->bindParam(':id', $productId, PDO::PARAM_INT);
-        $stmtCategory->execute();
-        $categoria = $stmtCategory->fetchColumn();
+            // Consultar la categoría del producto
+            $stmtCategory = $pdo->prepare("
+                SELECT c.nombre
+                FROM categorias c
+                JOIN productos p ON c.id_categoria = p.categoria
+                WHERE p.id_producto = :id
+            ");
+            $stmtCategory->bindParam(':id', $productId, PDO::PARAM_INT);
+            $stmtCategory->execute();
+            $categoria = $stmtCategory->fetchColumn();
 
-        $stmtDisenos = $pdo->prepare("SELECT id_diseno, codigo, file_path FROM disenos WHERE muestrario = :id");
-        $stmtDisenos->bindParam(':id', $productId, PDO::PARAM_INT);
-        $stmtDisenos->execute();
-        $disenos = $stmtDisenos->fetchAll(PDO::FETCH_OBJ);
+            // Consultar diseños del producto
+            $stmtDisenos = $pdo->prepare("SELECT id_diseno, codigo, file_path FROM disenos WHERE muestrario = :id");
+            $stmtDisenos->bindParam(':id', $productId, PDO::PARAM_INT);
+            $stmtDisenos->execute();
+            $disenos = $stmtDisenos->fetchAll(PDO::FETCH_OBJ);
+
+        } else {
+            echo "Producto no encontrado.";
+            exit;
+        }
     } else {
-        echo "Producto no encontrado.";
+        echo "Error al preparar la consulta del producto.";
         exit;
     }
 } else {
@@ -108,6 +109,8 @@ if (isset($_GET['id'])) {
     exit;
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
