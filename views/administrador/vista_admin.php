@@ -18,8 +18,8 @@ try {
     // Obtener el nombre completo del usuario desde la tabla PERSONA
     $stmt = $db->getPDO()->prepare("
         SELECT p.nombres, p.apellido_p, p.apellido_m 
-        FROM PERSONA p
-        JOIN USUARIOS u ON p.usuario = u.id_usuario
+        FROM persona p
+        JOIN usuarios u ON p.usuario = u.id_usuario
         WHERE u.nom_usuario = ?
     ");
     $stmt->execute([$user]);
