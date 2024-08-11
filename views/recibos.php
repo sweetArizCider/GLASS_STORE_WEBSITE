@@ -1,15 +1,44 @@
+<?php
+session_start();
+
+if (!isset($_SESSION["nom_usuario"])) {
+    error_log("Usuario no autenticado. Redirigiendo a iniciarSesion.php");
+    header("Location: ../iniciarSesion.php"); // Redirige a la página de inicio de sesión si no está autenticado
+    exit();
+}
+
+require_once '../class/database.php';
+
+$db = new Database();
+$db->conectarDB();
+$user = $_SESSION["nom_usuario"];
+
+// Procedimiento almacenado para obtener el rol del usuario
+$stmt = $db->getPDO()->prepare("CALL roles_usuario(?)");
+$stmt->execute([$user]);
+$result = $stmt->fetch(PDO::FETCH_OBJ);
+
+if ($result && $result->nombre_rol == 'administrador') { // Verificar el rol del usuario
+    $_SESSION["nombre_rol"] = $result->nombre_rol;
+    error_log("Usuario autenticado como Administrador: " . $user);
+} else {
+    // Si el usuario no es administrador o no se encontró el rol, redirigir a la página de inicio de sesión
+    error_log("Usuario sin privilegios de Administrador o rol no encontrado. Redirigiendo a iniciarSesion.php");
+    header("Location: ../iniciarSesion.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Recibos</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="shortcut icon" href="../img/index/logoVarianteSmall.png" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Store</title>
+  <link rel="shortcut icon" href="../img/index/logoVarianteSmall.png" type="image/x-icon">
   <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../css/normalized.css">
   <link rel="stylesheet" href="../css/style_admin.css">
-    <style>
+  <style>
         .hidden {
             display: none;
         }
@@ -21,11 +50,12 @@
             margin-bottom: 10px;
         }
     </style>
+
 </head>
 <body>
-<!--Logo flotante del negocio-->
-<div id="logotipo-flotante">
-    <img src="../img/index/GLASS.png" alt="Glass store">
+  <!--Logo flotante del negocio-->
+  <div id="logotipo-flotante">
+    <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
   <!--Barra lateral-->
@@ -33,65 +63,69 @@
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
-          <img src="../img/index/menu.svg" alt="Menu">
+          <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
           <a href="#">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
-        <li class="sidebar-item">
+      <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
-            <img src="../img/admin/admin_icon.svg" alt="Personal">
+            <img src="../../img/admin/admin_icon.svg" alt="Personal">
             <span>Personal</span>
           </a>
           <ul id="personal" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="../views/administrador/vista_admin_gestionainstalador.php" class="sidebar-link">Registrar</a>
+              <a href="./administrador/vista_admin_gestionainstalador.php" class="sidebar-link">Registrar</a>
             </li>
             <li class="sidebar-item">
-              <a href="../views/administrador/vista_admin_darRol.php" class="sidebar-link">Gestionar</a>
+              <a href="./administrador/vista_admin_darRol.php" class="sidebar-link">Gestionar</a>
             </li>
           </ul>
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#citas" aria-expanded="false" aria-controls="citas">
-            <img src="../img/admin/calendar.svg" alt="Citas">
+            <img src="../../img/admin/calendar.svg" alt="Citas">
             <span>Citas</span>
           </a>
           <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="../views/administrador/vista_admin_citas.php" class="sidebar-link">Gestionar citas</a>
+              <a href="./administrador/vista_admin_citas.php" class="sidebar-link">Gestionar citas</a>
             </li>
           </ul>
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
-            <img src="../img/admin/clipboard.svg" alt="Cotizaciones">
+            <img src="../../img/admin/clipboard.svg" alt="Cotizaciones">
             <span>Cotizaciones</span>
           </a>
           <ul id="cotizaciones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="../views/administrador/vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
+              <a href="./administrador/vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
+            </li>
+
+            <li class="sidebar-item">
+              <a href="./administrador/vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
             </li>
           </ul>
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#ventas" aria-expanded="false" aria-controls="ventas">
-            <img src="../img/admin/recibos.svg" alt="Ventas">
+            <img src="../../img/admin/recibos.svg" alt="Ventas">
             <span>Ventas</span>
           </a>
           <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
           
           <li class="sidebar-item">
-          <a href="../views/administrador/vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
+          <a href="./administrador/vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
           </li>
           <li class="sidebar-item">
-          <a href="../views/administrador/vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
+          <a href="./administrador/vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
           </li>
           <li class="sidebar-item">
           <a href="./recibos.php" class="sidebar-link">Historial</a>
@@ -101,48 +135,54 @@
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
-            <img src="../img/admin/products.svg" alt="Productos">
+            <img src="../../img/admin/products.svg" alt="Productos">
             <span>Productos</span>
           </a>
           <ul id="productos" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="../views/administrador/vista_admin_productos.php" class="sidebar-link">Gestionar productos</a>
+              <a href="./administrador/vista_admin_productos.php" class="sidebar-link">Gestionar productos</a>
             </li>
             <li class="sidebar-item">
-              <a href="../views/administrador/vista_admin_disenos.php" class="sidebar-link">Diseños</a>
+              <a href="./administrador/vista_admin_disenos.php" class="sidebar-link">Diseños</a>
             </li>
           </ul>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#promociones" aria-expanded="false" aria-controls="promociones">
-            <img src="../img/admin/off.svg" alt="Promociones">
+            <img src="../../img/admin/off.svg" alt="Promociones">
             <span>Promociones</span>
           </a>
           <ul id="promociones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="../views/administrador/vista_admin_promos.php" class="sidebar-link">Añadir</a>
+              <a href="./administrador/vista_admin_promos.php" class="sidebar-link">Añadir</a>
             </li>
           </ul>
         </li>
       </ul>
       <div class="sidebar-footer">
-        <a href="../index.php" class="sidebar-link">
-          <img src="../img/admin/home.svg" alt="Volver"><!--PONER UNA IMAGEN COMO DE VOLVER-->
+        <a href="../../index.php" class="sidebar-link">
+          <img src="../../img/admin/logout.svg" alt="Volver"><!--PONER UNA IMAGEN COMO DE VOLVER-->
           <span>Volver</span>
         </a>
       </div>
       <div class="sidebar-footer">
-        <a href="../scripts/cerrarSesion.php" class="sidebar-link">
-        <img src="../img/admin/logout.svg" alt="Cerrar Sesión">
+        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+        <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
         <span>Cerrar Sesión</span>
         </a>
     </div>
     </aside>
-    <div class="container mt-4">
+    <div class="main p-3">
+      <div class="text-center">
+        <div class="busqueda mx-auto">
+          <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
+          <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
+        </div>
+        <div class="container mt-4">
         <h1>Recibos</h1>
 
         <?php
-        include '../class/database.php'; // Incluye el archivo con la conexión a la base de datos
+        require_once '../class/database.php'; // Incluye el archivo con la conexión a la base de datos
 
         $database = new Database();
         $database->conectarDB();
@@ -228,8 +268,13 @@
         <p>No se encontraron resultados.</p>
         <?php endif; ?>
     </div>
+      </div>
+    </div>
+  </div>
 
-    <script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+  <script>
         document.addEventListener('DOMContentLoaded', function() {
             const criterioSelect = document.getElementById('criterio');
             const nombreCompletoDiv = document.getElementById('nombre_completo_div');
@@ -253,8 +298,6 @@
             criterioSelect.dispatchEvent(new Event('change'));
         });
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const hamBurger = document.querySelector(".toggle-btn");
 
