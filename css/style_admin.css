@@ -304,3 +304,34 @@ font-size: 3em;
 .strong-bsname{
     color: #4AB3D5;
 }
+/*gestionar instalador*/
+
+.form-floating{
+    width: 75%;
+    margin: auto;
+    border: 1px solid rgba(19, 38, 68, 0.53);
+    margin-bottom: 0px !important;
+    font-size: .8rem !important;
+    font-family: 'Inter';
+    padding-top: 0px !important;
+    border-radius: 8px;
+    overflow: hidden; 
+  }
+  
+  
+.submit-button-register{
+    background-color: #132644;
+    color: #fff;
+    font-family: 'Montserrat';
+    font-weight: 700;
+    height: 7vh;
+    width: 75%;
+    margin: auto;
+    border: none;
+    border-radius: 30px;
+    letter-spacing: 2px;
+    margin-bottom: 3em;
+  }
+  .submit-button-register:hover{
+    background-color: #4AB3D5;
+  }

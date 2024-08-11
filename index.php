@@ -161,7 +161,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
               <div class="offcanvas-body">
                   <ul class="navbar-nav">
                       <li class="nav-item ">
-                          <a class="nav-link" href="https://api.whatsapp.com/send?phone=8717843809" target="_blank">Contacto</a>
+                          <a class="nav-link" href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">Contacto</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link nav-left" href="./views/productos.php">Productos</a>

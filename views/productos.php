@@ -358,7 +358,7 @@ if (!isset($_SESSION['nombre_producto'])) {
           <div class="col-md-4 mb-3">
               <h5>Links</h5>
               <ul class="list-unstyled">
-                  <li><a href="https://api.whatsapp.com/send?phone=8717843809" target="_blank" class="text-white">Contacto</a></li>
+                  <li><a href="https://api.whatsapp.com/send?phone=528717843809" target="_blank" class="text-white">Contacto</a></li>
                   <li><a href="/views/productos.php" class="text-white">Productos</a></li>
                   <li><a href="/views/citas.php" class="text-white">Agendar</a></li>
                   <li><a href="#about-us" id="link-nosotros" class="text-white">Nosotros</a></li>

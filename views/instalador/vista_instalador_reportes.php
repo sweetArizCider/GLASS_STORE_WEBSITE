@@ -67,8 +67,9 @@ if ($result) {
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
- <!-- Barra lateral -->
- <div class="wrapper">
+
+  <!--Barra lateral-->
+  <div class="wrapper">
     <aside id="sidebar">
     <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -87,7 +88,7 @@ if ($result) {
           </a>
           <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="index_instalador.php" class="sidebar-link">Volver al Inicio</a>
+              <a href="./index_Instalador.php" class="sidebar-link">Volver al Inicio</a>
             </li>
           </ul>
         </li>
@@ -127,20 +128,20 @@ if ($result) {
             </li>
           </ul>
         </li>
+        
+       
       </ul>
       <div class="sidebar-footer">
-        <a href="./index_Instalador.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver">
-          <span>Volver</span>
+        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+            <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+            <span>Cerrar Sesión</span>
         </a>
-      </div>
-      <div class="sidebar-footer">
-      <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
-      <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
-          <span>Cerrar Sesión</span>
-        </a>
-      </div>
+    </div>
+     
+      
     </aside>
+
+
     <div class="main p-3">
     <div class="main p-3">
       <div class="text-center">
