@@ -125,19 +125,17 @@ try {
             </li>
           </ul>
         </li>
+        
+       
       </ul>
-      <div class="sidebar-footer">
-        <a href="../../../" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver">
-          <span>Volver</span>
-        </a>
-      </div>
       <div class="sidebar-footer">
         <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
             <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
             <span>Cerrar Sesión</span>
         </a>
     </div>
+     
+      
     </aside>
 
     <div class="main p-3">

@@ -15,6 +15,18 @@ try {
     $db->conectarDB();
     $user = $_SESSION["nom_usuario"];
 
+    // Obtener el nombre completo del usuario desde la tabla PERSONA
+    $stmt = $db->getPDO()->prepare("
+        SELECT p.nombres, p.apellido_p, p.apellido_m 
+        FROM PERSONA p
+        JOIN USUARIOS u ON p.usuario = u.id_usuario
+        WHERE u.nom_usuario = ?
+    ");
+    $stmt->execute([$user]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $nombreCompleto = htmlspecialchars($result['nombres'] . ' ' . $result['apellido_p']);
+
     // Procedimiento almacenado para obtener los roles del usuario
     $stmt = $db->getPDO()->prepare("CALL roles_usuario(?)");
     $stmt->execute([$user]);
@@ -75,7 +87,6 @@ try {
   $stmt = $db->getPDO()->prepare("CALL producto_mas_vendido()");
   $stmt->execute();
   $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  
   
   $productoMasVendido = isset($productos[0]) ? $productos[0] : [];
   $productoMenosVendidos = array_slice($productos, 1);
@@ -170,6 +181,28 @@ try {
     .product-card-title {
       font-size: 1.25rem;
     }
+    .welcome-card {
+      background-color: #007bff;
+      color: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .welcome-card h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .welcome-card p {
+      font-size: 1.25rem;
+    }
+    .extra-message {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      font-style: italic;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -178,8 +211,8 @@ try {
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-  <!--Barra lateral-->
-  <div class="wrapper">
+   <!--Barra lateral-->
+   <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -294,42 +327,15 @@ try {
       
     </aside>
     <div class="main p-3">
-      <!-- Área de búsqueda -->
-      
-      <div class="text-center my-4">
-    <h2>Productos Más Vendidos</h2>
-  </div>
-      <!-- Tarjetas de productos -->
-      <div class="container main-content">
-        <div class="row">
-          <!-- Producto más vendido -->
-          <div class="col-md-4 mb-3">
-            <div class="card card-custom product-card">
-              <div class="card-body">
-                <h5 class="card-title"><?php echo htmlspecialchars($productoMasVendido['nombre'] ?? ''); ?></h5>
-                <img src="../../img/productos/<?php echo htmlspecialchars($productoMasVendido['imagen'] ?? ''); ?>" alt="<?php echo htmlspecialchars($productoMasVendido['imagen'] ?? ''); ?>" class="img-fluid">
-                <p class="card-text">Cantidad Vendida: <?php echo htmlspecialchars($productoMasVendido['cantidad_vendida'] ?? 0); ?></p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Productos menos vendidos -->
-          <?php foreach ($productoMenosVendidos as $producto): ?>
-            <div class="col-md-4 mb-3">
-              <div class="card card-custom product-card">
-                <div class="card-body">
-                  <h6 class="card-title product-card-title"><?php echo htmlspecialchars($producto['nombre']); ?></h6>
-                  <img src="../../img/productos/<?php echo htmlspecialchars($producto['imagen'] ?? ''); ?>" alt="<?php echo htmlspecialchars($producto['imagen'] ?? ''); ?>" class="img-fluid">
-                  <p class="card-text">Cantidad Vendida: <?php echo htmlspecialchars($producto['cantidad_vendida']); ?></p>
-                </div>
-              </div>
-            </div>
-          <?php endforeach; ?>
-        </div>
+      <div class="general-container">
+      <!-- Mensaje de bienvenida -->
+      <div class="">
+      <div class="text-center ">
+        <h2 class="mensaje-bienvenida">¡Bienvenido, <?php echo $nombreCompleto; ?>!</h2>
+        <p>Esperamos que te encuentres bien el día de hoy. Aquí tienes un resumen de tus estadísticas recientes.</p>
       </div>
-      <div class="text-center my-4">
-    <h2>Estadísticas</h2>
-  </div>
+      </div>
+
       <!-- Tarjetas de estadísticas de ventas -->
       <div class="container main-content">
         <div class="row">
@@ -368,7 +374,46 @@ try {
       </div>
         </div>
       </div>
+
+      <!-- Mensaje extra -->
+      <div class="extra-message">
+        <p>Recuerda, cada pequeño esfuerzo suma a grandes logros. ¡Gracias por tu dedicación!</p>
+      </div>
+
+      <!-- Área de búsqueda y productos más vendidos -->
+      <div class="text-center my-4">
+        <h2>Productos Más Vendidos</h2>
+      </div>
+      
+      <div class="container main-content">
+        <div class="row">
+          <!-- Producto más vendido -->
+          <div class="col-md-4 mb-3">
+            <div class="card card-custom product-card">
+              <div class="card-body">
+                <h5 class="card-title"><?php echo htmlspecialchars($productoMasVendido['nombre'] ?? ''); ?></h5>
+                <img src="../../img/productos/<?php echo htmlspecialchars($productoMasVendido['imagen'] ?? ''); ?>" alt="<?php echo htmlspecialchars($productoMasVendido['imagen'] ?? ''); ?>" class="img-fluid">
+                <p class="card-text">Cantidad Vendida: <?php echo htmlspecialchars($productoMasVendido['cantidad_vendida'] ?? 0); ?></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Productos menos vendidos -->
+          <?php foreach ($productoMenosVendidos as $producto): ?>
+            <div class="col-md-4 mb-3">
+              <div class="card card-custom product-card">
+                <div class="card-body">
+                  <h6 class="card-title product-card-title"><?php echo htmlspecialchars($producto['nombre']); ?></h6>
+                  <img src="../../img/productos/<?php echo htmlspecialchars($producto['imagen'] ?? ''); ?>" alt="<?php echo htmlspecialchars($producto['imagen'] ?? ''); ?>" class="img-fluid">
+                  <p class="card-text">Cantidad Vendida: <?php echo htmlspecialchars($producto['cantidad_vendida']); ?></p>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
     </div>
+  </div>
   </div>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
