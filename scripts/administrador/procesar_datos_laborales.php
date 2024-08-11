@@ -17,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $db = new database();
     $db->conectarDB();
+    $db->configurarConexionPorRol();
     
     try {
         // Sacar el ID por el nombre de usuario

@@ -13,6 +13,7 @@ include '../../class/database.php';
 try {
     $db = new database();
     $db->conectarDB();
+    $db->configurarConexionPorRol();
     $user = $_SESSION["nom_usuario"];
 
     // Obtener el nombre completo del usuario desde la tabla PERSONA

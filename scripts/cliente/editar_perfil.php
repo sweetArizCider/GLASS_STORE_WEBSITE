@@ -16,6 +16,7 @@ if (isset($_SESSION["nom_usuario"])) {
     
     $db = new Database();
     $db->conectarDB();
+    $db->configurarConexionPorRol();
 
     try {
         $cadena = "CALL obteneridusuariopornombre(:nombre_usuario)";

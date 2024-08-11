@@ -10,6 +10,7 @@ if (isset($_SESSION["nom_usuario"])) {
     // Crear conexión a la base de datos
     $conexion = new Database(); // Asegúrate de que la clase tenga la mayúscula correcta si así está definida
     $conexion->conectarDB();
+    $conexion->configurarConexionPorRol();
 
     // Consulta para obtener el rol del usuario basado en el nombre de usuario
     $consulta_rol = "CALL roles_usuario(:nombre_usuario)";

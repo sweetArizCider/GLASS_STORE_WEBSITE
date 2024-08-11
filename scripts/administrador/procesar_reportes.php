@@ -13,6 +13,7 @@ include '../../class/database.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db = new Database();
     $db->conectarDB();
+    $db->configurarConexionPorRol();
     
     // Obtener la lista de reportes seleccionados
     $reportes_seleccionados = isset($_POST['reportes_seleccionados']) ? $_POST['reportes_seleccionados'] : [];

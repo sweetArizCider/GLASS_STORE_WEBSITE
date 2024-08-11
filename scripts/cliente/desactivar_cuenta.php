@@ -19,6 +19,7 @@ if (isset($_SESSION["nom_usuario"])) {
     
     $db = new Database();
     $db->conectarDB();
+    $db->configurarConexionPorRol();
 
     try {
         echo "Nombre de usuario actual: " . $nombre_usuario_actual . "<br>";

@@ -10,6 +10,7 @@ include '../../class/database.php';
 
 $db = new database();
 $db->conectarDB();
+$db->configurarConexionPorRol();
 
 $nom_usuario = $_POST['nom_usuario_quitar'];
 $nombre_rol = $_POST['nombre_rol_quitar'];

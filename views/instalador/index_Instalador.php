@@ -5,6 +5,7 @@ include '../../class/database.php';
 // Crear instancia de la clase y conectar a la base de datos
 $db = new database();
 $db->conectarDB();
+$db->configurarConexionPorRol();
 $pdo = $db->getPDO();
 
 try {

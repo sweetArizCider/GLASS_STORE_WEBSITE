@@ -9,6 +9,7 @@ if (isset($_POST['id_producto']) && isset($_POST['id_usuario'])) {
     // Crear conexión a la base de datos
     $conexion = new database();
     $conexion->conectarDB();
+    $conexion->configurarConexionPorRol();
 
     // Insertar el favorito en la base de datos
     $consulta = "CALL agregar_favorito(?, ?)";

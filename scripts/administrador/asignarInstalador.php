@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +14,7 @@
 include '../../class/database.php';
 $db = new Database();
 $db->conectarDB();
+$db->configurarConexionPorRol();
 
 if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
     $id_cita = $_POST['id_cita'];

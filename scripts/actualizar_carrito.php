@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_detalle_producto'])
     // Crear conexión a la base de datos
     $conexion = new database();
     $conexion->conectarDB();
+    $conexion->configurarConexionPorRol();
 
     // Consulta para actualizar el estado del producto
     $consulta = "UPDATE detalle_producto SET estatus = ? WHERE id_detalle_producto = ?";

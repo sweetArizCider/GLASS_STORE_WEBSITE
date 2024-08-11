@@ -34,6 +34,7 @@
         include '../../class/database.php';
         $db = new Database();
         $db->conectarDB();
+        $db->configurarConexionPorRol();
 
         // Obtener los datos del usuario
         $cadena = "CALL obtenerdatosusuario(:nombre_usuario)";

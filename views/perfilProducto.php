@@ -12,6 +12,7 @@ $notificaciones = [];
 // Crear conexión a la base de datos
 $db = new database();
 $db->conectarDB();
+$db->configurarConexionPorRol();
 $pdo = $db->getPDO();
 
 if ($pdo === null) {

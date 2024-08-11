@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +26,7 @@
 
         $database = new Database();
         $database->conectarDB();
+        $database->configurarConexionPorRol();
 
         // Definir el parámetro de salida
         $resultado = 0;

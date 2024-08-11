@@ -55,6 +55,7 @@ if (isset($_SESSION["nom_usuario"])) {
     // Crear una instancia única de la conexión a la base de datos
     $conexion = new database();
     $conexion->conectarDB();
+    $conexion->configurarConexionPorRol();
 
     // Consulta para obtener el rol del usuario basado en el nombre de usuario
     $consulta_rol = "CALL roles_usuario(?)";

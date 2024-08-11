@@ -9,6 +9,7 @@ if (isset($_SESSION["nom_usuario"])) {
     $user = $_SESSION["nom_usuario"];
     $conexion = new database();
     $conexion->conectarDB();
+    $conexion->configurarConexionPorRol();
 
     $consulta_rol = "CALL roles_usuario(?)";
     $params_rol = [$user];

@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente_venta"
     $cita_id = $_POST["cita_id"];
     $db = new database();
     $db->conectarDB();
+    $db->configurarConexionPorRol();
 
     try {
         $stmt = $db->getPDO()->prepare("CALL crearventaporclienteycita(?, ?)");

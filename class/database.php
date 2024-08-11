@@ -1,25 +1,68 @@
 <?php
-  
-class database{
-    // paramentros que le voy a enviar al objeto pdo
-    private $PDOlocal;
-    private $user = 'arizpe1';
-    private $password = "arizpe1";
-    private $server = "mysql:host=54.214.99.251;dbname=glass_store_ana";
 
-    // le ponemos la sig cadena: host, base de datos
-    function conectarDB()
-    // vamos a instanciar PDO
-    {
-        try{
-        $this->PDOlocal = new PDO ($this->server, $this->user, $this->password);
+  class database{
+          private $PDOlocal;
+          private $user;
+          private $password;
+          private $server = "mysql:host=localhost;dbname=glass_store_beta";
+      
+          // Constructor para iniciar la conexión como cliente por defecto
+          public function __construct() {
+              $this->user = 'cliente_user';
+              $this->password = "clientekey";
+              $this->conectarDB();
+          }
+      
+          // Método para cambiar la conexión según el rol del usuario
+          public function cambiarConexion($rol_id) {
+              $credenciales = $this->getCredencialesPorRol($rol_id);
+              $this->user = $credenciales['username'];
+              $this->password = $credenciales['password'];
+              $this->conectarDB();
+          }
+      
+          // Obtener las credenciales correspondientes según el rol
+          private function getCredencialesPorRol($rol_id) {
+              switch($rol_id) {
+                  case '1': //admin
+                      return ['username' => 'admin_user', 'password' => 'adminkey'];
+                  case '3': //instalador
+                      return ['username' => 'instalador_user', 'password' => 'instaladorkey'];
+                  case '2': //cliente
+                  default:
+                      return ['username' => 'cliente_user', 'password' => 'clientekey'];
+              }
+          }
+      
+          public function conectarDB() {
+              try {
+                  $this->PDOlocal = new PDO($this->server, $this->user, $this->password);
+              } catch (PDOException $e) {
+                  echo $e->getMessage();
+              }
+          }
+    
+
+        // Método que se puede llamar en cada pantalla para establecer la conexión según el rol
+        public function configurarConexionPorRol() {
+
+            if (isset($_SESSION["nom_usuario"])) {
+                $user = $_SESSION["nom_usuario"];
+    
+                // Obtener el rol del usuario
+                $query = "CALL roles_id_usuario(:nom_usuario)";
+                $params = [":nom_usuario" => $user];
+                $result = $this->executeQueryWithParams($query, $params);
+    
+                if ($result && isset($result[0]->id_rol)) {
+                    $id_rol = $result[0]->id_rol;
+                    $this->cambiarConexion($id_rol);
+                } else {
+                    echo "No se pudo obtener el id_rol o el resultado está vacío.";
+                    exit;
+                }
+            }
         }
-        catch (PDOException $e)
-        // excepciones del PDO
-        {
-            echo $e->getMessage();
-        }
-    }
 
     function desconectarDB()
     {

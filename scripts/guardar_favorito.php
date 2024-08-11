@@ -25,6 +25,7 @@ if (isset($_SESSION["nom_usuario"])) {
 
     $conexion = new database();
     $conexion->conectarDB();
+    $conexion->configurarConexionPorRol();
 
     $consulta_ids = "CALL obtener_id_por_nombre_usuario(?)";
     $params_ids = [$user];

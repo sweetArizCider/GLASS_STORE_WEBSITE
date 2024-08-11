@@ -1,5 +1,6 @@
 <?php
 include '../../class/database.php'; 
+session_start();
 
 $debugMessages = []; // Array para almacenar los mensajes de depuración
 
@@ -18,6 +19,7 @@ if (isset($_POST['cambiar_estatus'])) {
     try {
         $db = new Database(); 
         $debugMessages[] = "Conexión a la base de datos establecida.";
+        $db->configurarConexionPorRol();
 
         // Ejecutar el procedimiento almacenado
         $debugMessages[] = "Ejecutando consulta: " . $consulta;

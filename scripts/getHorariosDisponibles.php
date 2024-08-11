@@ -1,4 +1,5 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 
 // Obtener la fecha desde la solicitud GET
@@ -8,6 +9,7 @@ $fecha = $_GET['fecha'];
 require_once 'path/to/database.php'; // Asegúrate de incluir la ruta correcta a tu archivo database.php
 $db = new database();
 $db->conectarDB(); // Conectar a la base de datos
+$db->configurarConexionPorRol();
 
 // Preparar la consulta SQL
 $sql = "SELECT hora FROM citas WHERE fecha = :fecha AND estatus IN ('aceptada', 'en espera')";

@@ -7,6 +7,7 @@ if (isset($_SESSION["nom_usuario"])) {
     include '../../class/database.php';
     $db = new database(); // Crear instancia de la clase database
     $db->conectarDB(); // Establecer la conexión a la base de datos
+    $db->configurarConexionPorRol();
 
     // Verificar si la conexión es válida
     $pdo = $db->getPDO();

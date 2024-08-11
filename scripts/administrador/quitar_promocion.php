@@ -12,6 +12,8 @@
     include '../../class/database.php';
     $db = new database();
     $db->conectarDB();
+    session_start();
+    $db->configurarConexionPorRol();
 
     // Verificar si los datos POST están presentes
     if (isset($_POST['nombre_promocion']) && isset($_POST['id_venta'])) {

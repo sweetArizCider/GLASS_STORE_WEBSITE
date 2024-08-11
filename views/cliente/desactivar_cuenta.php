@@ -19,6 +19,7 @@
     if (isset($_SESSION["nom_usuario"])) {
         $nombre_usuario_actual = $_SESSION["nom_usuario"];
         $db = new Database();
+        $db->configurarConexionPorRol();
         $db->conectarDB();
     } else {
         echo "<div class='alert alert-danger'>No hay sesión de usuario válida.</div>";

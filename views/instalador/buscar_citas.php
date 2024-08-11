@@ -14,6 +14,7 @@ if (isset($_POST['search'])) {
     // Crear una instancia de la clase database.
     $db = new database();
     $db->conectarDB();
+    $db->configurarConexionPorRol();
 
     // Obtener el id del instalador de la sesión actual.
     $id_instalador = $_SESSION['id_instalador'];

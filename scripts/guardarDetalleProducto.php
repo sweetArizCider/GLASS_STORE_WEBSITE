@@ -4,6 +4,7 @@ include '../class/database.php';
 
 $db = new database();
 $db->conectarDB();
+$db->configurarConexionPorRol();
 $pdo = $db->getPDO();
 
 if (isset($_POST['producto'], $_POST['alto'], $_POST['ancho'], $_POST['cantidad'], $_POST['total'])) {

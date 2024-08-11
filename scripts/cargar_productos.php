@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 include '../class/database.php';
 
 $search = isset($_GET['search']) ? $_GET['search'] : '';
@@ -9,6 +9,7 @@ $offset = ($page - 1) * $productos_por_pagina;
 
 $conexion = new database();
 $conexion->conectarDB();
+$conexion->configurarConexionPorRol();
 
 $consulta_productos = "
     SELECT p.id_producto, p.nombre, p.precio, i.imagen

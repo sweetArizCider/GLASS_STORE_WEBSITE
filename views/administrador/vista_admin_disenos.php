@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -204,6 +208,7 @@
 include '../../class/database.php'; 
 $conexion = new Database();
 $conexion->conectarDB();
+$conexion->configurarConexionPorRol();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['id_type'])) {

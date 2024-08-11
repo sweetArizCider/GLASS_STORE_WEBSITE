@@ -13,6 +13,7 @@ $usuario = $_SESSION['nom_usuario'];
 // Conectar a la base de datos
 $db = new Database();
 $db->conectarDB();
+$db->configurarConexionPorRol();
 
 // Verificar si la conexión se estableció correctamente
 $pdo = $db->getPDO();

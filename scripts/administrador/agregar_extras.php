@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +16,7 @@
     include '../../class/database.php';
     $db = new Database();
     $db->conectarDB();
+    $db->configurarConexionPorRol();
     extract($_POST);
 
     try {

@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,6 +17,8 @@
         include '../../class/database.php';
         $db = new Database();
         $db-> conectarDB();
+        
+$db->configurarConexionPorRol();
         extract($_POST);
 
         $cadena = "call crear_producto_por_nombre_categoria('$categoria', '$nombre', '$descripcion', '$precio','$estatus');";

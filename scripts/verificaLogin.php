@@ -14,6 +14,7 @@
 
     $db = new Database();
     $db->conectarDB();
+    $db->configurarConexionPorRol();
 
     $mensaje = '';
     $redirectUrl = '../views/iniciarSesion.php'; // URL por defecto en caso de error

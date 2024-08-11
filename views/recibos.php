@@ -11,6 +11,7 @@ require_once '../class/database.php';
 
 $db = new Database();
 $db->conectarDB();
+$db->configurarConexionPorRol();
 $user = $_SESSION["nom_usuario"];
 
 // Procedimiento almacenado para obtener el rol del usuario

@@ -4,6 +4,8 @@ include '../../class/database.php';
 
 $db = new Database();
 $db->conectarDB(); 
+session_start();
+$db->configurarConexionPorRol()
 
 $pdo = $db->getPDO();
 

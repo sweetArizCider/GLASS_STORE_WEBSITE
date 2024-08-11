@@ -4,6 +4,7 @@ include '../../class/database.php';
 
 $db = new database();
 $db->conectarDB();
+$db->configurarConexionPorRol();
 
 $user = $_SESSION["nom_usuario"];
 
