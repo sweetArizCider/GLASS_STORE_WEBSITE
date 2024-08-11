@@ -189,6 +189,7 @@ try {
                 <h1>Gestión de Roles</h1>
                 <div class="container mt-5">
                     <div class="row">
+                      
                         <!-- Columna para Asignar Rol -->
                         <div class="col-md-6">
                             <h2>Asignar Rol</h2>

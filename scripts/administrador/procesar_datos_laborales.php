@@ -8,71 +8,56 @@ if (!isset($_SESSION["nom_usuario"])) {
 
 include '../../class/database.php';
 
-$db = new database();
-$db->conectarDB();
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $usuario = $_POST['usuario'];
+        $rol = $_POST['rol']; 
+        $rfc = $_POST['rfc'];
+        $nss = $_POST['nss'];
+        $curp = $_POST['curp'];
+    
+        $db = new database();
+        $db->conectarDB();
+    
+        try {
+            // Sacar el ID por el nombre de usuario
+            $stmt = $db->getPDO()->prepare("SELECT id_usuario FROM USUARIOS WHERE nom_usuario = ?");
+            $stmt->execute([$usuario]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $id_usuario = $result['id_usuario'];
 
-$usuario = $_POST['usuario'];
-$rfc = $_POST['rfc'];
-$nss = $_POST['nss'];
-$curp = $_POST['curp'];
+            if (!$id_usuario) {
+                throw new Exception('Usuario no encontrado');
+            }
 
-try {
-    // Verificar si el usuario existe
-    $stmt = $db->getPDO()->prepare("SELECT id_usuario FROM usuarios WHERE nom_usuario = ?");
-    $stmt->execute([$usuario]);
-    $usuarioData = $stmt->fetch(PDO::FETCH_OBJ);
+            // Depuración: Verificar los valores
+            error_log("ID Usuario: $id_usuario");
+            error_log("Rol: $rol");
+            error_log("RFC: $rfc");
+            error_log("NSS: $nss");
+            error_log("CURP: $curp");
 
-    if (!$usuarioData) {
-        throw new Exception('Usuario no encontrado.');
-    }
+            // Llamar al procedimiento almacenado para actualizar datos laborales y asignar rol
+            $stmt = $db->getPDO()->prepare("CALL actualizardatoslaborales(?, ?, ?, ?, ?)");
+            $stmt->execute([$id_usuario, $rol, $rfc, $nss, $curp]);
 
-    // Obtener la persona asociada al usuario
-    $stmt = $db->getPDO()->prepare("SELECT id_persona FROM persona WHERE usuario = ?");
-    $stmt->execute([$usuarioData->id_usuario]);
-    $persona = $stmt->fetch(PDO::FETCH_OBJ);
-
-    if (!$persona) {
-        throw new Exception('Persona asociada al usuario no encontrada.');
-    }
-
-    // Verificar si la persona es un instalador
-    $stmt = $db->getPDO()->prepare("SELECT id_instalador FROM instalador WHERE persona = ?");
-    $stmt->execute([$persona->id_persona]);
-    $instalador = $stmt->fetch(PDO::FETCH_OBJ);
-
-    if (!$instalador) {
-        throw new Exception('El usuario ingresado no es un instalador.');
-    }
-
-    // Intentar actualizar los datos del instalador
-    $stmt = $db->getPDO()->prepare("
-        UPDATE instalador 
-        SET rfc = ?, nss = ?, curp = ?
-        WHERE id_instalador = ?
-    ");
-    $stmt->execute([$rfc, $nss, $curp, $instalador->id_instalador]);
-
-    echo "<script>alert('Datos laborales actualizados correctamente.'); window.location.href = '../../views/administrador/vista_admin_gestionainstalador.php';</script>";
-    exit();
-} catch (PDOException $e) {
-    // Capturar errores de la base de datos, como duplicidad o formato incorrecto
-    $errorCode = $e->getCode();
-    $message = 'Datos Invalidos, por favor intente nuevamente';
-    if ($errorCode == '23000') { // Código de error para violaciones de unicidad
-        if (strpos($e->getMessage(), 'rfc') !== false) {
-            $message = 'El RFC ingresado ya está en uso. Por favor, ingrese uno diferente.';
-        } elseif (strpos($e->getMessage(), 'nss') !== false) {
-            $message = 'El NSS ingresado ya está en uso. Por favor, ingrese uno diferente.';
-        } elseif (strpos($e->getMessage(), 'curp') !== false) {
-            $message = 'El CURP ingresado ya está en uso. Por favor, ingrese uno diferente.';
+            echo "Datos laborales actualizados y rol asignado correctamente.";
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage();
+            error_log("Error en actualizar datos laborales: " . $e->getMessage());
         }
+    
+        $db->desconectarDB();
+        ?>
+
+        <!-- Mostrar el mensaje y redirigir -->
+        <script>
+            redirigir("<?php echo $redirect_page; ?>");
+        </script>
+
+        <?php
+        exit();
     }
-    error_log("Error en la base de datos: " . $e->getMessage());
-    echo "<script>alert('$message'); window.location.href = '../../views/administrador/vista_admin_gestionainstalador.php';</script>";
-    exit();
-} catch (Exception $e) {
-    error_log("Error al procesar los datos: " . $e->getMessage());
-    echo "<script>alert('Error: " . htmlspecialchars($e->getMessage()) . "'); window.location.href = '../../views/administrador/vista_admin_gestionainstalador.php';</script>";
-    exit();
-}
-?>
+    ?>
+</div>
+</body>
+</html>

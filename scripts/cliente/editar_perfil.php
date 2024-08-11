@@ -66,7 +66,7 @@ if (isset($_SESSION["nom_usuario"])) {
                 exit;
             }
         } else {
-            $cadena = "CALL actualizarusuario(:id_usuario, :nombre_usuario, :nombres, :apellido_p, :apellido_m, :correo, :telefono, NULL)";
+            $cadena = "CALL actualizarUsuario(:id_usuario, :nombre_usuario, :nombres, :apellido_p, :apellido_m, :correo, :telefono, NULL)";
             $params = [
                 ':id_usuario' => $id_usuario,
                 ':nombre_usuario' => $nombre_usuario_nuevo,
