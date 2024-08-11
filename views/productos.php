@@ -61,6 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_producto'])) {
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
 }
+$productos_espera = [];
+if ($id_usuario != 0) {
+    // Obtener los detalles del producto en espera
+    $consulta_productos = "CALL carrito(?)";
+    $params_productos = [$id_usuario];
+    $productos_espera = $conexion->seleccionar($consulta_productos, $params_productos);
+}
 
 function esReciente($fecha){
     $fechaNotif = new DateTime($fecha);
@@ -72,31 +79,6 @@ function esReciente($fecha){
 $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     return esReciente($notif->fecha);
 });
-
-$conexion = new database();
-$conexion->conectarDB();
-
-// Obtener todos los productos para paginación si no se está buscando
-if (!isset($_SESSION['nombre_producto'])) {
-    $offset = ($pagina_actual - 1) * $productos_por_pagina;
-
-    $consulta_productos_total = "SELECT COUNT(*) as total FROM productos";
-    $total_productos = $conexion->seleccionar($consulta_productos_total)[0]->total;
-    $total_paginas = ceil($total_productos / $productos_por_pagina);
-
-   $consulta_productos = "
-    SELECT p.id_producto, p.nombre, p.precio, i.imagen
-    FROM productos p
-    LEFT JOIN imagen i ON p.id_producto = i.producto
-    WHERE p.estatus = 'activo'
-    LIMIT ? OFFSET ?
-";
-    $productos_espera = $conexion->seleccionar($consulta_productos);
-} else {
-    $nombreBuscado = trim($_SESSION['nombre_producto']);
-    unset($_SESSION['nombre_producto']);
-    $productos_espera = $conexion->BuscarProductoPorNombre($nombreBuscado);
-}
 
 ?>
 
@@ -141,7 +123,7 @@ if (!isset($_SESSION['nombre_producto'])) {
               <img src="../img/index/GLASS.png" alt="" class="logo">
           </div>
           <div class="icons">
-                <a href="../../"><img src="../img/index/home.svg" alt="" width="25px"></a>
+                <a href="../../"><img src="../img/index/inicio.svg" alt="" width="25px"></a>
                 <button class="botonMostrarFavoritos" data-bs-toggle="modal" data-bs-target="#favoritosModal"><img src="../img/index/favorites.svg" alt="" width="25px"></button>
 
                 <a id="carrito" data-bs-toggle="modal" data-bs-target="#carritoModal"><img src="../img/index/clip.svg" alt="" width="25px"></a>
@@ -318,18 +300,7 @@ if (!isset($_SESSION['nombre_producto'])) {
     </div>
 </div>
 
-<!-- Paginación -->
-<?php if (!isset($_SESSION['nombre_producto']) && $total_paginas > 1): ?>
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                <li class="page-item <?php if ($i == $pagina_actual) echo 'active'; ?>">
-                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-                </li>
-            <?php endfor; ?>
-        </ul>
-    </nav>
-<?php endif; ?>
+
 
   <!-- detalles producto en el carrito -->
   <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
@@ -385,10 +356,30 @@ if (!isset($_SESSION['nombre_producto'])) {
   <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
   <script>
     $(document).ready(function() {
-        // Filtro en tiempo real
-        $('#search-input').on('input', function() {
-            var searchValue = $(this).val().toLowerCase();
-            $('.product-item').each(function() {
+    // Filtro en tiempo real al escribir en el campo
+    $('#search-input').on('input', function() {
+        ejecutarBusqueda();
+    });
+
+    // Ejecutar búsqueda al hacer clic en el botón
+    $('#search-button').on('click', function() {
+        ejecutarBusqueda();
+    });
+
+    // Ejecutar búsqueda al presionar Enter
+    $('#search-input').on('keydown', function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault(); // Evitar comportamiento predeterminado
+            ejecutarBusqueda();
+        }
+    });
+
+    function ejecutarBusqueda() {
+        var searchValue = $('#search-input').val().toLowerCase();
+        
+        if ($('#favoritosModal').is(':visible')) {
+            // Buscar dentro del modal de favoritos
+            $('#favoritos-list .product-item').each(function() {
                 var productName = $(this).data('name').toLowerCase();
                 if (productName.includes(searchValue)) {
                     $(this).show();
@@ -396,10 +387,20 @@ if (!isset($_SESSION['nombre_producto'])) {
                     $(this).hide();
                 }
             });
-        });
+        } else {
+            // Buscar en la lista principal de productos
+            $('#product-list .product-item').each(function() {
+                var productName = $(this).data('name').toLowerCase();
+                if (productName.includes(searchValue)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+    }
+});
 
-        // Código adicional para funcionalidades específicas...
-    });
 
     function changeIcon(element, id_producto) {
         var icon = element.querySelector('.icon-overlay');
@@ -497,6 +498,112 @@ if (!isset($_SESSION['nombre_producto'])) {
             });
         }
     });
+
+    
+    $(document).ready(function() {
+        $('#favoritosModal').on('shown.bs.modal', function () {
+            cargarFavoritos();
+        });
+
+        function cargarFavoritos() {
+            <?php if (isset($_SESSION["nom_usuario"])): ?>
+                $.ajax({
+                    url: '../scripts/obtener_favoritos.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(favoritos) {
+                        var favoritosList = $('#favoritos-list');
+                        favoritosList.empty();
+                        if (favoritos.length > 0) {
+                            favoritos.forEach(function(favorito) {
+                                var imagen = favorito.imagen ? '../img/index/' + favorito.imagen : '../img/index/default.png';
+                                var favoritoHtml = `
+                                    <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
+                                        <div class='card shadow'>
+                                            <a href='./views/perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
+                                                <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
+                                                <div class='card-body'>
+                                                    <h5 class='card-title'>${favorito.nombre}</h5>
+                                                    <p class='card-text'>$ ${favorito.precio}</p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>`;
+                                favoritosList.append(favoritoHtml);
+                            });
+                        } else {
+                            favoritosList.append("<p>No tienes productos en favoritos.</p>");
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error al obtener los favoritos:', error);
+                        $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
+                    }
+                });
+            <?php else: ?>
+                var favoritosList = $('#favoritos-list');
+                favoritosList.empty();
+                favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
+            <?php endif; ?>
+        }
+    });
+
+
+
+
+
+$(document).ready(function() {
+    $('#carritoModal').on('shown.bs.modal', function () {
+        cargarCarrito();
+    });
+
+    function cargarCarrito() {
+        $.ajax({
+            url: '../scripts/obtener_carrito.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(carrito) {
+    var carritoList = $('#carrito-list');
+    carritoList.empty();
+    if (carrito.length > 0) {
+        carrito.forEach(function(item) {
+            console.log('Imagen Producto:', item.imagen_producto); // Verifica la URL de la imagen
+            var imagen = item.imagen_producto ? '../img/index/' + item.imagen_producto : '../img/index/default.png';
+            var productoHtml = `
+                <div class='col-md-12 mt-3 py-3 py-md-0'>
+                    <div class='card shadow' style='display: flex; flex-direction: row;'>
+                        <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
+                        <div class='card-body'>
+                            <h5 class='card-title'>${item.nombre_producto}</h5>
+                            ${item.alto ? `<p class='card-text'>Alto: ${item.alto}</p>` : ''}
+                            ${item.largo ? `<p class='card-text'>Largo: ${item.largo}</p>` : ''}
+                            ${item.cantidad ? `<p class='card-text'>Cantidad: ${item.cantidad}</p>` : ''}
+                            ${item.monto ? `<p class='card-text'>Monto: ${item.monto}</p>` : ''}
+                            ${item.grosor ? `<p class='card-text'>Grosor: ${item.grosor}</p>` : ''}
+                            ${item.tipo_tela ? `<p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p>` : ''}
+                            ${item.marco ? `<p class='card-text'>Marco: ${item.marco}</p>` : ''}
+                            ${item.tipo_cadena ? `<p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p>` : ''}
+                            ${item.color ? `<p class='card-text'>Color: ${item.color}</p>` : ''}
+                            ${item.codigo_diseno ? `<p class='card-text'>Diseño: ${item.codigo_diseno}</p>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            carritoList.append(productoHtml);
+        });
+    } else {
+        carritoList.append("<p>No tienes productos en espera.</p>");
+    }
+
+
+            },
+            error: function(error) {
+                console.error('Error al obtener el carrito:', error);
+                $('#carrito-list').append("<p>Error al cargar el carrito.</p>");
+            }
+        });
+    }
+});
+
   </script>
 </body>
 </html>

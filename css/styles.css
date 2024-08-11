@@ -67,6 +67,10 @@ html {
   background-size: cover;
   background-position: 70%;
 }
+.main-content .content{
+  margin-left: 4em;
+
+}
 
 
 /*--------------------------------- segunda barra---------------------------- */
@@ -125,7 +129,6 @@ html {
 .content{
   width: 50%;
   padding-top:  150px;
-  margin-left: 60px;
 
 }
 .content h1{
@@ -188,10 +191,12 @@ html {
 }
 /*Cards de categorias*/
 .img-card {
-  width: 100%;
-  height: 200px !important; /* Ajusta este valor al alto deseado */
+  width: 90%;
+  height: 200px !important;
   object-fit: cover;
   overflow: hidden;
+  margin: auto;
+  margin-top: 1rem;
 }
 .categoria-title{
   font-family: Inter;
@@ -289,6 +294,7 @@ html {
   right: 10px;
   width: 40px; 
   height: 40px; 
+  margin-right: 1em;
   background-color: white;
   border-radius: 50%;
   display: flex;

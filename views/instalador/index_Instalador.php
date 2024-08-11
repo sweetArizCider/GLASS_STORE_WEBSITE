@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 include '../../class/database.php';
@@ -12,7 +11,7 @@ try {
     // Consultar el ID del instalador basado en la sesión
     $user = $_SESSION["nom_usuario"];
     $stmt = $pdo->prepare("
-        SELECT i.id_instalador
+        SELECT i.id_instalador, p.nombres, p.apellido_p
         FROM instalador i
         JOIN persona p ON i.persona = p.id_persona
         JOIN usuarios u ON p.usuario = u.id_usuario
@@ -23,42 +22,30 @@ try {
 
     if ($result) {
         $_SESSION["id_instalador"] = $result->id_instalador;
-        
-        $stmt = $pdo->prepare("CALL instalador_mas_instalaciones()");
-        $stmt->execute();
-        
-        $instaladorDelMes = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($instaladorDelMes) {
-            $nombreCompleto = htmlspecialchars($instaladorDelMes['nombres'] . ' ' . $instaladorDelMes['apellido_p']);
-            $instalaciones = htmlspecialchars($instaladorDelMes['instalaciones_realizadas']);
-        } else {
-            $nombreCompleto = "No hay datos disponibles";
-            $instalaciones = "";
-        }
+        $nombreCompleto = htmlspecialchars($result->nombres . ' ' . $result->apellido_p);
+
+        // Obtener el total de citas asignadas en el día
+        $stmt = $pdo->prepare("CALL ContarCitasDiaInstalador(?, CURDATE(), @total_citas_dia)");
+        $stmt->execute([$result->id_instalador]);
+
+        $stmt = $pdo->query("SELECT @total_citas_dia AS total_citas_dia");
+        $totalCitasDia = $stmt->fetch(PDO::FETCH_OBJ)->total_citas_dia;
+
+        // Obtener el total de citas asignadas en el mes
+        $stmt = $pdo->prepare("CALL ContarCitasMesInstalador(?, MONTH(CURDATE()), YEAR(CURDATE()), @total_citas_mes)");
+        $stmt->execute([$result->id_instalador]);
+
+        $stmt = $pdo->query("SELECT @total_citas_mes AS total_citas_mes");
+        $totalCitasMes = $stmt->fetch(PDO::FETCH_OBJ)->total_citas_mes;
     } else {
         echo 'No se encontró el ID del instalador para el usuario.';
         $nombreCompleto = "";
-        $instalaciones = "";
+        $totalCitasDia = 0;
+        $totalCitasMes = 0;
     }
 } catch (PDOException $e) {
     echo "Error al obtener datos: " . $e->getMessage();
 }
-
-$stmt = $db->getPDO()->prepare("CALL obtenertotalcitas(:id_instalador)");
-$stmt->bindParam(':id_instalador', $idInstalador, PDO::PARAM_INT);
-$stmt->execute();
-
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
-$totalCitas = $result['TotalCitas'] ?? 0;
-
-$stmt = $db->getPDO()->prepare("CALL obtenermaxmincitasporsemana(:id_instalador)");
-$stmt->bindParam(':id_instalador', $idInstalador, PDO::PARAM_INT);
-$stmt->execute();
-
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
-$maxCitas = $result['MaxCitasPorSemana'] ?? 0;
-$minCitas = $result['MinCitasPorSemana'] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -98,7 +85,7 @@ $minCitas = $result['MinCitasPorSemana'] ?? 0;
           </a>
           <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="../../../" class="sidebar-link">Volver al Inicio</a>
+              <a href="./index_Instalador.php" class="sidebar-link">Volver al Inicio</a>
             </li>
           </ul>
         </li>
@@ -146,72 +133,66 @@ $minCitas = $result['MinCitasPorSemana'] ?? 0;
         </a>
       </div>
       <div class="sidebar-footer">
-    <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
-        <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
-        <span>Cerrar Sesión</span>
-    </a>
-</div>
-
+        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+            <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+            <span>Cerrar Sesión</span>
+        </a>
+    </div>
     </aside>
+
     <div class="main p-3">
-      <!-- contenido general-->
-      <div class="contenidoGeneral mt-4">
-        <div class="container">
-          <div class="row">
-            <!-- Tarjeta de Estadísticas -->
-            <div class="col-md-6 mb-4">
-              <div class="card card-custom text-center" style="border-color: #0e2238;">
-                <div class="card-header" style="background-color: #0e2238; color: white;">
-                  <h5 class="card-title mb-0">Instalador del Mes</h5>
-                </div>
-                <div class="card-body">
-                  <h4 class="card-title"><?php echo $nombreCompleto; ?></h4>
-                  <p class="card-text"><strong>Instalaciones Realizadas:</strong> <?php echo $instalaciones; ?></p>
-                </div>
-                <div class="card-footer text-muted" style="background-color: #0e2238;">
-                  <i class="bi bi-star-fill text-primary" style="font-size: 2rem;"></i>
-                </div>
-              </div>
-            </div>
-            <!-- Tarjeta de Total de Citas Asignadas -->
-            <div class="col-md-6 mb-4">
-              <div class="card card-custom text-center" style="border-color: #28a745;">
-                <div class="card-header" style="background-color: #28a745; color: white;">
-                  <h5 class="card-title mb-0">Total de Citas Asignadas</h5>
-                </div>
-                <div class="card-body">
-                  <h4 class="card-title"><?php echo $totalCitas; ?></h4>
-                  <p class="card-text">Citas asignadas en el mes actual</p>
-                </div>
-                <div class="card-footer text-muted" style="background-color: #f8f9fa;">
-                  <i class="bi bi-calendar-check-fill text-success" style="font-size: 2rem;"></i>
-                </div>
-              </div>
+  <div class="contenidoGeneral mt-4">
+    <div class="general-container">
+      <div class="row">
+        <!-- Card de bienvenida -->
+        <div class="col-12 mb-4 card-bienvenida">
+          <div class="text-center ">
+            <div class="">
+              <h5 class=" mensaje-bienvenida">Bienvenido, <?php echo $nombreCompleto; ?></h5>
+              <p class=" mensaje-sub"><mark class="marklued">¡ Esperamos que hoy te encuentres bien !</mark></p>
             </div>
           </div>
-  </div>
-  <!-- Tarjeta de Max/Min Citas por Semana -->
-  <div class="row justify-content-center">
-              <div class="col-md-4 mb-4">
-                <div class="card card-custom text-center" style="border-color: #007bff;">
-                  <div class="card-header" style="background-color: #007bff; color: white;">
-                    <h5 class="card-title mb-0">Citas por Semana</h5>
-                  </div>
-                  <div class="card-body">
-                    <h4 class="card-title"><?php echo $maxCitas; ?> / <?php echo $minCitas; ?></h4>
-                    <p class="card-text">Mayor y menor de asignacion de citas por semana</p>
-                  </div>
-                  <div class="card-footer text-muted" style="background-color: #f8f9fa;">
-                    <i class="bi bi-calendar-week-fill text-primary" style="font-size: 2rem;"></i>
-                  </div>
-                </div>
+        </div>
+        <!-- Contadores -->
+        <div class="col-md-6 mb-4">
+          <div class="secc-sub-general  text-center">
+            <div class="card-body">
+              <div class="">
+              <p class="card-text"><strong>El día de hoy tienes</strong></p>
               </div>
-           </div>
+              <h3 class="card-title contador"><?php echo $totalCitasDia; ?></h3>
+              <p class="card-text"><strong>citas asignadas</strong></p>
+              <p class="card-text dirigete">Dirígete al apartado de citas para <a href="./vista_instalador_citas.php"> más información</a>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="secc-sub-general text-center">
+            <div class="card-body">
+              <div class="">
+              <p class="card-text"><strong>Este  mes tienes</strong></p>
+              </div>
+              <h3 class="card-title contador"><?php echo $totalCitasMes; ?></h3>
+              <p class="card-text"><strong>citas asignadas</strong></p>
+              <p class="card-text dirigete">Dirígete al apartado de citas para <a href="./vista_instalador_citas.php"> más información</a>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 mt-4">
+          <div class="text-center">
+            <div class="">
+              <p class="">
+                <strong>¡ En <span class="strong-bsname">GLASS STORE</span> agradecemos tu esfuerzo y dedicación!</strong>
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
+
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
   <script>

@@ -80,7 +80,7 @@ try {
         </div>
       </div>
       <ul class="sidebar-nav">
-        <li class="sidebar-item">
+      <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
             <img src="../../img/admin/admin_icon.svg" alt="Personal">
@@ -116,6 +116,10 @@ try {
           <ul id="cotizaciones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
               <a href="./vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
+            </li>
+
+            <li class="sidebar-item">
+              <a href="./vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
             </li>
           </ul>
         </li>
@@ -164,10 +168,9 @@ try {
             </li>
           </ul>
         </li>
-      </ul>
-      <div class="sidebar-footer">
-        <a href="./vista_admin.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver"><!--PONER UNA IMAGEN COMO DE VOLVER-->
+        <div class="sidebar-footer">
+        <a href="../../index.php" class="sidebar-link">
+          <img src="../../img/index/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
       </div>
@@ -177,7 +180,10 @@ try {
         <span>Cerrar Sesión</span>
         </a>
     </div>
+      </ul>
+      
     </aside>
+    
       <div class="main p-3">
             <div class="text-center">
                 <h1>Gestión de Roles</h1>

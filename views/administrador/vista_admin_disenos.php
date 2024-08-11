@@ -24,8 +24,8 @@
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-  <!--Barra lateral-->
-  <div class="wrapper">
+ <!--Barra lateral-->
+ <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -36,7 +36,7 @@
         </div>
       </div>
       <ul class="sidebar-nav">
-        <li class="sidebar-item">
+      <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
             <img src="../../img/admin/admin_icon.svg" alt="Personal">
@@ -44,10 +44,10 @@
           </a>
           <ul id="personal" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="#" class="sidebar-link">Registrar</a>
+              <a href="./vista_admin_gestionainstalador.php" class="sidebar-link">Registrar</a>
             </li>
             <li class="sidebar-item">
-              <a href="#" class="sidebar-link">Gestionar</a>
+              <a href="./vista_admin_darRol.php" class="sidebar-link">Gestionar</a>
             </li>
           </ul>
         </li>
@@ -59,57 +59,62 @@
           </a>
           <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./vista_admin_citas.php" class="sidebar-link">Agendar cita</a>
-            </li>
-            <li class="sidebar-item">
-              <a href="./vista_admin_citas.php" class="sidebar-link">Horario</a>
+              <a href="./vista_admin_citas.php" class="sidebar-link">Gestionar citas</a>
             </li>
           </ul>
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
+            data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
             <img src="../../img/admin/clipboard.svg" alt="Cotizaciones">
             <span>Cotizaciones</span>
           </a>
           <ul id="cotizaciones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./vista_admin_corizaciones.php" class="sidebar-link">Crear cotización</a>
+              <a href="./vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
             </li>
-          </ul>
-        </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#recibos" aria-expanded="false" aria-controls="recibos">
-            <img src="../../img/admin/clipboard.svg" alt="Recibos">
-            <span>Recibos</span>
-          </a>
-          <ul id="recibos" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+
             <li class="sidebar-item">
-              <a href="../../views/recibos.php" class="sidebar-link">Buscar recibos</a>
+              <a href="./vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
             </li>
           </ul>
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
+             data-bs-target="#ventas" aria-expanded="false" aria-controls="ventas">
+            <img src="../../img/admin/recibos.svg" alt="Ventas">
+            <span>Ventas</span>
+          </a>
+          <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+          
+          <li class="sidebar-item">
+          <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
+          </li>
+          <li class="sidebar-item">
+          <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
+          </li>
+          <li class="sidebar-item">
+          <a href="../recibos.php" class="sidebar-link">Historial</a>
+          </li>
+          </ul>
+        </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+            data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
             <img src="../../img/admin/products.svg" alt="Productos">
             <span>Productos</span>
           </a>
           <ul id="productos" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./vista_admin_productos.php" class="sidebar-link">Añadir</a>
+              <a href="./vista_admin_productos.php" class="sidebar-link">Gestionar productos</a>
             </li>
-          </ul>
-          <ul id="productos" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./vista_admin_productos.php" class="sidebar-link">Diseños</a>
+              <a href="./vista_admin_disenos.php" class="sidebar-link">Diseños</a>
             </li>
           </ul>
-        </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#promociones" aria-expanded="false" aria-controls="promociones">
+            data-bs-target="#promociones" aria-expanded="false" aria-controls="promociones">
             <img src="../../img/admin/off.svg" alt="Promociones">
             <span>Promociones</span>
           </a>
@@ -119,10 +124,9 @@
             </li>
           </ul>
         </li>
-      </ul>
-      <div class="sidebar-footer">
-        <a href="./vista_admin.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver">
+        <div class="sidebar-footer">
+        <a href="../../index.php" class="sidebar-link">
+          <img src="../../img/index/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
       </div>
@@ -132,6 +136,8 @@
         <span>Cerrar Sesión</span>
         </a>
     </div>
+      </ul>
+      
     </aside>
 
     <div class="main p-3">

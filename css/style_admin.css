@@ -286,3 +286,21 @@ a.sidebar-link:hover {
     color: #ffffff;
 
 }
+/*index instalador*/
+.mensaje-bienvenida{
+    font-family: 'Montserrat';
+    font-size: 2.8em;
+    font-weight: 700;
+    color: #132644;
+    text-transform: uppercase;
+}
+.dirigete{
+font-size: .8em;
+}
+
+.contador{
+font-size: 3em;
+}
+.strong-bsname{
+    color: #4AB3D5;
+}

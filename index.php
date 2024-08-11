@@ -188,7 +188,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
               ESTILO Y DISTINCIÓN
           </h1>
           <p>Dale un toque único a tu espacio con nuestros <br> productos de alta calidad. Soluciones elegantes y <br> personalizadas para tu hogar o negocio.</p>
-          <div id="btn1" ><a href="https://api.whatsapp.com/send?phone=8717843809" target="_blank"><button class="banner-boton" >Contáctanos</button></a></div>
+          <div id="btn1" ><a href="./views/productos.php" ><button class="banner-boton" >Ver Porductos</button></a></div>
         </div> 
       </div>
      </main>
@@ -200,7 +200,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
         <div class="row" style="margin-top: 50px;">
             <div class="col-md-3 py-3 py-md-0 ">
                 <div class="card shadow">
-                    <img src="./img/index/PersianaCafeClaro.jpeg" alt="" class="card image-top img-card" height="200px">
+                    <img src="./img/index/PersianaCafeClaro.jpeg" alt="" class="card img-card" >
                     <div class="card-body">
                         <h5 class="card-titel text-center categoria-title">Persianas</h5>
                         <p class="text-center">Mejora tu hogar con nuestras elegantes persianas, disponibles en varios estilos y colores para un control óptimo de la luz y privacidad.</p>
@@ -273,7 +273,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                     </div>
                 </div>
                 <p class="testimonyReview">Obtén asesoramiento personalizado para transformar tu espacio con nuestras soluciones en vidrio templado, persianas, papel tapiz y herrajes. ¡Reserva tu cita ahora!</p>
-                <div id="btn4"><a href="/views/citas.php"><button class="agendar-boton">Agendar</button></a></div>
+                <div id="btn4"><a href="./views/citas.php"><button class="agendar-boton">Agendar</button></a></div>
             </div>
         </div>
     </div>

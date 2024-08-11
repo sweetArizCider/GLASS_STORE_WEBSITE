@@ -82,8 +82,8 @@ $db->desconectarDB();
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-  <!--Barra lateral-->
-  <div class="wrapper">
+ <!--Barra lateral-->
+ <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -130,6 +130,10 @@ $db->desconectarDB();
           <ul id="cotizaciones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
               <a href="./vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
+            </li>
+
+            <li class="sidebar-item">
+              <a href="./vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
             </li>
           </ul>
         </li>
@@ -178,10 +182,9 @@ $db->desconectarDB();
             </li>
           </ul>
         </li>
-      </ul>
-      <div class="sidebar-footer">
-        <a href="./vista_admin.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver">
+        <div class="sidebar-footer">
+        <a href="../../index.php" class="sidebar-link">
+          <img src="../../img/index/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
       </div>
@@ -191,6 +194,8 @@ $db->desconectarDB();
         <span>Cerrar Sesión</span>
         </a>
     </div>
+      </ul>
+      
     </aside>
     <div class="main p-3">
       <div class="text-center">
@@ -357,6 +362,14 @@ $db->desconectarDB();
     </div>
   </div>
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const hamBurger = document.querySelector(".toggle-btn");
+
+    hamBurger.addEventListener("click", function () {
+      document.querySelector("#sidebar").classList.toggle("expand");
+    });
+  </script>
 </body>
 </html>

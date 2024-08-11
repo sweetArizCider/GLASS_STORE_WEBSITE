@@ -278,10 +278,9 @@ try {
             </li>
           </ul>
         </li>
-      </ul>
-      <div class="sidebar-footer">
+        <div class="sidebar-footer">
         <a href="../../index.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver">
+          <img src="../../img/index/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
       </div>
@@ -291,6 +290,8 @@ try {
         <span>Cerrar Sesión</span>
         </a>
     </div>
+      </ul>
+      
     </aside>
     <div class="main p-3">
       <!-- Área de búsqueda -->
@@ -369,6 +370,14 @@ try {
       </div>
     </div>
   </div>
-  <script src="../../js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const hamBurger = document.querySelector(".toggle-btn");
+
+    hamBurger.addEventListener("click", function () {
+      document.querySelector("#sidebar").classList.toggle("expand");
+    });
+  </script>
 </body>
 </html>

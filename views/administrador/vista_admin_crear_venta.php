@@ -79,8 +79,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-  <!--Barra lateral-->
-  <div class="wrapper">
+ <!--Barra lateral-->
+ <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -91,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
         </div>
       </div>
       <ul class="sidebar-nav">
-        <li class="sidebar-item">
+      <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
             <img src="../../img/admin/admin_icon.svg" alt="Personal">
@@ -128,6 +128,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
             <li class="sidebar-item">
               <a href="./vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
             </li>
+
+            <li class="sidebar-item">
+              <a href="./vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
+            </li>
           </ul>
         </li>
         <li class="sidebar-item">
@@ -139,26 +143,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
           <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
           
           <li class="sidebar-item">
-          <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Nueva</a>
+          <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
           </li>
           <li class="sidebar-item">
-          <a href="./vista_admin_ventas.php" class="sidebar-link">Pendientes</a>
+          <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
           </li>
           <li class="sidebar-item">
           <a href="../recibos.php" class="sidebar-link">Historial</a>
           </li>
-          </ul>
-        </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-            data-bs-target="#recibos" aria-expanded="false" aria-controls="recibos">
-            <img src="../../img/admin/recibos.svg" alt="Recibos">
-            <span>Recibos</span>
-          </a>
-          <ul id="recibos" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-            <li class="sidebar-item">
-              <a href="./recibos.php" class="sidebar-link">Buscar recibos</a>
-            </li>
           </ul>
         </li>
         <li class="sidebar-item">
@@ -187,10 +179,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
             </li>
           </ul>
         </li>
-      </ul>
-      <div class="sidebar-footer">
-        <a href="./vista_admin.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver"><!--PONER UNA IMAGEN COMO DE VOLVER-->
+        <div class="sidebar-footer">
+        <a href="../../index.php" class="sidebar-link">
+          <img src="../../img/index/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
       </div>
@@ -200,7 +191,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
         <span>Cerrar Sesión</span>
         </a>
     </div>
+      </ul>
+      
     </aside>
+
+
     <div class="main p-3">
       <div class="text-center">
         <div class="busqueda mx-auto">
