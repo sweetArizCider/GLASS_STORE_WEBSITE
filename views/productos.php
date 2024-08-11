@@ -80,6 +80,31 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     return esReciente($notif->fecha);
 });
 
+$conexion = new database();
+$conexion->conectarDB();
+
+// Obtener todos los productos para paginación si no se está buscando
+if (!isset($_SESSION['nombre_producto'])) {
+    $offset = ($pagina_actual - 1) * $productos_por_pagina;
+
+    $consulta_productos_total = "SELECT COUNT(*) as total FROM productos";
+    $total_productos = $conexion->seleccionar($consulta_productos_total)[0]->total;
+    $total_paginas = ceil($total_productos / $productos_por_pagina);
+
+   $consulta_productos = "
+    SELECT p.id_producto, p.nombre, p.precio, i.imagen
+    FROM productos p
+    LEFT JOIN imagen i ON p.id_producto = i.producto
+    WHERE p.estatus = 'activo'
+    LIMIT ? OFFSET ?
+";
+    $productos_espera = $conexion->seleccionar($consulta_productos);
+} else {
+    $nombreBuscado = trim($_SESSION['nombre_producto']);
+    unset($_SESSION['nombre_producto']);
+    $productos_espera = $conexion->BuscarProductoPorNombre($nombreBuscado);
+}
+
 ?>
 
 <!DOCTYPE html>
