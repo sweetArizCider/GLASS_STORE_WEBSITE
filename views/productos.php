@@ -4,7 +4,7 @@ include '../class/database.php';
 
 $id_usuario = 0;
 $notificaciones = [];
-$productos_por_pagina = 8; // Mostrar 8 productos por vez
+$productos_por_pagina = 8; // Número de productos por página
 
 if (isset($_SESSION["nom_usuario"])) {
     $user = $_SESSION["nom_usuario"];
@@ -63,8 +63,6 @@ $consulta_productos = "
     LIMIT $productos_por_pagina
 ";
 $productos_espera = $conexion->seleccionar($consulta_productos);
-
-$total_productos = count($productos_espera);
 ?>
 
 <!DOCTYPE html>
@@ -201,7 +199,7 @@ $total_productos = count($productos_espera);
         <?php
         if (!empty($productos_espera)) {
             foreach ($productos_espera as $producto) {
-                $imagen = $producto->imagen ? '../img/index/' . $producto->imagen : '../img/index/default.png';
+                $imagen = $producto->imagen ? '../img/disenos/' . $producto->imagen : '../img/index/default.png';
                 $id_producto = $producto->id_producto;
 
                 // Verificar si el producto es favorito para el usuario actual
@@ -262,6 +260,23 @@ $total_productos = count($productos_espera);
     </div>
 </div>
 
+<!-- Modal de Favoritos -->
+<div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="favoritosModalLabel">Mis Favoritos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="favoritos-list" class="row">
+                    <!-- Aquí se cargarán los productos favoritos -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--Footer-->
 <footer class="footer">
     <div class="container">
@@ -299,78 +314,78 @@ $(document).ready(function() {
     var currentPage = 1;
     var productosPorPagina = <?php echo $productos_por_pagina; ?>;
 
-    $('#load-more').on('click', function() {
-        currentPage++;
-        cargarMasProductos(currentPage);
-    });
-
+    // Filtro en tiempo real al escribir en el campo
     $('#search-input').on('input', function() {
         currentPage = 1; // Resetear la página actual a 1
         ejecutarBusqueda();
     });
 
+    // Ejecutar búsqueda al hacer clic en el botón
     $('#search-button').on('click', function() {
         currentPage = 1; // Resetear la página actual a 1
         ejecutarBusqueda();
     });
 
+    // Ejecutar búsqueda al presionar Enter
     $('#search-input').on('keydown', function(event) {
         if (event.keyCode === 13) {
-            event.preventDefault();
+            event.preventDefault(); // Evitar comportamiento predeterminado
             currentPage = 1; // Resetear la página actual a 1
             ejecutarBusqueda();
         }
     });
 
+    // Cargar más productos al hacer clic en "Ver más"
+    $('#load-more').on('click', function() {
+        currentPage++;
+        cargarMasProductos(currentPage);
+    });
+
+    // Función para ejecutar la búsqueda de productos
     function ejecutarBusqueda() {
         var searchValue = $('#search-input').val().toLowerCase();
-        $.ajax({
-            url: '../scripts/cargar_productos.php',
-            method: 'GET',
-            data: {
-                search: searchValue,
-                page: currentPage,
-                productos_por_pagina: productosPorPagina
-            },
-            dataType: 'json',
-            success: function(response) {
-                $('#product-list').empty();
-                if (response.productos.length > 0) {
-                    response.productos.forEach(function(producto) {
-                        var imagen = producto.imagen ? '../img/index/' + producto.imagen : '../img/index/default.png';
-                        var iconoFavorito = producto.es_favorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
-
-                        var productoHtml = `
-                            <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='${producto.nombre}'>
-                                <div class='card shadow' id='c'>
-                                    <a href='./perfilProducto.php?id=${producto.id_producto}' style='text-decoration: none; color: inherit;'>
-                                        <img src='${imagen}' alt='${producto.nombre}' class='card image-top pad'>
-                                    </a>
-                                    <div class='icon-overlay-container' onclick='changeIcon(this, ${producto.id_producto})'>
-                                        <img src='${iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
-                                    </div>
-                                    <div class='card-body'>
-                                        <h3 class='card-title text-center title-card-new'>${producto.nombre}</h3>
-                                        <p class='card-text text-center card-price'>\$${producto.precio}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        $('#product-list').append(productoHtml);
-                    });
-
-                    $('#load-more').show(); // Mostrar el botón "Ver más" después de la búsqueda
+        
+        if ($('#favoritosModal').is(':visible')) {
+            // Buscar dentro del modal de favoritos
+            $('#favoritos-list .product-item').each(function() {
+                var productName = $(this).data('name').toLowerCase();
+                if (productName.includes(searchValue)) {
+                    $(this).show();
                 } else {
-                    $('#product-list').append("<div class='col-12'><p class='text-center'>No se encontraron productos.</p></div>");
-                    $('#load-more').hide();
+                    $(this).hide();
                 }
-            },
-            error: function(error) {
-                console.error('Error al buscar productos:', error);
-            }
-        });
+            });
+        } else {
+            // Buscar en la lista principal de productos
+            $.ajax({
+                url: '../scripts/cargar_productos.php',
+                method: 'GET',
+                data: {
+                    search: searchValue,
+                    page: currentPage,
+                    productos_por_pagina: productosPorPagina
+                },
+                dataType: 'json',
+                success: function(response) {
+                    $('#product-list').empty();
+                    if (response.productos.length > 0) {
+                        response.productos.forEach(function(producto) {
+                            agregarProductoAlDOM(producto);
+                        });
+                        $('#load-more').show(); // Mostrar el botón "Ver más" después de la búsqueda
+                    } else {
+                        $('#product-list').append("<div class='col-12'><p class='text-center'>No se encontraron productos.</p></div>");
+                        $('#load-more').hide();
+                    }
+                },
+                error: function(error) {
+                    console.error('Error al buscar productos:', error);
+                }
+            });
+        }
     }
 
+    // Función para cargar más productos
     function cargarMasProductos(pagina) {
         var searchValue = $('#search-input').val().toLowerCase();
         $.ajax({
@@ -385,26 +400,7 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.productos.length > 0) {
                     response.productos.forEach(function(producto) {
-                        var imagen = producto.imagen ? '../img/index/' + producto.imagen : '../img/index/default.png';
-                        var iconoFavorito = producto.es_favorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
-
-                        var productoHtml = `
-                            <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='${producto.nombre}'>
-                                <div class='card shadow' id='c'>
-                                    <a href='./perfilProducto.php?id=${producto.id_producto}' style='text-decoration: none; color: inherit;'>
-                                        <img src='${imagen}' alt='${producto.nombre}' class='card image-top pad'>
-                                    </a>
-                                    <div class='icon-overlay-container' onclick='changeIcon(this, ${producto.id_producto})'>
-                                        <img src='${iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
-                                    </div>
-                                    <div class='card-body'>
-                                        <h3 class='card-title text-center title-card-new'>${producto.nombre}</h3>
-                                        <p class='card-text text-center card-price'>\$${producto.precio}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        $('#product-list').append(productoHtml);
+                        agregarProductoAlDOM(producto);
                     });
                 } else {
                     $('#load-more').hide(); // Ocultar el botón si no hay más productos
@@ -415,10 +411,162 @@ $(document).ready(function() {
             }
         });
     }
+
+    // Función para agregar un producto al DOM
+    function agregarProductoAlDOM(producto) {
+        var imagen = producto.imagen ? '../img/disenos/' + producto.imagen : '../img/index/default.png';
+        var iconoFavorito = producto.es_favorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
+
+        var productoHtml = `
+            <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='${producto.nombre}'>
+                <div class='card shadow' id='c'>
+                    <a href='./perfilProducto.php?id=${producto.id_producto}' style='text-decoration: none; color: inherit;'>
+                        <img src='${imagen}' alt='${producto.nombre}' class='card image-top pad'>
+                    </a>
+                    <div class='icon-overlay-container' onclick='changeIcon(this, ${producto.id_producto})'>
+                        <img src='${iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
+                    </div>
+                    <div class='card-body'>
+                        <h3 class='card-title text-center title-card-new'>${producto.nombre}</h3>
+                        <p class='card-text text-center card-price'>\$${producto.precio}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        $('#product-list').append(productoHtml);
+    }
+
+    // Función para cambiar el ícono de favoritos
+    function changeIcon(element, id_producto) {
+        var icon = element.querySelector('.icon-overlay');
+        var isFavorite = icon.getAttribute('src') === '../img/index/heartCover.svg';
+        
+        // Depuración
+        console.log("Icon clicked for product ID: ", id_producto);
+        console.log("Current icon state (isFavorite): ", isFavorite);
+        
+        if (isFavorite) {
+            icon.setAttribute('src', '../img/index/addFavorites.svg');
+        } else {
+            icon.setAttribute('src', '../img/index/heartCover.svg');
+        }
+        
+        saveToFavorites(id_producto, !isFavorite); // Enviar estado actual
+    }
+
+    // Función para guardar un producto en favoritos
+    function saveToFavorites(id_producto, isFavorite) {
+        $.ajax({
+            url: '../scripts/guardar_favorito.php',
+            method: 'POST',
+            data: { id_producto: id_producto, is_favorite: isFavorite },
+            success: function(response) {
+                console.log("Favorite saved successfully: ", response);
+            },
+            error: function(error) {
+                console.error('Error saving favorite:', error);
+            }
+        });
+    }
+
+    // Cargar favoritos cuando el modal es mostrado
+    $('#favoritosModal').on('shown.bs.modal', function () {
+        cargarFavoritos();
+    });
+
+    // Función para cargar favoritos
+    function cargarFavoritos() {
+        <?php if (isset($_SESSION["nom_usuario"])): ?>
+            $.ajax({
+                url: '../scripts/obtener_favoritos.php',
+                method: 'GET',
+                dataType: 'json',
+                success: function(favoritos) {
+                    var favoritosList = $('#favoritos-list');
+                    favoritosList.empty();
+                    if (favoritos.length > 0) {
+                        favoritos.forEach(function(favorito) {
+                            var imagen = favorito.imagen ? '../img/disenos/' + favorito.imagen : '../img/index/default.png';
+                            var favoritoHtml = `
+                                <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
+                                    <div class='card shadow'>
+                                        <a href='./views/perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
+                                            <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
+                                            <div class='card-body'>
+                                                <h5 class='card-title'>${favorito.nombre}</h5>
+                                                <p class='card-text'>$ ${favorito.precio}</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>`;
+                            favoritosList.append(favoritoHtml);
+                        });
+                    } else {
+                        favoritosList.append("<p>No tienes productos en favoritos.</p>");
+                    }
+                },
+                error: function(error) {
+                    console.error('Error al obtener los favoritos:', error);
+                    $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
+                }
+            });
+        <?php else: ?>
+            var favoritosList = $('#favoritos-list');
+            favoritosList.empty();
+            favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
+        <?php endif; ?>
+    }
+
+    // Cargar carrito cuando el modal es mostrado
+    $('#carritoModal').on('shown.bs.modal', function () {
+        cargarCarrito();
+    });
+
+    // Función para cargar el carrito
+    function cargarCarrito() {
+        $.ajax({
+            url: '../scripts/obtener_carrito.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(carrito) {
+                var carritoList = $('#carrito-list');
+                carritoList.empty();
+                if (carrito.length > 0) {
+                    carrito.forEach(function(item) {
+                        var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/index/default.png';
+                        var productoHtml = `
+                            <div class='col-md-12 mt-3 py-3 py-md-0'>
+                                <div class='card shadow' style='display: flex; flex-direction: row;'>
+                                    <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
+                                    <div class='card-body'>
+                                        <h5 class='card-title'>${item.nombre_producto}</h5>
+                                        ${item.alto ? `<p class='card-text'>Alto: ${item.alto}</p>` : ''}
+                                        ${item.largo ? `<p class='card-text'>Largo: ${item.largo}</p>` : ''}
+                                        ${item.cantidad ? `<p class='card-text'>Cantidad: ${item.cantidad}</p>` : ''}
+                                        ${item.monto ? `<p class='card-text'>Monto: ${item.monto}</p>` : ''}
+                                        ${item.grosor ? `<p class='card-text'>Grosor: ${item.grosor}</p>` : ''}
+                                        ${item.tipo_tela ? `<p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p>` : ''}
+                                        ${item.marco ? `<p class='card-text'>Marco: ${item.marco}</p>` : ''}
+                                        ${item.tipo_cadena ? `<p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p>` : ''}
+                                        ${item.color ? `<p class='card-text'>Color: ${item.color}</p>` : ''}
+                                        ${item.codigo_diseno ? `<p class='card-text'>Diseño: ${item.codigo_diseno}</p>` : ''}
+                                    </div>
+                                </div>
+                            </div>`;
+                        carritoList.append(productoHtml);
+                    });
+                } else {
+                    carritoList.append("<p>No tienes productos en espera.</p>");
+                }
+            },
+            error: function(error) {
+                console.error('Error al obtener los productos del carrito:', error);
+                $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
+            }
+        });
+    }
 });
 </script>
-
-
 
 </body>
 </html>

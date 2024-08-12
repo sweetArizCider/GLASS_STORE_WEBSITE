@@ -79,4 +79,3 @@ $favoritos = $conexion->seleccionar($consulta, $params);
 
 echo json_encode($favoritos);
 */
-?>

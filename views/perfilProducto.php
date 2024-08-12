@@ -245,7 +245,7 @@ if (isset($_GET['id'])) {
                         if (!empty($imagenes)) {
                             $first = true;
                             foreach ($imagenes as $img) {
-                                $imagePath = !empty($img->imagen) ? '../img/index/' . $img->imagen : '../img/index/default.png';
+                                $imagePath = !empty($img->imagen) ? '../img/disenos/' . $img->imagen : '../img/index/default.png';
                                 $activeClass = $first ? 'active' : '';
                                 echo "<div class='carousel-item $activeClass'>
                                     <img src='" . htmlspecialchars($imagePath) . "' class='img-fluid h-100' alt='Imagen del Producto' style='object-fit: cover;'>
@@ -270,7 +270,7 @@ if (isset($_GET['id'])) {
                 <?php
                 if (!empty($imagenes)) {
                     foreach ($imagenes as $img) {
-                        $imagePath = !empty($img->imagen) ? '../img/index/' . $img->imagen : '../img/index/default.png';
+                        $imagePath = !empty($img->imagen) ? '../img/disenos/' . $img->imagen : '../img/index/default.png';
                         echo "<div class='container-sub-img'>
                                 <img src='" . htmlspecialchars($imagePath) . "' class='sub-img' alt='Imagen del Producto'>
                               </div>";
@@ -495,7 +495,7 @@ $(document).ready(function() {
                 favoritosList.empty();
                 if (favoritos.length > 0) {
                     favoritos.forEach(function(favorito) {
-                        var imagen = favorito.imagen ? '../img/index/' + favorito.imagen : '../img/index/default.png';
+                        var imagen = favorito.imagen ? '../img/disenos/' + favorito.imagen : '../img/index/default.png';
                         var favoritoHtml = `
                             <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
                                 <div class='card shadow'>
@@ -541,7 +541,7 @@ $(document).ready(function() {
                 carritoList.empty();
                 if (carrito.length > 0) {
                     carrito.forEach(function(item) {
-                        var imagen = item.imagen_producto ? '../img/index/' + item.imagen_producto : '../img/index/default.png';
+                        var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/index/default.png';
                         var productoHtml = `
                             <div class='col-md-12 mt-3 py-3 py-md-0'>
                                 <div class='card shadow' style='display: flex; flex-direction: row;'>

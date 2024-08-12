@@ -69,4 +69,3 @@ try {
 } catch (Exception $e) {
     echo json_encode(['error' => 'Error al ejecutar el procedimiento: ' . $e->getMessage()]);
 }
-?>
