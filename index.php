@@ -619,7 +619,7 @@ $(document).ready(function() {
     if (carrito.length > 0) {
         carrito.forEach(function(item) {
             console.log('Imagen Producto:', item.imagen_producto); // Verifica la URL de la imagen
-            var imagen = item.imagen_producto ? './img/index/' + item.imagen_producto : './img/index/default.png';
+            var imagen = item.imagen_producto ? './img/disenos/' + item.imagen_producto : './img/disenos/default.png';
             var productoHtml = `
                 <div class='col-md-12 mt-3 py-3 py-md-0'>
                     <div class='card shadow' style='display: flex; flex-direction: row;'>

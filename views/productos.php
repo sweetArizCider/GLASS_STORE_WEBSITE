@@ -53,6 +53,12 @@ $conexion = new database();
 $conexion->conectarDB();
 
 $productos_espera = [];
+if ($id_usuario != 0) {
+    // Obtener los detalles del producto en espera
+    $consulta_productos = "CALL carrito(?)";
+    $params_productos = [$id_usuario];
+    $productos_espera = $conexion->seleccionar($consulta_productos, $params_productos);
+}
 
 // Cargar los primeros 8 productos
 $consulta_productos = "
@@ -64,6 +70,17 @@ $consulta_productos = "
     LIMIT $productos_por_pagina
 ";
 $productos_espera = $conexion->seleccionar($consulta_productos);
+
+function esReciente($fecha){
+    $fechaNotif = new DateTime($fecha);
+    $fechaActual = new DateTime();
+    $intervalo = $fechaActual->diff($fechaNotif);
+    return ($intervalo->d < 30); // Considera reciente si es de los últimos 30 días
+}
+
+$notificacionesRecientes = array_filter($notificaciones, function($notif) {
+    return esReciente($notif->fecha);
+});
 ?>
 
 <!DOCTYPE html>
@@ -204,7 +221,7 @@ $productos_espera = $conexion->seleccionar($consulta_productos);
                 $id_producto = $producto->id_producto;
 
                 // Verificar si el producto es favorito para el usuario actual
-                $esFavorito = true;
+                $esFavorito = false;
                 if ($id_usuario != 0) { // Verificar solo si el usuario está autenticado
                     $esFavorito = $conexion->esFavorito($id_producto, $id_usuario);
                 }
@@ -282,6 +299,32 @@ $productos_espera = $conexion->seleccionar($consulta_productos);
                         <p><a href="../views/iniciarSesion.php">Inicia sesión</a> para guardar tus productos favoritos y acceder a ellos cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
                     </div>
                 <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal notificaciones-->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Notificaciones</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <?php
+                if (!empty($notificacionesRecientes)) {
+                    foreach ($notificacionesRecientes as $notif) {
+                        echo '<div class="notification">';
+                        echo '<p>' . htmlspecialchars($notif->notificacion) . '</p>';
+                        echo '<small>' . htmlspecialchars($notif->fecha) . '</small>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo '<p>No tienes notificaciones recientes.</p>';
+                }
+                ?>
             </div>
         </div>
     </div>
@@ -449,55 +492,80 @@ $(document).ready(function() {
 
 
     
-
-   
-    // Cargar carrito cuando el modal es mostrado
-    $('#carritoModal').on('shown.bs.modal', function () {
-        cargarCarrito();
-    });
-
-    // Función para cargar el carrito
-    function cargarCarrito() {
-        $.ajax({
-            url: '../scripts/obtener_carrito.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(carrito) {
-                var carritoList = $('#carrito-list');
-                carritoList.empty();
-                if (carrito.length > 0) {
-                    carrito.forEach(function(item) {
-                        var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/index/default.png';
-                        var productoHtml = `
-                            <div class='col-md-12 mt-3 py-3 py-md-0'>
-                                <div class='card shadow' style='display: flex; flex-direction: row;'>
-                                    <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
-                                    <div class='card-body'>
-                                        <h5 class='card-title'>${item.nombre_producto}</h5>
-                                        ${item.alto ? `<p class='card-text'>Alto: ${item.alto}</p>` : ''}
-                                        ${item.largo ? `<p class='card-text'>Largo: ${item.largo}</p>` : ''}
-                                        ${item.cantidad ? `<p class='card-text'>Cantidad: ${item.cantidad}</p>` : ''}
-                                        ${item.monto ? `<p class='card-text'>Monto: ${item.monto}</p>` : ''}
-                                        ${item.grosor ? `<p class='card-text'>Grosor: ${item.grosor}</p>` : ''}
-                                        ${item.tipo_tela ? `<p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p>` : ''}
-                                        ${item.marco ? `<p class='card-text'>Marco: ${item.marco}</p>` : ''}
-                                        ${item.tipo_cadena ? `<p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p>` : ''}
-                                        ${item.color ? `<p class='card-text'>Color: ${item.color}</p>` : ''}
-                                        ${item.codigo_diseno ? `<p class='card-text'>Diseño: ${item.codigo_diseno}</p>` : ''}
-                                    </div>
-                                </div>
-                            </div>`;
-                        carritoList.append(productoHtml);
-                    });
-                } 
-            },
-            error: function(error) {
-                console.error('Error al obtener los productos del carrito:', error);
-                $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
-            }
-        });
-    }
 });
+   
+       // Cargar carrito cuando el modal es mostrado
+       $(document).ready(function() {
+        $('#carritoModal').on('shown.bs.modal', function () {
+            cargarCarrito();
+        });
+
+        $('#aceptar-btn').on('click', function() {
+            actualizarEstadoProductos();
+        });
+
+        function cargarCarrito() {
+            $.ajax({
+                url: '../scripts/obtener_carrito.php',
+                method: 'GET',
+                dataType: 'json',
+                success: function(carrito) {
+                    var carritoList = $('#carrito-list');
+                    carritoList.empty();
+                    if (carrito.length > 0) {
+                        carrito.forEach(function(item) {
+                            var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/disenos/default.png';
+                            var productoHtml = `
+                                <div class='col-md-12 mt-3 py-3 py-md-0'>
+                                    <div class='card shadow' style='display: flex; flex-direction: row;'>
+                                        <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 15px;'>
+                                        <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
+                                        <div class='card-body'>
+                                            <h5 class='card-title'>${item.nombre_producto}</h5>
+                                            ${item.alto ? `<p class='card-text'>Alto: ${item.alto}</p>` : ''}
+                                            ${item.largo ? `<p class='card-text'>Largo: ${item.largo}</p>` : ''}
+                                            ${item.cantidad ? `<p class='card-text'>Cantidad: ${item.cantidad}</p>` : ''}
+                                            ${item.monto ? `<p class='card-text'>Monto: ${item.monto}</p>` : ''}
+                                            ${item.grosor ? `<p class='card-text'>Grosor: ${item.grosor}</p>` : ''}
+                                            ${item.tipo_tela ? `<p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p>` : ''}
+                                            ${item.marco ? `<p class='card-text'>Marco: ${item.marco}</p>` : ''}
+                                            ${item.tipo_cadena ? `<p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p>` : ''}
+                                            ${item.color ? `<p class='card-text'>Color: ${item.color}</p>` : ''}
+                                            ${item.codigo_diseno ? `<p class='card-text'>Diseño: ${item.codigo_diseno}</p>` : ''}
+                                        </div>
+                                    </div>
+                                </div>`;
+                            carritoList.append(productoHtml);
+                        });
+                    } else {
+                        carritoList.append("<p>No tienes productos en espera.</p>");
+                    }
+                },
+                error: function(error) {
+                    console.error('Error al obtener los productos del carrito:', error);
+                    $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
+                }
+            });
+        }
+
+        function actualizarEstadoProductos() {
+            $('.producto-checkbox:checked').each(function() {
+                var idDetalleProducto = $(this).val();
+                $.ajax({
+                    url: '../scripts/actualizar_carrito.php',
+                    method: 'POST',
+                    data: { id_detalle_producto: idDetalleProducto },
+                    success: function(response) {
+                        console.log('Producto actualizado:', response);
+                        window.location.href = 'citas.php';
+                    },
+                    error: function(error) {
+                        console.error('Error al actualizar el producto:', error);
+                    }
+                });
+            });
+        }
+    });
 
 function changeIcon(element, id_producto) {
         var icon = element.querySelector('.icon-overlay');
