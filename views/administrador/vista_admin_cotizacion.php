@@ -13,7 +13,6 @@ $db = new database();
 $db->conectarDB();
 $user = $_SESSION["nom_usuario"];
 
-
 try {
     $stmt = $db->getPDO()->prepare("CALL roles_usuario(?)");
     $stmt->execute([$user]);
@@ -221,14 +220,22 @@ $db->desconectarDB();
     <div class="main p-3">
       <div class="text-center">
         <div class="busqueda mx-auto">
-          <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
+          <input type="text" placeholder="Buscar Citas" class="buscar-input" id="search-input">
           <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
         </div>
       </div>
+      <br>
+
+      <div class="col-12 mb-4 card-bienvenida">
+        <div class="text-center">
+          <h5 class="mensaje-bienvenida">Cotizaciones</h5>
+        </div>
+      </div>
       <br><br>
-      <!-- Nuevo contenedor -->
+      <!-- Contenedor para los resultados de búsqueda -->
       <div class="container">
         <div id="accordion">
+            <!-- Aquí se actualizarán los resultados de búsqueda -->
             <?php foreach ($citas as $id_cita => $cita): ?>
                 <div class="card">
                     <div class="card-header" id="heading<?php echo $id_cita; ?>">
@@ -258,15 +265,30 @@ $db->desconectarDB();
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-  <script>
-    const hamBurger = document.querySelector(".toggle-btn");
-
-    hamBurger.addEventListener("click", function () {
-      document.querySelector("#sidebar").classList.toggle("expand");
-    });
-  </script>
+    <script>
+        $(document).ready(function() {
+            // Función para realizar la búsqueda en tiempo real
+            $('#search-input').on('input', function() {
+                const query = $(this).val();
+                
+                // Enviar la solicitud AJAX al servidor
+                $.ajax({
+                    url: '../../scripts/buscar_citas.php',
+                    type: 'GET',
+                    data: { search: query },
+                    success: function(response) {
+                        // Actualizar el contenedor con los resultados
+                        $('#accordion').html(response);
+                    },
+                    error: function() {
+                        console.log('Error al realizar la búsqueda.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -168,23 +168,22 @@ foreach ($detalles_citas as $detalle) {
       </ul>
       
     </aside>
-
+    
+    <div class="col-12 mb-4 card-bienvenida">
+        <div class="text-center">
+          <h5 class="mensaje-bienvenida">Reporte de recibos</h5>
+        </div>
     
     <div class="container">
       <div class="main p-3">
         <div class="text-center">
-          <div class="busqueda mx-auto">
-            <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
-            <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
-          </div>
+
+          
           <div class="d-flex justify-content-end mt-4">
               <div class="dropdown">
-                <button class="btn btn-secondary filters" type="button" id="dropdownOrdenar" data-bs-toggle="dropdown" aria-expanded="false"> Ordenar <img src="../../img/instalador/filter.svg" alt="Filtrar" class="icono-filtro">
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
-                  <li><a class="dropdown-item" href="#">Recientes</a></li>
-                  <li><a class="dropdown-item" href="#">Antiguas</a></li>
-                </ul>
+                
+
+
               </div>
             </div>
         </div>

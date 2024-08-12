@@ -200,9 +200,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
     
     <div class="main p-3">
       <div class="text-center">
-        <div class="busqueda mx-auto">
-          <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
-          <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
+      <div class="col-12 mb-4 card-bienvenida">
+        <div class="text-center">
+          <h5 class="mensaje-bienvenida">Ventas</h5>
         </div>
       </div><br>
 
