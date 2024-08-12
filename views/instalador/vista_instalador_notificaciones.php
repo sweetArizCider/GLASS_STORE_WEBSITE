@@ -174,8 +174,6 @@ if (isset($_SESSION["nom_usuario"])) {
             }
             if (count($notificaciones) > 4) {
                 echo '<button id="verMasBtn" class="btn btn-secondary filters">Ver más</button>';
-               
-
             }
         } else {
             echo '<p>No hay notificaciones para mostrar.</p>';
