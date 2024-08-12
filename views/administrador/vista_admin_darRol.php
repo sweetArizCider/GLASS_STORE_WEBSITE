@@ -42,14 +42,15 @@ try {
 }
 
 try {
-    // Obtener roles excluyendo 'cliente'
-    $stmt = $db->getPDO()->prepare("SELECT nombre_rol FROM roles WHERE nombre_rol != 'cliente'");
-    $stmt->execute();
-    $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  // Obtener roles excluyendo 'cliente' e 'instalador'
+  $stmt = $db->getPDO()->prepare("SELECT nombre_rol FROM roles WHERE nombre_rol NOT IN ('cliente')");
+  $stmt->execute();
+  $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
-    error_log("Error al obtener roles: " . $e->getMessage());
-    $roles = [];
+  error_log("Error al obtener roles: " . $e->getMessage());
+  $roles = [];
 }
+
 ?>
 
 <!DOCTYPE html>

@@ -26,7 +26,7 @@ try {
     }
 
     // Obtener ID del rol
-    $stmt = $db->getPDO()->prepare("SELECT id_rol FROM roles WHERE nombre_rol = ? AND nombre_rol NOT IN ('cliente', 'instalador')");
+    $stmt = $db->getPDO()->prepare("SELECT id_rol FROM roles WHERE nombre_rol = ?");
     $stmt->execute([$nombre_rol]);
     $rol = $stmt->fetch(PDO::FETCH_OBJ);
 
@@ -45,6 +45,23 @@ try {
         exit();
     }
 
+    // Verificar si se está asignando el rol de instalador
+    if ($nombre_rol == 'instalador') {
+        $stmt = $db->getPDO()->prepare("SELECT * FROM instalador WHERE persona = ?");
+        $stmt->execute([$usuario->id_usuario]);
+        $instalador = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if ($instalador) {
+            // Si existe, activar el instalador
+            $stmt = $db->getPDO()->prepare("UPDATE instalador SET estatus = 'activo' WHERE persona = ?");
+            $stmt->execute([$usuario->id_usuario]);
+        } else {
+            // Si no existe, mostrar mensaje de alerta
+            echo "<script>alert('El usuario no existe en la tabla instalador. Necesita ser ingresado manualmente.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
+            exit();
+        }
+    }
+
     // Asignar el rol al usuario
     $stmt = $db->getPDO()->prepare("INSERT INTO rol_usuario (rol, usuario, estatus) VALUES (?, ?, 'activo')");
     $stmt->execute([$rol->id_rol, $usuario->id_usuario]);
@@ -54,4 +71,3 @@ try {
     error_log("Error al asignar el rol: " . $e->getMessage());
     echo "<script>alert('Error al asignar el rol.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
 }
-

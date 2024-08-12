@@ -32,7 +32,7 @@ try {
     }
 
     // Obtener ID del rol
-    $stmt = $db->getPDO()->prepare("SELECT id_rol FROM roles WHERE nombre_rol = ? AND nombre_rol != 'cliente'");
+    $stmt = $db->getPDO()->prepare("SELECT id_rol FROM roles WHERE nombre_rol = ?");
     $stmt->execute([$nombre_rol]);
     $rol = $stmt->fetch(PDO::FETCH_OBJ);
 
@@ -54,6 +54,12 @@ try {
     // Quitar el rol al usuario
     $stmt = $db->getPDO()->prepare("DELETE FROM rol_usuario WHERE usuario = ? AND rol = ?");
     $stmt->execute([$usuario->id_usuario, $rol->id_rol]);
+
+    // Si se está quitando el rol de instalador, marcarlo como inactivo
+    if ($nombre_rol == 'instalador') {
+        $stmt = $db->getPDO()->prepare("UPDATE instalador SET estatus = 'inactivo' WHERE persona = ?");
+        $stmt->execute([$usuario->id_usuario]);
+    }
 
     echo "<script>alert('Rol eliminado exitosamente.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
 } catch (Exception $e) {
