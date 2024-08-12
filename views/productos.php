@@ -199,11 +199,11 @@ $productos_espera = $conexion->seleccionar($consulta_productos);
         <?php
         if (!empty($productos_espera)) {
             foreach ($productos_espera as $producto) {
-                $imagen = $producto->imagen ? '../img/disenos/' . $producto->imagen : '../img/index/default.png';
+                $imagen = $producto->imagen ? '../img/disenos/' . $producto->imagen : '../img/disenos/default.png';
                 $id_producto = $producto->id_producto;
 
                 // Verificar si el producto es favorito para el usuario actual
-                $esFavorito = false;
+                $esFavorito = true;
                 if ($id_usuario != 0) { // Verificar solo si el usuario está autenticado
                     $esFavorito = $conexion->esFavorito($id_producto, $id_usuario);
                 }
@@ -414,109 +414,33 @@ $(document).ready(function() {
 
     // Función para agregar un producto al DOM
     function agregarProductoAlDOM(producto) {
-        var imagen = producto.imagen ? '../img/disenos/' + producto.imagen : '../img/index/default.png';
-        var iconoFavorito = producto.es_favorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
+    var imagen = producto.imagen ? '../img/disenos/' + producto.imagen : '../img/disenos/default.png';
+    var iconoFavorito = producto.es_favorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
 
-        var productoHtml = `
-            <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='${producto.nombre}'>
-                <div class='card shadow' id='c'>
-                    <a href='./perfilProducto.php?id=${producto.id_producto}' style='text-decoration: none; color: inherit;'>
-                        <img src='${imagen}' alt='${producto.nombre}' class='card image-top pad'>
-                    </a>
-                    <div class='icon-overlay-container' onclick='changeIcon(this, ${producto.id_producto})'>
-                        <img src='${iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
-                    </div>
-                    <div class='card-body'>
-                        <h3 class='card-title text-center title-card-new'>${producto.nombre}</h3>
-                        <p class='card-text text-center card-price'>\$${producto.precio}</p>
-                    </div>
+    var productoHtml = `
+        <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='${producto.nombre}'>
+            <div class='card shadow' id='c'>
+                <a href='./perfilProducto.php?id=${producto.id_producto}' style='text-decoration: none; color: inherit;'>
+                    <img src='${imagen}' alt='${producto.nombre}' class='card image-top pad'>
+                </a>
+                <div class='icon-overlay-container' onclick='changeIcon(this, ${producto.id_producto})'>
+                    <img src='${iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
+                </div>
+                <div class='card-body'>
+                    <h3 class='card-title text-center title-card-new'>${producto.nombre}</h3>
+                    <p class='card-text text-center card-price'>\$${producto.precio}</p>
                 </div>
             </div>
-        `;
-        $('#product-list').append(productoHtml);
-    }
+        </div>
+    `;
+    $('#product-list').append(productoHtml);
+}
 
-    // Función para cambiar el ícono de favoritos
-    function changeIcon(element, id_producto) {
-        var icon = element.querySelector('.icon-overlay');
-        var isFavorite = icon.getAttribute('src') === '../img/index/heartCover.svg';
-        
-        // Depuración
-        console.log("Icon clicked for product ID: ", id_producto);
-        console.log("Current icon state (isFavorite): ", isFavorite);
-        
-        if (isFavorite) {
-            icon.setAttribute('src', '../img/index/addFavorites.svg');
-        } else {
-            icon.setAttribute('src', '../img/index/heartCover.svg');
-        }
-        
-        saveToFavorites(id_producto, !isFavorite); // Enviar estado actual
-    }
 
-    // Función para guardar un producto en favoritos
-    function saveToFavorites(id_producto, isFavorite) {
-        $.ajax({
-            url: '../scripts/guardar_favorito.php',
-            method: 'POST',
-            data: { id_producto: id_producto, is_favorite: isFavorite },
-            success: function(response) {
-                console.log("Favorite saved successfully: ", response);
-            },
-            error: function(error) {
-                console.error('Error saving favorite:', error);
-            }
-        });
-    }
 
-    // Cargar favoritos cuando el modal es mostrado
-    $('#favoritosModal').on('shown.bs.modal', function () {
-        cargarFavoritos();
-    });
+    
 
-    // Función para cargar favoritos
-    function cargarFavoritos() {
-        <?php if (isset($_SESSION["nom_usuario"])): ?>
-            $.ajax({
-                url: '../scripts/obtener_favoritos.php',
-                method: 'GET',
-                dataType: 'json',
-                success: function(favoritos) {
-                    var favoritosList = $('#favoritos-list');
-                    favoritosList.empty();
-                    if (favoritos.length > 0) {
-                        favoritos.forEach(function(favorito) {
-                            var imagen = favorito.imagen ? '../img/disenos/' + favorito.imagen : '../img/index/default.png';
-                            var favoritoHtml = `
-                                <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
-                                    <div class='card shadow'>
-                                        <a href='./views/perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
-                                            <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
-                                            <div class='card-body'>
-                                                <h5 class='card-title'>${favorito.nombre}</h5>
-                                                <p class='card-text'>$ ${favorito.precio}</p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>`;
-                            favoritosList.append(favoritoHtml);
-                        });
-                    } else {
-                        favoritosList.append("<p>No tienes productos en favoritos.</p>");
-                    }
-                },
-                error: function(error) {
-                    console.error('Error al obtener los favoritos:', error);
-                    $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
-                }
-            });
-        <?php else: ?>
-            var favoritosList = $('#favoritos-list');
-            favoritosList.empty();
-            favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
-        <?php endif; ?>
-    }
-
+   
     // Cargar carrito cuando el modal es mostrado
     $('#carritoModal').on('shown.bs.modal', function () {
         cargarCarrito();
@@ -566,6 +490,79 @@ $(document).ready(function() {
         });
     }
 });
+
+function changeIcon(element, id_producto) {
+        var icon = element.querySelector('.icon-overlay');
+        var isFavorite = icon.getAttribute('src') === '../img/index/heartCover.svg';
+        if (isFavorite) {
+            icon.setAttribute('src', '../img/index/addFavorites.svg');
+        } else {
+            icon.setAttribute('src', '../img/index/heartCover.svg');
+        }
+        saveToFavorites(id_producto);
+    }
+
+    function saveToFavorites(id_producto) {
+        $.ajax({
+            url: '../scripts/guardar_favorito.php',
+            method: 'POST',
+            data: { id_producto: id_producto },
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+     // Cargar favoritos cuando el modal es mostrado
+     $('#favoritosModal').on('shown.bs.modal', function () {
+        cargarFavoritos();
+    });
+
+    // Función para cargar favoritos
+    function cargarFavoritos() {
+        <?php if (isset($_SESSION["nom_usuario"])): ?>
+            $.ajax({
+                url: '../scripts/obtener_favoritos.php',
+                method: 'GET',
+                dataType: 'json',
+                success: function(favoritos) {
+                    var favoritosList = $('#favoritos-list');
+                    favoritosList.empty();
+                    if (favoritos.length > 0) {
+                        favoritos.forEach(function(favorito) {
+                            var imagen = favorito.imagen ? '../img/disenos/' + favorito.imagen : '../img/index/default.png';
+                            var favoritoHtml = `
+                                <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
+                                    <div class='card shadow'>
+                                        <a href='./views/perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
+                                            <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
+                                            <div class='card-body'>
+                                                <h5 class='card-title'>${favorito.nombre}</h5>
+                                                <p class='card-text'>$ ${favorito.precio}</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>`;
+                            favoritosList.append(favoritoHtml);
+                        });
+                    } else {
+                        favoritosList.append("<p>No tienes productos en favoritos.</p>");
+                    }
+                },
+                error: function(error) {
+                    console.error('Error al obtener los favoritos:', error);
+                    $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
+                }
+            });
+        <?php else: ?>
+            var favoritosList = $('#favoritos-list');
+            favoritosList.empty();
+            favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
+        <?php endif; ?>
+    }
+
 </script>
 
 </body>
