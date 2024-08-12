@@ -23,10 +23,10 @@ if (isset($_POST['id_cita']) && isset($_POST['motivo'])) {
         ]);
         
         echo"<div class='alert alert-success'>CITA RECHAZADA CON EXITO</div>";
-        header ("refresh:3 ; ../../views/administrador/vista_admin_citas.php");
+        header ("refresh:1 ; ../../views/administrador/vista_admin_citas.php");
     } catch (Exception $e) {
         echo"<div class='alert alert-success'>No se puede</div>";
-        header ("refresh:3 ; ../../views/administrador/vista_admin_citas.php");
+        header ("refresh:1 ; ../../views/administrador/vista_admin_citas.php");
     }
 } else {
     header("Location: citas.php?status=error&message=Datos incompletos.");

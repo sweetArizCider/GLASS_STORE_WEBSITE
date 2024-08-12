@@ -32,7 +32,6 @@ try {
         $_SESSION["nombre_rol"] = 'administrador';
         error_log("Usuario autenticado como Administrador: " . $user);
     } else {
-
         error_log("Usuario sin privilegios de Administrador. Redirigiendo a iniciarSesion.php");
         header("Location: ../iniciarSesion.php");
         exit();
@@ -43,19 +42,26 @@ try {
     exit();
 }
 
-$cadena = "SELECT * FROM vista_citas_detalles ORDER BY id_cita";
+// Limitar a las primeras 8 cotizaciones
+$limit = 8;
+$offset = 0;
+
+$cadena = "SELECT * FROM vista_citas_detalles ORDER BY id_cita LIMIT $limit OFFSET $offset";
 $resultado = $db->seleccionar($cadena);
 
 $citas = array();
 if ($resultado) {
     foreach ($resultado as $row) {
-        $citas[$row->id_cita]['cliente'] = $row->nombre_cliente;
-        $citas[$row->id_cita]['detalles'][] = $row;
+        $id_cita = $row->id_cita;
+        if (!isset($citas[$id_cita])) {
+            $citas[$id_cita]['cliente'] = $row->nombre_cliente ?: $row->nombre_instalador;
+            $citas[$id_cita]['detalles'] = [];
+        }
+        $citas[$id_cita]['detalles'][] = $row;
     }
 }
 $db->desconectarDB();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -263,6 +269,7 @@ $db->desconectarDB();
                 <br>
             <?php endforeach; ?>
         </div>
+        <button id="load-more" class="btn btn-primary mt-3">Ver más</button>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -289,6 +296,26 @@ $db->desconectarDB();
                 });
             });
         });
+
+        $(document).ready(function() {
+        let offset = 8;
+
+        // Función para cargar más citas
+        $('#load-more').click(function() {
+            $.ajax({
+                url: '../../scripts/cargar_mas_citas.php',
+                type: 'GET',
+                data: { offset: offset },
+                success: function(response) {
+                    $('#accordion').append(response);
+                    offset += 8;
+                },
+                error: function() {
+                    console.log('Error al cargar más citas.');
+                }
+            });
+        });
+    });
     </script>
 </body>
 </html>

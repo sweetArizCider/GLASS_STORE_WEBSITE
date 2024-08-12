@@ -303,11 +303,17 @@ if ($categoriaSeleccionada) {
                               <option value="activo" <?php echo $producto->estatus == 'activo' ? 'selected' : ''; ?>>Activo</option>
                               <option value="inactivo" <?php echo $producto->estatus == 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
                             </select>
-                          </div>
-                          <div class="mb-3">
-                            <label for="edit-product-image-<?php echo $producto->id_producto; ?>" class="form-label">Imagen del Producto</label>
-                            <input type="file" class="form-control" name="fileToUpload" id="edit-product-image-<?php echo $producto->id_producto; ?>">
-                          </div>
+                            <div class="mb-3">
+    <label for="edit-product-image-portada-<?php echo $producto->id_producto; ?>" class="form-label">Portada del Producto</label>
+    <input type="file" class="form-control" name="fileToUpload" id="edit-product-image-portada-<?php echo $producto->id_producto; ?>">
+    <input type="hidden" name="upload_type" value="portada">
+</div>
+<div class="mb-3">
+    <label for="edit-product-image-adicional-<?php echo $producto->id_producto; ?>" class="form-label">Imágenes del Producto</label>
+    <input type="file" class="form-control" name="fileToUpload" id="edit-product-image-adicional-<?php echo $producto->id_producto; ?>">
+    <input type="hidden" name="upload_type" value="imagenes">
+</div>
+
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Descartar</button>
                             <button type="submit" class="btn btn-primary">Guardar</button>
