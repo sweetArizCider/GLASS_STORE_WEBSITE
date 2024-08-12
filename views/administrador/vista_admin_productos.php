@@ -68,7 +68,6 @@ if ($categoriaSeleccionada) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,13 +75,6 @@ if ($categoriaSeleccionada) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Glass Store</title>
   <link rel="shortcut icon" href="../../img/index/logoVarianteSmall.png" type="image/x-icon">
-  <!-- Bootstrap CSS -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Bootstrap JS and Popper.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
-
   <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../../css/normalized.css">
   <link rel="stylesheet" href="../../css/style_admin.css">
@@ -93,24 +85,18 @@ if ($categoriaSeleccionada) {
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-<!--Barra lateral-->
-<div class="wrapper">
+  <!--Barra lateral-->
+  <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="../../index.php">GLASS STORE</a>
+          <a href="#">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
-      <div class="sidebar-itemr">
-        <a href="./vista_admin.php" class="sidebar-link">
-          <img src="../../img/index/home.svg" alt="Volver">
-          <span>Volver</span>
-        </a>
-      </div>
       <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
@@ -199,7 +185,12 @@ if ($categoriaSeleccionada) {
             </li>
           </ul>
         </li>
-       
+        <div class="sidebar-itemr">
+        <a href="../../index.php" class="sidebar-link">
+          <img src="../../img/index/home.svg" alt="Volver">
+          <span>Volver</span>
+        </a>
+      </div>
       <div class="sidebar-item">
         <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
         <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
@@ -217,26 +208,31 @@ if ($categoriaSeleccionada) {
           <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
         </div>
       </div>
-
       <br>
-      <div class="contenidoGeneral mt-4">
-        <h1 class="text-center my-4">Gestionar Productos</h1>
 
+      <div class="col-12 mb-4 card-bienvenida">
+        <div class="text-center">
+          <h5 class="mensaje-bienvenida">Gestión de Productos</h5>
+          <p class="mensaje-sub"><mark class="marklued">¡Hoy es un gran día para expandir tu catálogo de productos!</mark></p>
+        </div>
+      </div>
+
+      <div class="contenidoGeneral mt-4">
         <div class="d-flex justify-content-end mt-4 flex-column flex-md-row">
-  <a href="#addProductModal" class="btn btn-primary me-2 mb-2 mb-md-0" data-bs-toggle="modal">Añadir Producto</a>
-  <a href="#addCategoryModal" class="btn btn-secondary me-2 mb-2 mb-md-0" data-bs-toggle="modal">Añadir Categoría</a>
-  <div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-      Filtrar por Categoría
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-      <li><a class="dropdown-item" href="?categoria=">Todas las Categorías</a></li>
-      <?php foreach ($categorias as $categoria): ?>
-      <li><a class="dropdown-item" href="?categoria=<?php echo urlencode($categoria->nombre); ?>"><?php echo htmlspecialchars($categoria->nombre); ?></a></li>
-      <?php endforeach; ?>
-    </ul>
-  </div>
-</div>
+          <a href="#addProductModal" class="btn btn-primary me-2 mb-2 mb-md-0" data-bs-toggle="modal">Añadir Producto</a>
+          <a href="#addCategoryModal" class="btn btn-secondary me-2 mb-2 mb-md-0" data-bs-toggle="modal">Añadir Categoría</a>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              Filtrar por Categoría
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+              <li><a class="dropdown-item" href="?categoria=">Todas las Categorías</a></li>
+              <?php foreach ($categorias as $categoria): ?>
+              <li><a class="dropdown-item" href="?categoria=<?php echo urlencode($categoria->nombre); ?>"><?php echo htmlspecialchars($categoria->nombre); ?></a></li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        </div>
 
         <div class="table-responsive">
           <table class="table table-striped">
@@ -250,84 +246,84 @@ if ($categoriaSeleccionada) {
                 <th>Acciones</th>
               </tr>
             </thead>
-            <tbody>
-  <?php if (is_array($productos) && !empty($productos)): ?>
-    <?php foreach ($productos as $producto): ?>
-    <tr>
-      <td><?php echo htmlspecialchars($producto->nombre); ?></td>
-      <td><?php echo htmlspecialchars($producto->categoria); ?></td>
-      <td><?php echo htmlspecialchars($producto->descripcion); ?></td>
-      <td><?php echo htmlspecialchars($producto->precio); ?></td>
-      <td><?php echo htmlspecialchars($producto->estatus); ?></td>
-      <td>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProductModal-<?php echo $producto->id_producto; ?>">Editar</button>
-      </td>
-    </tr>
+            <tbody id="product-list">
+              <?php if (is_array($productos) && !empty($productos)): ?>
+                <?php foreach ($productos as $producto): ?>
+                <tr>
+                  <td><?php echo htmlspecialchars($producto->nombre); ?></td>
+                  <td><?php echo htmlspecialchars($producto->categoria); ?></td>
+                  <td><?php echo htmlspecialchars($producto->descripcion); ?></td>
+                  <td><?php echo htmlspecialchars($producto->precio); ?></td>
+                  <td><?php echo htmlspecialchars($producto->estatus); ?></td>
+                  <td>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProductModal-<?php echo $producto->id_producto; ?>">Editar</button>
+                  </td>
+                </tr>
 
-    <!-- Modal de edición -->
-    <div class="modal fade" id="editProductModal-<?php echo $producto->id_producto; ?>" tabindex="-1" aria-labelledby="editProductModalLabel-<?php echo $producto->id_producto; ?>" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="editProductModalLabel-<?php echo $producto->id_producto; ?>">Editar Producto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form action="../../scripts/administrador/editaProducto.php" method="POST" enctype="multipart/form-data">
-              <input type="hidden" name="id_producto" value="<?php echo $producto->id_producto; ?>">
-              <div class="mb-3">
-                <label for="edit-product-nombre-<?php echo $producto->id_producto; ?>" class="form-label">Nombre Actual</label>
-                <input type="text" class="form-control" name="nombre_actual" id="edit-product-nombre-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->nombre); ?>" readonly>
-              </div>
-              <div class="mb-3">
-                <label for="edit-product-new-name-<?php echo $producto->id_producto; ?>" class="form-label">Nuevo Nombre</label>
-                <input type="text" class="form-control" name="nuevo_nombre" id="edit-product-new-name-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->nombre); ?>">
-              </div>
-              <div class="mb-3">
-                <label for="edit-product-categoria-<?php echo $producto->id_producto; ?>" class="form-label">Categoría</label>
-                <select class="form-control" name="categoria" id="edit-product-categoria-<?php echo $producto->id_producto; ?>">
-                  <?php foreach ($categorias as $categoria): ?>
-                  <option value="<?php echo $categoria->nombre; ?>" <?php echo $producto->nombre == $categoria->nombre ? 'selected' : ''; ?>>
-                    <?php echo htmlspecialchars($categoria->nombre); ?>
-                  </option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="edit-product-descripcion-<?php echo $producto->id_producto; ?>" class="form-label">Descripción</label>
-                <textarea class="form-control" name="descripcion" id="edit-product-descripcion-<?php echo $producto->id_producto; ?>"><?php echo htmlspecialchars($producto->descripcion); ?></textarea>
-              </div>
-              <div class="mb-3">
-                <label for="edit-product-precio-<?php echo $producto->id_producto; ?>" class="form-label">Precio</label>
-                <input type="text" class="form-control" name="precio" id="edit-product-precio-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->precio); ?>">
-              </div>
-              <div class="mb-3">
-                <label for="edit-product-estatus-<?php echo $producto->id_producto; ?>" class="form-label">Estatus</label>
-                <select class="form-control" name="estatus" id="edit-product-estatus-<?php echo $producto->id_producto; ?>">
-                  <option value="activo" <?php echo $producto->estatus == 'activo' ? 'selected' : ''; ?>>Activo</option>
-                  <option value="inactivo" <?php echo $producto->estatus == 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
-                </select>
-              </div>
-              <div class="mb-3">
-            <label for="edit-product-image-<?php echo $producto->id_producto; ?>" class="form-label">Imagen del Producto</label>
-            <input type="file" class="form-control" name="fileToUpload" id="edit-product-image-<?php echo $producto->id_producto; ?>">
-          </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Descartar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <?php endforeach; ?>
-  <?php else: ?>
-    <tr>
-      <td colspan="6" class="text-center">No se encontraron productos</td>
-    </tr>
-  <?php endif; ?>
-</tbody>
+                <!-- Modal de edición -->
+                <div class="modal fade" id="editProductModal-<?php echo $producto->id_producto; ?>" tabindex="-1" aria-labelledby="editProductModalLabel-<?php echo $producto->id_producto; ?>" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="editProductModalLabel-<?php echo $producto->id_producto; ?>">Editar Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form action="../../scripts/administrador/editaProducto.php" method="POST" enctype="multipart/form-data">
+                          <input type="hidden" name="id_producto" value="<?php echo $producto->id_producto; ?>">
+                          <div class="mb-3">
+                            <label for="edit-product-nombre-<?php echo $producto->id_producto; ?>" class="form-label">Nombre Actual</label>
+                            <input type="text" class="form-control" name="nombre_actual" id="edit-product-nombre-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->nombre); ?>" readonly>
+                          </div>
+                          <div class="mb-3">
+                            <label for="edit-product-new-name-<?php echo $producto->id_producto; ?>" class="form-label">Nuevo Nombre</label>
+                            <input type="text" class="form-control" name="nuevo_nombre" id="edit-product-new-name-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->nombre); ?>">
+                          </div>
+                          <div class="mb-3">
+                            <label for="edit-product-categoria-<?php echo $producto->id_producto; ?>" class="form-label">Categoría</label>
+                            <select class="form-control" name="categoria" id="edit-product-categoria-<?php echo $producto->id_producto; ?>">
+                              <?php foreach ($categorias as $categoria): ?>
+                              <option value="<?php echo $categoria->nombre; ?>" <?php echo $producto->nombre == $categoria->nombre ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($categoria->nombre); ?>
+                              </option>
+                              <?php endforeach; ?>
+                            </select>
+                          </div>
+                          <div class="mb-3">
+                            <label for="edit-product-descripcion-<?php echo $producto->id_producto; ?>" class="form-label">Descripción</label>
+                            <textarea class="form-control" name="descripcion" id="edit-product-descripcion-<?php echo $producto->id_producto; ?>"><?php echo htmlspecialchars($producto->descripcion); ?></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="edit-product-precio-<?php echo $producto->id_producto; ?>" class="form-label">Precio</label>
+                            <input type="text" class="form-control" name="precio" id="edit-product-precio-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->precio); ?>">
+                          </div>
+                          <div class="mb-3">
+                            <label for="edit-product-estatus-<?php echo $producto->id_producto; ?>" class="form-label">Estatus</label>
+                            <select class="form-control" name="estatus" id="edit-product-estatus-<?php echo $producto->id_producto; ?>">
+                              <option value="activo" <?php echo $producto->estatus == 'activo' ? 'selected' : ''; ?>>Activo</option>
+                              <option value="inactivo" <?php echo $producto->estatus == 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
+                            </select>
+                          </div>
+                          <div class="mb-3">
+                            <label for="edit-product-image-<?php echo $producto->id_producto; ?>" class="form-label">Imagen del Producto</label>
+                            <input type="file" class="form-control" name="fileToUpload" id="edit-product-image-<?php echo $producto->id_producto; ?>">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Descartar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <tr>
+                  <td colspan="6" class="text-center">No se encontraron productos</td>
+                </tr>
+              <?php endif; ?>
+            </tbody>
           </table>
         </div>
       </div>
@@ -408,6 +404,76 @@ if ($categoriaSeleccionada) {
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    $(document).ready(function() {
+      var currentPage = 1;
+
+      // Filtro en tiempo real al escribir en el campo
+      $('#search-input').on('input', function() {
+        currentPage = 1;
+        ejecutarBusqueda();
+      });
+
+      // Ejecutar búsqueda al hacer clic en el botón
+      $('#search-button').on('click', function() {
+        currentPage = 1;
+        ejecutarBusqueda();
+      });
+
+      // Ejecutar búsqueda al presionar Enter
+      $('#search-input').on('keydown', function(event) {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          currentPage = 1;
+          ejecutarBusqueda();
+        }
+      });
+
+      // Función para ejecutar la búsqueda de productos
+      function ejecutarBusqueda() {
+        var searchValue = $('#search-input').val().toLowerCase();
+
+        $.ajax({
+          url: '../../scripts/administrador/buscar_productos.php',
+          method: 'GET',
+          data: {
+            search: searchValue,
+            page: currentPage
+          },
+          dataType: 'json',
+          success: function(response) {
+            $('#product-list').empty();
+            if (response.productos.length > 0) {
+              response.productos.forEach(function(producto) {
+                agregarProductoAlDOM(producto);
+              });
+            } else {
+              $('#product-list').append("<tr><td colspan='6' class='text-center'>No se encontraron productos.</td></tr>");
+            }
+          },
+          error: function(error) {
+            console.error('Error al buscar productos:', error);
+          }
+        });
+      }
+
+      // Función para agregar un producto al DOM
+      function agregarProductoAlDOM(producto) {
+        var productoHtml = `
+          <tr>
+            <td>${producto.nombre}</td>
+            <td>${producto.categoria}</td>
+            <td>${producto.descripcion}</td>
+            <td>${producto.precio}</td>
+            <td>${producto.estatus}</td>
+            <td>
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProductModal-${producto.id_producto}">Editar</button>
+            </td>
+          </tr>
+        `;
+        $('#product-list').append(productoHtml);
+      }
+    });
+
     const hamBurger = document.querySelector(".toggle-btn");
 
     hamBurger.addEventListener("click", function () {

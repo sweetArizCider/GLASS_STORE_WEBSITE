@@ -177,12 +177,13 @@ if ($result && $result->nombre_rol == 'administrador') { // Verificar el rol del
 
     <div class="main p-3">
       <div class="text-center">
-        <div class="busqueda mx-auto">
-          <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
-          <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
-        </div>
+
         <div class="container mt-4">
-        <h1>Recibos</h1>
+        <div class="col-12 mb-4 card-bienvenida">
+        <div class="text-center">
+          <h5 class="mensaje-bienvenida">Reporte de recibos</h5>
+        </div>
+      </div>
 
         <?php
         require_once '../class/database.php'; // Incluye el archivo con la conexión a la base de datos

@@ -26,12 +26,12 @@ try {
     }
 
     // Obtener ID del rol
-    $stmt = $db->getPDO()->prepare("SELECT id_rol FROM roles WHERE nombre_rol = ?");
+    $stmt = $db->getPDO()->prepare("SELECT id_rol FROM roles WHERE nombre_rol = ? AND nombre_rol NOT IN ('cliente', 'instalador')");
     $stmt->execute([$nombre_rol]);
     $rol = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (!$rol) {
-        echo "<script>alert('Rol no encontrado.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
+        echo "<script>alert('Rol no encontrado o no permitido.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
         exit();
     }
 
@@ -54,3 +54,4 @@ try {
     error_log("Error al asignar el rol: " . $e->getMessage());
     echo "<script>alert('Error al asignar el rol.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
 }
+

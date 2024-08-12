@@ -25,13 +25,19 @@ try {
         exit();
     }
 
+    // Verificar que no se esté quitando el rol de administrador a sí mismo
+    if ($usuario->id_usuario == $_SESSION['id_usuario'] && $nombre_rol == 'administrador') {
+        echo "<script>alert('No puedes quitarte el rol de administrador a ti mismo.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
+        exit();
+    }
+
     // Obtener ID del rol
-    $stmt = $db->getPDO()->prepare("SELECT id_rol FROM roles WHERE nombre_rol = ?");
+    $stmt = $db->getPDO()->prepare("SELECT id_rol FROM roles WHERE nombre_rol = ? AND nombre_rol != 'cliente'");
     $stmt->execute([$nombre_rol]);
     $rol = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (!$rol) {
-        echo "<script>alert('Rol no encontrado.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
+        echo "<script>alert('Rol no encontrado o no permitido.'); window.location.href = '../../views/administrador/vista_admin_darRol.php';</script>";
         exit();
     }
 

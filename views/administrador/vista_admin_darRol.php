@@ -42,7 +42,8 @@ try {
 }
 
 try {
-    $stmt = $db->getPDO()->prepare("SELECT nombre_rol FROM roles");
+    // Obtener roles excluyendo 'cliente'
+    $stmt = $db->getPDO()->prepare("SELECT nombre_rol FROM roles WHERE nombre_rol != 'cliente'");
     $stmt->execute();
     $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
@@ -68,8 +69,8 @@ try {
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
- <!--Barra lateral-->
- <div class="wrapper">
+  <!--Barra lateral-->
+  <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -80,13 +81,13 @@ try {
         </div>
       </div>
       <ul class="sidebar-nav">
-      <div class="sidebar-itemr">
-        <a href="./vista_admin.php" class="sidebar-link">
-          <img src="../../img/index/home.svg" alt="Volver">
-          <span>Volver</span>
-        </a>
-      </div>
-      <li class="sidebar-item">
+        <div class="sidebar-itemr">
+          <a href="./vista_admin.php" class="sidebar-link">
+            <img src="../../img/index/home.svg" alt="Volver">
+            <span>Volver</span>
+          </a>
+        </div>
+        <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
             <img src="../../img/admin/admin_icon.svg" alt="Personal">
@@ -115,7 +116,7 @@ try {
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-            data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
+             data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
             <img src="../../img/admin/clipboard.svg" alt="Cotizaciones">
             <span>Cotizaciones</span>
           </a>
@@ -123,7 +124,6 @@ try {
             <li class="sidebar-item">
               <a href="./vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
             </li>
-
             <li class="sidebar-item">
               <a href="./vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
             </li>
@@ -136,21 +136,20 @@ try {
             <span>Ventas</span>
           </a>
           <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-          
-          <li class="sidebar-item">
-          <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="../recibos.php" class="sidebar-link">Historial</a>
-          </li>
+            <li class="sidebar-item">
+              <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
+            </li>
+            <li class="sidebar-item">
+              <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
+            </li>
+            <li class="sidebar-item">
+              <a href="../recibos.php" class="sidebar-link">Historial</a>
+            </li>
           </ul>
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-            data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
+             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
             <img src="../../img/admin/products.svg" alt="Productos">
             <span>Productos</span>
           </a>
@@ -162,9 +161,10 @@ try {
               <a href="./vista_admin_disenos.php" class="sidebar-link">Diseños</a>
             </li>
           </ul>
+        </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-            data-bs-target="#promociones" aria-expanded="false" aria-controls="promociones">
+             data-bs-target="#promociones" aria-expanded="false" aria-controls="promociones">
             <img src="../../img/admin/off.svg" alt="Promociones">
             <span>Promociones</span>
           </a>
@@ -174,72 +174,77 @@ try {
             </li>
           </ul>
         </li>
-       
-      <div class="sidebar-item">
-        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
-        <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
-        <span>Cerrar Sesión</span>
-        </a>
-    </div>
-      </ul>
-      
-    </aside>
-      <div class="main p-3">
-            <div class="text-center">
-                <h1>Gestión de Roles</h1>
-                <div class="container mt-5">
-                    <div class="row">
-                      
-                        <!-- Columna para Asignar Rol -->
-                        <div class="col-md-6">
-                            <h2>Asignar Rol</h2>
-                            <form action="../../scripts/administrador/asignar_rol.php" method="POST">
-                                <div class="mb-3">
-                                    <label for="nom_usuario_asignar" class="form-label">Nombre de Usuario</label>
-                                    <input type="text" class="form-control" id="nom_usuario_asignar" name="nom_usuario" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="nombre_rol_asignar" class="form-label">Rol</label>
-                                    <select class="form-select" id="nombre_rol_asignar" name="nombre_rol" required>
-                                        <option value="">Seleccione un rol</option>
-                                        <?php foreach ($roles as $role): ?>
-                                            <option value="<?php echo htmlspecialchars($role['nombre_rol']); ?>">
-                                                <?php echo htmlspecialchars($role['nombre_rol']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Asignar Rol</button>
-                            </form>
-                        </div>
-
-                        <!-- Columna para Quitar Rol -->
-                        <div class="col-md-6">
-                            <h2>Quitar Rol</h2>
-                            <form action="../../scripts/administrador/quitar_rol.php" method="POST">
-                                <div class="mb-3">
-                                    <label for="nom_usuario_quitar" class="form-label">Nombre de Usuario</label>
-                                    <input type="text" class="form-control" id="nom_usuario_quitar" name="nom_usuario_quitar" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="nombre_rol_quitar" class="form-label">Rol</label>
-                                    <select class="form-select" id="nombre_rol_quitar" name="nombre_rol_quitar" required>
-                                        <option value="">Seleccione un rol</option>
-                                        <?php foreach ($roles as $role): ?>
-                                            <option value="<?php echo htmlspecialchars($role['nombre_rol']); ?>">
-                                                <?php echo htmlspecialchars($role['nombre_rol']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-danger">Quitar Rol</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="sidebar-item">
+          <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+            <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+            <span>Cerrar Sesión</span>
+          </a>
         </div>
+      </ul>
+    </aside>
+    <div class="main p-3">
+      <div class="text-center">
+      <div class="col-12 mb-4 card-bienvenida">
+          <div class="text-center ">
+            <div class="">
+              <h5 class="mensaje-bienvenida">Gestión de Roles</h5>
+
+          </div>
+        </div>
+        <div class="container mt-5">
+          <div class="row">
+            <!-- Columna para Asignar Rol -->
+            <div class="col-md-6">
+              <h2>Asignar Rol</h2>
+              <form action="../../scripts/administrador/asignar_rol.php" method="POST">
+                <div class="mb-3">
+                  <label for="nom_usuario_asignar" class="form-label">Nombre de Usuario</label>
+                  <input type="text" class="form-control" id="nom_usuario_asignar" name="nom_usuario" required>
+                </div>
+                <div class="mb-3">
+                  <label for="nombre_rol_asignar" class="form-label">Rol</label>
+                  <select class="form-select" id="nombre_rol_asignar" name="nombre_rol" required>
+                    <option value="">Seleccione un rol</option>
+                    <?php foreach ($roles as $role): ?>
+                      <option value="<?php echo htmlspecialchars($role['nombre_rol']); ?>">
+                        <?php echo htmlspecialchars($role['nombre_rol']); ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Asignar Rol</button>
+              </form>
+            </div>
+
+            <!-- Columna para Quitar Rol -->
+            <div class="col-md-6">
+              <h2>Quitar Rol</h2>
+              <form action="../../scripts/administrador/quitar_rol.php" method="POST">
+                <div class="mb-3">
+                  <label for="nom_usuario_quitar" class="form-label">Nombre de Usuario</label>
+                  <input type="text" class="form-control" id="nom_usuario_quitar" name="nom_usuario_quitar" required>
+                </div>
+                <div class="mb-3">
+                  <label for="nombre_rol_quitar" class="form-label">Rol</label>
+                  <select class="form-select" id="nombre_rol_quitar" name="nombre_rol_quitar" required>
+                    <option value="">Seleccione un rol</option>
+                    <?php foreach ($roles as $role): ?>
+                      <?php if ($role['nombre_rol'] !== 'cliente'): ?>
+                        <option value="<?php echo htmlspecialchars($role['nombre_rol']); ?>">
+                          <?php echo htmlspecialchars($role['nombre_rol']); ?>
+                        </option>
+                      <?php endif; ?>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-danger">Quitar Rol</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
