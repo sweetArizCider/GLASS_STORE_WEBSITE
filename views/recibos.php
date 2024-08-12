@@ -55,15 +55,16 @@ if ($result && $result->nombre_rol == 'administrador') { // Verificar el rol del
 <body>
   <!--Logo flotante del negocio-->
   <div id="logotipo-flotante">
-    <img src="../../img/index/GLASS.png" alt="Glass store">
+    <img src="../img/index/GLASS.png" alt="Glass store">
   </div>
 
+  <!--Barra lateral-->
   <!--Barra lateral-->
   <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
-          <img src="../../img/index/menu.svg" alt="Menu">
+          <img src="../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
           <a href="#">GLASS STORE</a>
@@ -73,43 +74,43 @@ if ($result && $result->nombre_rol == 'administrador') { // Verificar el rol del
       <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
-            <img src="../../img/admin/admin_icon.svg" alt="Personal">
+            <img src="../img/admin/admin_icon.svg" alt="Personal">
             <span>Personal</span>
           </a>
           <ul id="personal" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./administrador/vista_admin_gestionainstalador.php" class="sidebar-link">Registrar</a>
+              <a href="../views/administrador/vista_admin_gestionainstalador.php" class="sidebar-link">Registrar</a>
             </li>
             <li class="sidebar-item">
-              <a href="./administrador/vista_admin_darRol.php" class="sidebar-link">Gestionar</a>
+              <a href="../views/administrador/vista_admin_darRol.php" class="sidebar-link">Gestionar</a>
             </li>
           </ul>
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#citas" aria-expanded="false" aria-controls="citas">
-            <img src="../../img/admin/calendar.svg" alt="Citas">
+            <img src="../img/admin/calendar.svg" alt="Citas">
             <span>Citas</span>
           </a>
           <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./administrador/vista_admin_citas.php" class="sidebar-link">Gestionar citas</a>
+              <a href="../views/administrador/vista_admin_citas.php" class="sidebar-link">Gestionar citas</a>
             </li>
           </ul>
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
-            <img src="../../img/admin/clipboard.svg" alt="Cotizaciones">
+            <img src="../img/admin/clipboard.svg" alt="Cotizaciones">
             <span>Cotizaciones</span>
           </a>
           <ul id="cotizaciones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./administrador/vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
+              <a href="../views/administrador/vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
             </li>
 
             <li class="sidebar-item">
-              <a href="./administrador/vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
+              <a href="../views/administrador/vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
             </li>
           </ul>
         </li>
@@ -122,10 +123,10 @@ if ($result && $result->nombre_rol == 'administrador') { // Verificar el rol del
           <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
           
           <li class="sidebar-item">
-          <a href="./administrador/vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
+          <a href="../views/administrador/vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
           </li>
           <li class="sidebar-item">
-          <a href="./administrador/vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
+          <a href="../views/administrador/vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
           </li>
           <li class="sidebar-item">
           <a href="./recibos.php" class="sidebar-link">Historial</a>
@@ -135,43 +136,45 @@ if ($result && $result->nombre_rol == 'administrador') { // Verificar el rol del
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
-            <img src="../../img/admin/products.svg" alt="Productos">
+            <img src="../img/admin/products.svg" alt="Productos">
             <span>Productos</span>
           </a>
           <ul id="productos" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./administrador/vista_admin_productos.php" class="sidebar-link">Gestionar productos</a>
+              <a href="../views/administrador/vista_admin_productos.php" class="sidebar-link">Gestionar productos</a>
             </li>
             <li class="sidebar-item">
-              <a href="./administrador/vista_admin_disenos.php" class="sidebar-link">Diseños</a>
+              <a href="../views/administrador/vista_admin_disenos.php" class="sidebar-link">Diseños</a>
             </li>
           </ul>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#promociones" aria-expanded="false" aria-controls="promociones">
-            <img src="../../img/admin/off.svg" alt="Promociones">
+            <img src="../img/admin/off.svg" alt="Promociones">
             <span>Promociones</span>
           </a>
           <ul id="promociones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./administrador/vista_admin_promos.php" class="sidebar-link">Añadir</a>
+              <a href="../views/administrador/vista_admin_promos.php" class="sidebar-link">Añadir</a>
             </li>
           </ul>
         </li>
-      </ul>
-      <div class="sidebar-footer">
-        <a href="../../index.php" class="sidebar-link">
-          <img src="../../img/admin/logout.svg" alt="Volver"><!--PONER UNA IMAGEN COMO DE VOLVER-->
+        <div class="sidebar-itemr">
+        <a href="../index.php" class="sidebar-link">
+          <img src="../img/index/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
       </div>
-      <div class="sidebar-footer">
-        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
-        <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+      <div class="sidebar-item">
+        <a href="../scripts/cerrarSesion.php" class="sidebar-link">
+        <img src="../img/admin/logout.svg" alt="Cerrar Sesión">
         <span>Cerrar Sesión</span>
         </a>
     </div>
+      </ul>
+      
     </aside>
+
     <div class="main p-3">
       <div class="text-center">
         <div class="busqueda mx-auto">

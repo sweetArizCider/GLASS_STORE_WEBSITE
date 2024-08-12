@@ -56,10 +56,11 @@ $productos_espera = [];
 
 // Cargar los primeros 8 productos
 $consulta_productos = "
-    SELECT p.id_producto, p.nombre, p.precio, i.imagen
+    SELECT p.id_producto, p.nombre, p.precio, MIN(i.imagen) as imagen
     FROM productos p
     LEFT JOIN imagen i ON p.id_producto = i.producto
     WHERE p.estatus = 'activo'
+    GROUP BY p.id_producto
     LIMIT $productos_por_pagina
 ";
 $productos_espera = $conexion->seleccionar($consulta_productos);
@@ -166,7 +167,7 @@ $productos_espera = $conexion->seleccionar($consulta_productos);
                         <a class="nav-link"  href="/">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-left" href="https://api.whatsapp.com/send?phone=8717843809" target="_blank">Contacto</a>
+                        <a class="nav-link nav-left" href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">Contacto</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link nav-left" href="/views/citas.php">Agendar</a>
@@ -235,7 +236,7 @@ $productos_espera = $conexion->seleccionar($consulta_productos);
     </div>
     <div class="row">
         <div class="col-12 text-center mt-3">
-            <button id="load-more" class="btn btn-primary">Ver más</button>
+            <button id="load-more">Ver más</button>
         </div>
     </div>
 </div>
@@ -269,9 +270,18 @@ $productos_espera = $conexion->seleccionar($consulta_productos);
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="favoritos-list" class="row">
-                    <!-- Aquí se cargarán los productos favoritos -->
-                </div>
+                <?php if (isset($_SESSION["nom_usuario"])): ?>
+                    <!-- Usuario logueado -->
+                    <p class="text-center">Guarda tus productos favoritos y accede a ellos en cualquier momento.</p>
+                    <div id="favoritos-list" class="row">
+                        <!-- Aquí se cargarán los productos favoritos -->
+                    </div>
+                <?php else: ?>
+                    <!-- Usuario no logueado -->
+                    <div class="text-center">
+                        <p><a href="../views/iniciarSesion.php">Inicia sesión</a> para guardar tus productos favoritos y acceder a ellos cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -479,9 +489,7 @@ $(document).ready(function() {
                             </div>`;
                         carritoList.append(productoHtml);
                     });
-                } else {
-                    carritoList.append("<p>No tienes productos en espera.</p>");
-                }
+                } 
             },
             error: function(error) {
                 console.error('Error al obtener los productos del carrito:', error);
@@ -536,7 +544,7 @@ function changeIcon(element, id_producto) {
                             var favoritoHtml = `
                                 <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
                                     <div class='card shadow'>
-                                        <a href='./views/perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
+                                        <a href='./perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
                                             <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
                                             <div class='card-body'>
                                                 <h5 class='card-title'>${favorito.nombre}</h5>
@@ -547,9 +555,7 @@ function changeIcon(element, id_producto) {
                                 </div>`;
                             favoritosList.append(favoritoHtml);
                         });
-                    } else {
-                        favoritosList.append("<p>No tienes productos en favoritos.</p>");
-                    }
+                    } 
                 },
                 error: function(error) {
                     console.error('Error al obtener los favoritos:', error);

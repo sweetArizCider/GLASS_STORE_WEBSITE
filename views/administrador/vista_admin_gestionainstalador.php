@@ -16,9 +16,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glass Store</title>
     <link rel="shortcut icon" href="../../img/index/logoVarianteSmall.png" type="image/x-icon">
-    <link rel="stylesheet" href="../../css/normalized.css">
-    <link rel="stylesheet" href="../../css/style_admin.css">
     <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../css/normalized.css">
+  <link rel="stylesheet" href="../../css/style_admin.css">
 
 </head>
 
@@ -28,18 +28,24 @@
         <img src="../../img/index/GLASS.png" alt="Glass store">
     </div>
 
-   <!--Barra lateral-->
-   <div class="wrapper">
+<!--Barra lateral-->
+<div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="#">GLASS STORE</a>
+          <a href="../../index.php">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
+      <div class="sidebar-itemr">
+        <a href="./vista_admin.php" class="sidebar-link">
+          <img src="../../img/index/home.svg" alt="Volver">
+          <span>Volver</span>
+        </a>
+      </div>
       <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
@@ -128,12 +134,7 @@
             </li>
           </ul>
         </li>
-        <div class="sidebar-itemr">
-        <a href="../../index.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver">
-          <span>Volver</span>
-        </a>
-      </div>
+       
       <div class="sidebar-item">
         <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
         <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">

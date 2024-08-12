@@ -57,22 +57,20 @@ try {
   <link rel="stylesheet" href="../../css/style_admin.css">
   <style>
     .promo-status {
+        border: none;
+        border-radius: 4px;
+        padding: 10px 20px;
+        cursor: pointer;
+        text-align: center;
+    }
 
-    border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
-    cursor: pointer;
-    text-align: center;
-}
+    .promo-status.activo {
+        color: green;
+    }
 
-.promo-status.activo {
-    color: green;
-}
-
-.promo-status.inactivo {
-    color: red;
-}
-
+    .promo-status.inactivo {
+        color: red;
+    }
   </style>
 </head>
 <body>
@@ -82,8 +80,7 @@ try {
   </div>
 
   <!--Barra lateral-->
-   <!--Barra lateral-->
-   <div class="wrapper">
+  <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -94,7 +91,7 @@ try {
         </div>
       </div>
       <ul class="sidebar-nav">
-      <li class="sidebar-item">
+        <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
             <img src="../../img/admin/admin_icon.svg" alt="Personal">
@@ -123,7 +120,7 @@ try {
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-            data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
+             data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
             <img src="../../img/admin/clipboard.svg" alt="Cotizaciones">
             <span>Cotizaciones</span>
           </a>
@@ -188,6 +185,7 @@ try {
           <span>Volver</span>
         </a>
       </div>
+      
       <div class="sidebar-item">
         <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
         <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
@@ -196,7 +194,9 @@ try {
     </div>
       </ul>
       
+      
     </aside>
+
 
     <div class="main p-3">
       <div class="text-center">
@@ -205,113 +205,117 @@ try {
           <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
         </div>
       </div>
+      <br>
+
+      <div class="col-12 mb-4 card-bienvenida">
+          <div class="text-center ">
+            <div class="">
+              <h5 class=" mensaje-bienvenida">Notificaciones</h5>
+            </div>
+          </div>
+        </div>
     
   <!-- contenido general-->
-
   <div class="contenidoGeneral mt-4">
-      
-        
       <div class="general-container">
         <div class="d-flex justify-content-end mt-4">
         <button class="btn addButton" type="button" data-bs-toggle="modal" data-bs-target="#modalNuevaPromocion"><img src="../../img/admin/add.svg" alt="Añadir" class="icono-circulo">
             </button>
-          <div class="dropdown">
-            <button class="btn btn-secondary filters" type="button" id="dropdownOrdenar" data-bs-toggle="dropdown" aria-expanded="false"> Ordenar <img src="../../img/instalador/filter.svg" alt="Filtrar" class="icono-filtro">
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
-              <li><a class="dropdown-item" href="#">Recientes</a></li>
-              <li><a class="dropdown-item" href="#">Antiguos</a></li>
-        
-            </ul>
-          </div>
         </div>
-          <!--aqui van las promos-->
-          <?php
-    require_once '../../class/database.php'; 
+        
+        <!--aqui van las promos-->
+        <?php
+            require_once '../../class/database.php'; 
 
-    $database = new Database();
-    $database->conectarDB();
+            $database = new Database();
+            $database->conectarDB();
 
-    $query = "SELECT id_promocion,nombre_promocion, valor, estatus FROM promociones";
-    $promociones = $database->seleccionar($query);
+            $query = "SELECT id_promocion,nombre_promocion, valor, estatus FROM promociones";
+            $promociones = $database->seleccionar($query);
 
-    $database->desconectarDB();
-    ?>
+            $database->desconectarDB();
+        ?>
 
-    <!-- Mostrar las promociones -->
-<div class="row">
-    <?php if (!empty($promociones)): ?>
-        <?php foreach ($promociones as $promo): ?>
-            <div class="col-md-4">
-                <div class="promo-card">
-                    <div class="promo-name"><?php echo htmlspecialchars($promo->nombre_promocion); ?></div>
-                    <div class="promo-value">Valor: <?php echo htmlspecialchars($promo->valor); ?></div>
-                    
-                    <!-- Formulario para cambiar el estatus -->
-                    <form method="post" action="../../scripts/administrador/cambiar_estatus_promo.php" style="display: inline;">
-                        <input type="hidden" name="id_promocion" value="<?php echo htmlspecialchars($promo->id_promocion); ?>">
-                        <input type="hidden" name="estatus_actual" value="<?php echo htmlspecialchars($promo->estatus); ?>">
-                        <button type="submit" name="cambiar_estatus" value="cambiar_estatus" class="promo-status <?php echo htmlspecialchars($promo->estatus); ?>">
-    <?php echo htmlspecialchars($promo->estatus); ?>
-</button>
+        <!-- Mostrar las promociones -->
+        <div id="promos-container" class="row">
+            <?php if (!empty($promociones)): ?>
+                <?php foreach ($promociones as $promo): ?>
+                    <div class="col-md-4 promo-item">
+                        <div class="promo-card">
+                            <div class="promo-name"><?php echo htmlspecialchars($promo->nombre_promocion); ?></div>
+                            <div class="promo-value">Valor: <?php echo htmlspecialchars($promo->valor); ?></div>
+                            
+                            <!-- Formulario para cambiar el estatus -->
+                            <form method="post" action="../../scripts/administrador/cambiar_estatus_promo.php" style="display: inline;">
+                                <input type="hidden" name="id_promocion" value="<?php echo htmlspecialchars($promo->id_promocion); ?>">
+                                <input type="hidden" name="estatus_actual" value="<?php echo htmlspecialchars($promo->estatus); ?>">
+                                <button type="submit" name="cambiar_estatus" value="cambiar_estatus" class="promo-status <?php echo htmlspecialchars($promo->estatus); ?>">
+                                    <?php echo htmlspecialchars($promo->estatus); ?>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No hay promociones disponibles.</p>
+            <?php endif; ?>
+        </div>
+
+       <!-- Modal agregar nueva promoción -->
+       <div class="modal fade" id="modalNuevaPromocion" tabindex="-1" aria-labelledby="modalNuevaPromocionLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalNuevaPromocionLabel">Nueva Promoción</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="formNuevaPromocion" method="post" action="../../scripts/administrador/crearPromocion.php">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="nombrePromocion" class="form-label">Nombre de la Promoción</label>
+                                <input type="text" class="form-control" id="nombrePromocion" name="nombre_promocion" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tipoPromocion" class="form-label">Tipo de Promoción</label>
+                                <select class="form-control" id="tipoPromocion" name="tipo_promocion" required>
+                                    <option value="cantidad">Fijo</option>
+                                    <option value="porcentual">Porcentual</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="valorPromocion" class="form-label">Valor</label>
+                                <input type="number" step="0.01" class="form-control" id="valorPromocion" name="valor" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
                     </form>
                 </div>
             </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <p>No hay promociones disponibles.</p>
-    <?php endif; ?>
-</div>
-
-
-
-       <!-- Modal agregar nueva promoción -->
-<div class="modal fade" id="modalNuevaPromocion" tabindex="-1" aria-labelledby="modalNuevaPromocionLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalNuevaPromocionLabel">Nueva Promoción</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="formNuevaPromocion" method="post" action="../../scripts/administrador/crearPromocion.php">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="nombrePromocion" class="form-label">Nombre de la Promoción</label>
-                        <input type="text" class="form-control" id="nombrePromocion" name="nombre_promocion" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="tipoPromocion" class="form-label">Tipo de Promoción</label>
-                        <select class="form-control" id="tipoPromocion" name="tipo_promocion" required>
-                            <option value="cantidad">Fijo</option>
-                            <option value="porcentual">Porcentual</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="valorPromocion" class="form-label">Valor</label>
-                        <input type="number" step="0.01" class="form-control" id="valorPromocion" name="valor" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </form>
         </div>
-    </div>
-</div>
 
     </div>
   </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+<script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+<script>
     const hamBurger = document.querySelector(".toggle-btn");
-
     hamBurger.addEventListener("click", function () {
-      document.querySelector("#sidebar").classList.toggle("expand");
+        document.querySelector("#sidebar").classList.toggle("expand");
     });
-  </script>
+
+    $(document).ready(function(){
+        $("#search-input").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#promos-container .promo-item").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
 </body>
 </html>

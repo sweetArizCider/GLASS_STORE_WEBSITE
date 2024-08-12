@@ -14,11 +14,12 @@ $conexion->conectarDB();
 
 // Consulta para obtener los productos
 $consulta_productos = "
-    SELECT p.id_producto, p.nombre, p.precio, i.imagen
+    SELECT p.id_producto, p.nombre, p.precio, MIN(i.imagen) as imagen
     FROM productos p
     LEFT JOIN imagen i ON p.id_producto = i.producto
     WHERE p.estatus = 'activo' 
     AND (p.nombre LIKE :search)
+    GROUP BY p.id_producto
     LIMIT :limit OFFSET :offset
 ";
 

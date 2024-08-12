@@ -108,38 +108,41 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                 <a id="carrito" data-bs-toggle="modal" data-bs-target="#carritoModal"><img src="./img/index/clip.svg" alt="" width="25px"></a>
 
                 <div class="dropdown">
-                    <a href="#" id="user-icon" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="./img/index/user.svg" alt="" width="25px" style="cursor: pointer">
-                    </a>
-                    <?php
-                    if (isset($_SESSION["nom_usuario"])) {
-                        echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
-                        echo '<li><a class="dropdown-item" href="./views/cliente/perfil.php">Perfil</a></li>';
-                        echo '<li><a class="dropdown-item" href="#" id="notification-icon" data-bs-toggle="modal" data-bs-target="#notificationModal">Notificaciones</a></li>';
-                        
-                        $user = $_SESSION["nom_usuario"];
-                        $consulta = "CALL roles_usuario(?)";
-                        $params = [$user];
-                        $roles = $conexion->seleccionar($consulta, $params);
-                        if ($roles) {
-                            foreach ($roles as $rol) {
-                                if ($rol->nombre_rol == 'administrador') {
-                                    echo '<li><a class="dropdown-item" href="./views/administrador/vista_admin.php">Administrador</a></li>';
-                                } elseif ($rol->nombre_rol == 'instalador') {
-                                    echo '<li><a class="dropdown-item" href="./views/instalador/index_Instalador.php">Buzón</a></li>';
-                                }
-                            }
-                        }
-                        echo '<li><hr class="dropdown-divider"></li>';
-                        echo '<li><a class="dropdown-item" href="scripts/cerrarSesion.php">Cerrar Sesión</a></li>';
-                        echo '</ul>';
-                    } else {
-                        echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
-                        echo '<li><a class="dropdown-item" href="./views/iniciarSesion.php">Iniciar Sesión</a></li>';
-                        echo '</ul>';
+    <a href="#" id="user-icon" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="./img/index/user.svg" alt="" width="25px" style="cursor: pointer">
+    </a>
+    <?php if (isset($_SESSION["nom_usuario"])): ?>
+        <ul class="dropdown-menu" aria-labelledby="user-icon">
+            <li class="dropdown-item" style="color: #6c757d; font-size: .8em; pointer-events: none; cursor: default;"> <!-- Estilo del nombre de usuario en gris claro -->
+                <?php echo htmlspecialchars($_SESSION["nom_usuario"]); ?>
+            </li>
+            <li><a class="dropdown-item" href="./views/cliente/perfil.php">Perfil</a></li>
+            <li><a class="dropdown-item" href="#" id="notification-icon" data-bs-toggle="modal" data-bs-target="#notificationModal">Notificaciones</a></li>
+            <?php
+            $user = $_SESSION["nom_usuario"];
+            $consulta = "CALL roles_usuario(?)";
+            $params = [$user];
+            $roles = $conexion->seleccionar($consulta, $params);
+            if ($roles) {
+                foreach ($roles as $rol) {
+                    if ($rol->nombre_rol == 'administrador') {
+                        echo '<li><a class="dropdown-item" href="./views/administrador/vista_admin.php">Administrador</a></li>';
+                    } elseif ($rol->nombre_rol == 'instalador') {
+                        echo '<li><a class="dropdown-item" href="./views/instalador/index_Instalador.php">Buzón</a></li>';
                     }
-                    ?>
-                </div>
+                }
+            }
+            ?>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="scripts/cerrarSesion.php">Cerrar Sesión</a></li>
+        </ul>
+    <?php else: ?>
+        <ul class="dropdown-menu" aria-labelledby="user-icon">
+            <li><a class="dropdown-item" href="./views/iniciarSesion.php">Iniciar Sesión</a></li>
+        </ul>
+    <?php endif; ?>
+</div>
+
             </div>
         </div>
     </div> 
@@ -457,7 +460,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
       </div>
     </div>
     
-<!-- nuevo Modal de Favoritos -->
+<!-- Modal de Favoritos -->
 <div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -466,13 +469,23 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="favoritos-list" class="row">
-                    <!-- Aquí se cargarán los productos favoritos -->
-                </div>
+                <?php if (isset($_SESSION["nom_usuario"])): ?>
+                    <!-- Usuario logueado -->
+                    <p class="text-center">Guarda tus <a href="./views/productos.php">productos</a> favoritos y accede a ellos en cualquier momento.</p>
+                    <div id="favoritos-list" class="row">
+                        <!-- Aquí se cargarán los productos favoritos -->
+                    </div>
+                <?php else: ?>
+                    <!-- Usuario no logueado -->
+                    <div class="text-center">
+                        <p><a href="./views/iniciarSesion.php">Inicia sesión</a> para guardar tus productos favoritos y acceder a ellos cuando quieras. ¡ <a href="./views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
+
 
 
 <!-- detalles producto en el carrito -->
@@ -556,12 +569,12 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                         favoritosList.empty();
                         if (favoritos.length > 0) {
                             favoritos.forEach(function(favorito) {
-                                var imagen = favorito.imagen ? './img/index/' + favorito.imagen : './img/index/default.png';
+                                var imagen = favorito.imagen ? './img/disenos/' + favorito.imagen : './img/disenos/default.png';
                                 var favoritoHtml = `
                                     <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
-                                        <div class='card shadow'>
+                                        <div class='card shadow' >
                                             <a href='./views/perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
-                                                <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
+                                                <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top' >
                                                 <div class='card-body'>
                                                     <h5 class='card-title'>${favorito.nombre}</h5>
                                                     <p class='card-text'>$ ${favorito.precio}</p>
@@ -571,9 +584,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                                     </div>`;
                                 favoritosList.append(favoritoHtml);
                             });
-                        } else {
-                            favoritosList.append("<p>No tienes productos en favoritos.</p>");
-                        }
+                        } 
                     },
                     error: function(error) {
                         console.error('Error al obtener los favoritos:', error);

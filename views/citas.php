@@ -45,27 +45,9 @@ if (isset($_SESSION["nom_usuario"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendar Cita</title>
     <link rel="shortcut icon" href="../img/index/logoVarianteSmall.png" type="image/x-icon">
+    <link rel="stylesheet" href="../css/normalized.css">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/normalized.css">
-
-    <style>
-        .hidden {
-            display: none;
-        }
-        .address-form {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 15px;
-            background-color: #f9f9f9;
-        }
-        .address-form label {
-            font-weight: bold;
-        }
-        .address-form .form-control {
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 <body>
 <!-- WhatsApp flotante -->
@@ -83,6 +65,10 @@ if (isset($_SESSION["nom_usuario"])) {
 
 <div class="row agendar">
     <div class="col-12 col-lg-5 back-left blue-left-citas">
+    <a href="../index.php" id="backToTopButton" class="btn btn-light btn-volver">
+    <img src="../img/index/aprev.svg" alt="Volver" style="width: 20px; height: 20px;">
+    
+</a>
         <img src="../img/index/GLASS.png" alt="" class="logo-citas">
         <h2 class="subtitle-agendar">¿Qué día tendremos el gusto de atenderte?</h2>
         
@@ -189,29 +175,7 @@ if (isset($_SESSION["nom_usuario"])) {
 </form>
 <!-- TERMINA EL FORM -------------------------------------------------------------------------->
 <!-- footer -->
-<footer class="footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <h5>Misión</h5>
-                <p>Transformar espacios con soluciones en vidrio y aluminio de alta calidad, creando ambientes modernos y funcionales que superen las expectativas de nuestros clientes.</p>
-            </div>
-            <div class="col-md-4 mb-3">
-                <h5>Visión</h5>
-                <p>Ser la empresa líder en la industria del vidrio y aluminio en México, reconocida por nuestra innovación, calidad y servicio excepcional al cliente.</p>
-            </div>
-            <div class="col-md-4 mb-3">
-                <h5>Valores</h5>
-                <ul class="list-unstyled">
-                    <li><i class="bi bi-check"></i> Calidad</li>
-                    <li><i class="bi bi-check"></i> Innovación</li>
-                    <li><i class="bi bi-check"></i> Servicio al Cliente</li>
-                    <li><i class="bi bi-check"></i> Integridad</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</footer>
+
 
 <script src="../js/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/agendarCita.js"></script>
@@ -219,58 +183,110 @@ if (isset($_SESSION["nom_usuario"])) {
     const calendarDays = document.getElementById('calendarDays');
     const selectedDateInput = document.getElementById('selected_date');
     const selectedDateDisplay = document.getElementById('selectedDateDisplay');
+    const calendarMonth = document.getElementById('calendarMonth');
+    const nextMonthButton = document.getElementById('nextMonth');
+    const prevMonthButton = document.getElementById('prevMonth');
+    
+    const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    
+    let currentDate = new Date();
+    let selectedDate = null;
 
-   
-    function createCalendar() {
-     
-        const currentDate = new Date();
+    // Crear el calendario inicial
+    createCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    
+    nextMonthButton.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        createCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    });
 
-      
-        generateCalendarDays(currentDate.getFullYear(), currentDate.getMonth());
-    }
+    prevMonthButton.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        createCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    });
 
-
-    function generateCalendarDays(year, month) {
-
+    function createCalendar(year, month) {
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
-
-  
         const firstDayOfWeek = firstDay.getDay();
 
+        calendarMonth.textContent = `${monthNames[month]} ${year}`;
 
         calendarDays.innerHTML = '';
 
-   
+        // Mostrar u ocultar botones de navegación
+        if (month === new Date().getMonth() && year === new Date().getFullYear()) {
+            prevMonthButton.style.visibility = 'hidden';
+        } else {
+            prevMonthButton.style.visibility = 'visible';
+        }
+
+        if (month === new Date().getMonth() + 1 && year === new Date().getFullYear()) {
+            nextMonthButton.style.visibility = 'hidden';
+        } else {
+            nextMonthButton.style.visibility = 'visible';
+        }
+
+        // Rellenar con días vacíos hasta el primer día del mes
         for (let i = 0; i < firstDayOfWeek; i++) {
             const emptyDay = document.createElement('div');
             emptyDay.classList.add('empty-day');
             calendarDays.appendChild(emptyDay);
         }
 
- 
+        // Añadir los días del mes
         for (let day = 1; day <= lastDay.getDate(); day++) {
             const dayElement = document.createElement('div');
             dayElement.classList.add('calendar-day');
             dayElement.textContent = day;
-            dayElement.addEventListener('click', () => selectDate(year, month, day));
+
+            const currentDay = new Date(year, month, day);
+
+            // Deshabilitar días pasados y el día actual
+            if (currentDay <= new Date()) {
+                dayElement.classList.add('disabled-day');
+            } else {
+                dayElement.addEventListener('click', () => selectDate(year, month, day));
+            }
+
             calendarDays.appendChild(dayElement);
+        }
+
+        // Resaltar el día seleccionado si lo hay
+        if (selectedDate && selectedDate.getFullYear() === year && selectedDate.getMonth() === month) {
+            const selectedDayElement = calendarDays.querySelector(`.calendar-day:nth-child(${firstDayOfWeek + selectedDate.getDate()})`);
+            if (selectedDayElement) {
+                selectedDayElement.classList.add('selected-day');
+            }
         }
     }
 
- 
     function selectDate(year, month, day) {
- 
-        const selectedDate = new Date(year, month, day);
+        // Desmarcar el día anterior seleccionado
+        if (selectedDate) {
+            const previousSelectedElement = calendarDays.querySelector('.selected-day');
+            if (previousSelectedElement) {
+                previousSelectedElement.classList.remove('selected-day');
+            }
+        }
+
+        selectedDate = new Date(year, month, day);
         const formattedDate = selectedDate.toISOString().split('T')[0];
 
+        // Actualizar el día seleccionado en el calendario
+        const firstDay = new Date(year, month, 1).getDay();
+        const selectedDayElement = calendarDays.querySelector(`.calendar-day:nth-child(${firstDay + day})`);
+        if (selectedDayElement) {
+            selectedDayElement.classList.add('selected-day');
+        }
 
         selectedDateInput.value = formattedDate;
         selectedDateDisplay.textContent = formattedDate;
     }
 
-
-    createCalendar();
+    createCalendar(currentDate.getFullYear(), currentDate.getMonth());
 </script>
+
+
 </body>
 </html>

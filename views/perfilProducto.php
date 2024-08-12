@@ -120,7 +120,6 @@ if (isset($_GET['id'])) {
 <link rel="stylesheet" href="../css/styles.css">
 <link rel="stylesheet" href="../css/normalized.css">
 <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
 <style>
     .card-img-left {
@@ -231,9 +230,6 @@ if (isset($_GET['id'])) {
     </div>
 </nav>
 <div class="container mt-3 d-flex justify-content-end">
-    <a href="./productos.php" class="btn btn-outline-primary">
-        <i class="bi bi-arrow-left"></i> Volver
-    </a>
 </div>
  <div class="container mt-5" id="product-profile">
     <div class="row">
@@ -331,6 +327,18 @@ if (isset($_GET['id'])) {
                 <label class="labelPerfilProduct" for="total" class="form-label">Precio Total</label>
                 <input type="text" class="form-control inputPerfilProductoCont total" id="total" name="total" readonly>
             </div>
+            <?php if ($categoria === 'persianas') : ?>
+            <div class="inputPerfil mb-3">
+            <label class="labelPerfilProduct" for="color_accesorios">Color de Accesorios</label>
+                <select  name="color_accesorios" id="color_accesorios" class="form-control inputPerfilProductoCont">
+                    <option value="blanco">Blanco</option>
+                    <option value="negro">Negro</option>
+                    <option value="gris">Gris</option>
+                    <!-- Añadir más opciones según sea necesario -->
+                </select>
+                
+            </div>
+        <?php endif; ?>
         </div>
 
         <div class="d-grid">
@@ -368,7 +376,7 @@ if (isset($_GET['id'])) {
     </div>
 </div>
 
-<!-- nuevo Modal de Favoritos, se estarian cargando abajo con js -->
+<!-- Modal de Favoritos -->
 <div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -377,9 +385,18 @@ if (isset($_GET['id'])) {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="favoritos-list" class="row">
-                    <!-- Aquí se cargarán los productos favoritos -->
-                </div>
+                <?php if (isset($_SESSION["nom_usuario"])): ?>
+                    <!-- Usuario logueado -->
+                    <p class="text-center">Guarda tus <a href="./productos.php">productos</a> favoritos y accede a ellos en cualquier momento.</p>
+                    <div id="favoritos-list" class="row">
+                        <!-- Aquí se cargarán los productos favoritos -->
+                    </div>
+                <?php else: ?>
+                    <!-- Usuario no logueado -->
+                    <div class="text-center">
+                        <p><a href="../views/iniciarSesion.php">Inicia sesión</a> para guardar tus productos favoritos y acceder a ellos cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -510,9 +527,7 @@ $(document).ready(function() {
                             </div>`;
                         favoritosList.append(favoritoHtml);
                     });
-                } else {
-                    favoritosList.append("<p>No tienes productos en favoritos.</p>");
-                }
+                } 
             },
             error: function(error) {
                 console.error('Error al obtener los favoritos:', error);
@@ -564,9 +579,7 @@ $(document).ready(function() {
                             </div>`;
                         carritoList.append(productoHtml);
                     });
-                } else {
-                    carritoList.append("<p>No tienes productos en espera.</p>");
-                }
+                } 
             },
             error: function(error) {
                 console.error('Error al obtener los productos del carrito:', error);

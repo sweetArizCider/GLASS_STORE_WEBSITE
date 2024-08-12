@@ -93,19 +93,24 @@ if ($categoriaSeleccionada) {
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-  <!--Barra lateral-->
-   <!--Barra lateral-->
-   <div class="wrapper">
+<!--Barra lateral-->
+<div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="#">GLASS STORE</a>
+          <a href="../../index.php">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
+      <div class="sidebar-itemr">
+        <a href="./vista_admin.php" class="sidebar-link">
+          <img src="../../img/index/home.svg" alt="Volver">
+          <span>Volver</span>
+        </a>
+      </div>
       <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
@@ -194,12 +199,7 @@ if ($categoriaSeleccionada) {
             </li>
           </ul>
         </li>
-        <div class="sidebar-itemr">
-        <a href="../../index.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver">
-          <span>Volver</span>
-        </a>
-      </div>
+       
       <div class="sidebar-item">
         <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
         <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">

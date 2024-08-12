@@ -12,9 +12,9 @@
 
   <style>
     .clickable-row {
-    cursor: pointer;
+      cursor: pointer;
     }
-    </style>
+  </style>
 
 </head>
 
@@ -24,8 +24,7 @@
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-    <!--Barra lateral-->
-    <div class="wrapper">
+  <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -126,7 +125,7 @@
         </li>
         <div class="sidebar-itemr">
         <a href="../../index.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver">
+          <img src="../../img/index/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
       </div>
@@ -149,227 +148,226 @@
       </div>
 
       <br>
-      <div class="container">
+      <div class="col-12 mb-4 card-bienvenida">
+          <div class="text-center ">
+            <div class="">
+              <h5 class="mensaje-bienvenida">Gestión de Diseños</h5>
+              <p class="mensaje-sub"><mark class="marklued">¡Hoy es un gran día para crear algo extraordinario!</mark></p>
 
-<!-- título ----------------------------------------------------->
-    <h1 class="text-center my-4">Gestionar Diseños</h1>
-</div>
+          </div>
+        </div>
 
-<!-- añadir diseño boton ----------------------------------------------------->
-<br>
+      <!-- añadir diseño botón -->
+      <br>
+      <button class="btn btn-secondary filters" type="button" id="dropdownOrdenar" data-bs-toggle="dropdown" aria-expanded="false">
+        Ordenar <img src="../../img/instalador/filter.svg" alt="Filtrar" class="icono-filtro">
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
+        <li><a class="dropdown-item" href="#" onclick="sortCitas('activo')">Activos</a></li>
+        <li><a class="dropdown-item" href="#" onclick="sortCitas('inactivo')">Inactivos</a></li>
+      </ul>
       <div class="d-flex justify-content-end mb-3">
-          <a href="#addDisenoModal" class="btn btn-primary me-2" data-bs-toggle="modal">Añadir Diseño</a>
+        <a href="#addDisenoModal" class="btn btn-primary me-2" data-bs-toggle="modal">Añadir Diseño</a>
       </div>
 
-<!-- Modal para añadir diseño --------------------------------------------------->
-<div class="modal fade" id="addDisenoModal" tabindex="-1" aria-labelledby="addDisenoModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title" id="addDisenoModalLabel">Añadir Diseño</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <!-- Modal para añadir diseño -->
+      <div class="modal fade" id="addDisenoModal" tabindex="-1" aria-labelledby="addDisenoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addDisenoModalLabel">Añadir Diseño</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="addProductForm" action="../../scripts/administrador/agregarDiseno.php" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <label for="add-product-imagen" class="form-label">Imagen</label>
+                  <input type="file" class="form-control" id="add-product-imagen" name="imagen" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                  <label for="add-product-codigo" class="form-label">Código</label>
+                  <input type="text" class="form-control" id="add-product-codigo" name="codigo" required>
+                </div>
+                <div class="mb-3">
+                  <label for="add-product-descripcion" class="form-label">Descripción</label>
+                  <input type="text" class="form-control" id="add-product-descripcion" name="descripcion" maxlength="255" required>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Descartar</button>
+                  <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
-      
-      <div class="modal-body">
-        <form id="addProductForm" action="../../scripts/agregarDiseno.php" method="POST" enctype="multipart/form-data">
-          <div class="mb-3">
-            <label for="add-product-imagen" class="form-label">Imagen</label>
-            <input type="file" class="form-control" id="add-product-imagen" name="imagen" accept="image/*" required>
-          </div>
 
-          <div class="mb-3">
-            <label for="add-product-codigo" class="form-label">Código</label>
-            <input type="text" class="form-control" id="add-product-codigo" name="codigo" required>
-          </div> 
+      <!-- Tablas -->
+      <?php
+      include '../../class/database.php'; 
+      $conexion = new Database();
+      $conexion->conectarDB();
 
-          <div class="mb-3">
-            <label for="add-product-descripcion" class="form-label">Descripción</label>
-            <input type="text" class="form-control" id="add-product-descripcion" name="descripcion" maxlength="255" required>
-          </div>
+      $limit = 15;
+      $offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
+      $query = isset($_POST['query']) ? $_POST['query'] : '';
+      $sortEstatus = isset($_POST['sortEstatus']) ? $_POST['sortEstatus'] : '';
+      $estatusCondition = '';
 
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Descartar</button>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+      if ($sortEstatus === 'activo') {
+          $estatusCondition = "disenos.estatus = 'activo'";
+      } elseif ($sortEstatus === 'inactivo') {
+          $estatusCondition = "disenos.estatus = 'inactivo'";
+      }
 
-<!-- Tablas --------------------------------------------------->
+      // Elimina acentos y convierte a minúsculas para hacer una búsqueda insensible a mayúsculas y acentos
+      $consulta = "
+          SELECT
+              disenos.id_diseno, 
+              disenos.file_path, 
+              disenos.codigo, 
+              disenos.estatus,
+              productos.nombre AS producto_nombre
+          FROM 
+              disenos
+          LEFT JOIN 
+              productos ON disenos.muestrario = productos.id_producto
+          WHERE 
+              (LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(disenos.codigo, 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u')) LIKE LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE('%$query%', 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u'))
+          OR
+              LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(productos.nombre, 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u')) LIKE LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE('%$query%', 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u')))
+      ";
 
-<?php
-include '../../class/database.php'; 
-$conexion = new Database();
-$conexion->conectarDB();
+      if ($estatusCondition !== '') {
+          $consulta .= " AND $estatusCondition";
+      }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['id_type'])) {
-        if ($_POST['id_type'] == 'diseno_producto') {
-            $id_diseno = $_POST['id_diseno'];
-            $id_producto = $_POST['id_producto'];
-            $nuevo_estatus_DP = $_POST['nuevo_estatus_DP'];
+      $consulta .= " ORDER BY disenos.estatus = 'activo' DESC, disenos.id_diseno DESC LIMIT $offset, $limit";
 
-            $consulta_existencia = "
-                SELECT COUNT(*) as count 
-                FROM disenos_productos
-                WHERE diseno = $id_diseno 
-                AND producto = $id_producto
-            ";
-            $resultado_existencia = $conexion->seleccionar($consulta_existencia);
+      $menu = $conexion->seleccionar($consulta);
+      ?>
 
-            if ($resultado_existencia[0]->count == 0) {
-                $consulta_insercion = "
-                    INSERT INTO disenos_productos (diseno, producto, estatus) 
-                    VALUES ($id_diseno, $id_producto, '$nuevo_estatus_DP')
-                ";
-                $conexion->seleccionar($consulta_insercion);
-            } else {
-                $consulta_actualizacion = "
-                    UPDATE disenos_productos
-                    SET estatus = '$nuevo_estatus_DP'
-                    WHERE diseno = '$id_diseno'
-                    AND producto = '$id_producto'
-                ";
-                $conexion->seleccionar($consulta_actualizacion);
-            }
-        }
-    } elseif (isset($_POST['id_diseno']) && isset($_POST['nuevo_estatus'])) {
-        // Actualización de estatus de diseño
-        $id_diseno = $_POST['id_diseno'];
-        $nuevo_estatus = $_POST['nuevo_estatus'];
-
-        $consulta_actualizacion = "
-            UPDATE disenos
-            SET estatus = '$nuevo_estatus'
-            WHERE id_diseno = $id_diseno
-        ";
-
-        $conexion->seleccionar($consulta_actualizacion);
-    }
-}
-
-$consulta = "
-    SELECT
-        disenos.id_diseno, disenos.file_path, disenos.codigo, disenos.estatus
-    FROM 
-        disenos;
-";
-
-$menu = $conexion->seleccionar($consulta);
-?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Diseños</title>
-    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h3>Diseños</h3>
-                <table class="table table-bordered">
-                    <thead>
+      <div class="container">
+          <div class="row">
+            <div class="col-md-2"></div>
+              <div class="col-md-8 col-sm-1" >
+                  <h3>Diseños</h3>
+                  <div id="disenos-container">
+                    <table class="table table-bordered">
+                      <thead>
                         <tr>
-                            <th>Imagen</th>
-                            <th>Código</th>
-                            <th>Estatus</th>
+                          <th>Imagen</th>
+                          <th>Código</th>
+                          <th>Estatus</th>
+                          <th>Producto</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                      </thead>
+                      <tbody>
                         <?php foreach($menu as $diseno): ?>
-                        <tr class='clickable-row' data-id='<?= $diseno->id_diseno ?>'>
-                            <td><img src='<?= $diseno->file_path ?>' alt='<?= $diseno->codigo ?>' style='width:100px;height:auto;'></td>
+                          <?php
+                            $imagePath = !empty($diseno->file_path) ? '../../img/disenos/' . $diseno->file_path : '../../img/index/default.png';
+                          ?>
+                          <tr class='clickable-row' data-id='<?= $diseno->id_diseno ?>'>
+                            <td>
+                              <img src='<?= htmlspecialchars($imagePath) ?>' alt='<?= $diseno->codigo ?>' style='width:100px;height:auto;'>
+                            </td>
                             <td><?= $diseno->codigo ?></td>
                             <td>
-                                <form id='form_<?= $diseno->id_diseno ?>' method='POST' action=''>
-                                    <input type='hidden' name='id_diseno' value='<?= $diseno->id_diseno ?>'>
-                                    <input type='hidden' name='nuevo_estatus' value='<?= $diseno->estatus == "activo" ? "inactivo" : "activo" ?>'>
-                                    <button type='submit' class='btn <?= $diseno->estatus == "activo" ? "btn-success" : "btn-danger" ?> btn-sm mb-2 w-100 status-btn'>
-                                        <i class='bi <?= $diseno->estatus == "activo" ? "bi-check" : "bi-x" ?>'></i>
-                                    </button>
-                                </form>
+                              <form class='update-status-form' method='POST' action='../../scripts/administrador/actualizarestatusdiseno.php'>
+                                <input type='hidden' name='id_diseno' value='<?= $diseno->id_diseno ?>'>
+                                <input type='hidden' name='nuevo_estatus' value='<?= $diseno->estatus == "activo" ? "inactivo" : "activo" ?>'>
+                                <button type='submit' class='btn <?= $diseno->estatus == "activo" ? "btn-success" : "btn-danger" ?> btn-sm mb-2 w-100 status-btn'>
+                                  <i class='bi <?= $diseno->estatus == "activo" ? "bi-check" : "bi-x" ?>'></i>
+                                </button>
+                              </form>
                             </td>
-                        </tr>
+                            <td><?= $diseno->producto_nombre ?></td>
+                          </tr>
                         <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="d-flex justify-content-center">
+                    <button id="load-more" class="btn btn-primary mt-3">Ver más</button>
+                  </div>
+              </div>
+          </div>
+      </div>
 
-            <div class='col-md-6'>
-                <h3>Tapices</h3>
-                <table class='table table-bordered'>
-                    <thead>
-                        <tr>
-                            <th>Tapiz</th>
-                            <th>Descripción</th>
-                            <th>Estatus</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        // Obtener ID de diseño de la URL
-                        $id_diseno = isset($_GET['id_diseno']) ? (int)$_GET['id_diseno'] : 0;
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+      <script>
+        $(document).ready(function() {
+          let offset = 15;
+          const limit = 15;
 
-                        if ($id_diseno > 0) {
-                            $consulta_productos = "
-                                CALL obtener_diseno_producto($id_diseno);
-                            ";
-                            $productos = $conexion->seleccionar($consulta_productos);
+          $('#load-more').click(function() {
+            $.ajax({
+              url: '', // Mismo archivo para manejar la solicitud
+              type: 'POST',
+              data: { query: $('#search-input').val(), offset: offset, limit: limit, sortEstatus: '' },
+              success: function(response) {
+                const newRows = $(response).find('#disenos-container tbody').html();
+                $('#disenos-container tbody').append(newRows);
+                offset += limit;
+              }
+            });
+          });
 
-                            foreach ($productos as $producto):
-                        ?>
-                        <tr>
-                            <td><?= $producto->nombre ?></td>
-                            <td><?= $producto->descripcion ?></td>
-                            <td>
-                                <form method='POST' action=''>
-                                    <input type='hidden' name='form_<?= $producto->id_diseno_producto ?>' value='form_<?= $producto->id_diseno_producto ?>'>
-                                    <input type='hidden' name='id_type' value='diseno_producto'>
-                                    <input type='hidden' name='id_diseno' value='<?= $producto->id_diseno ?>'>
-                                    <input type='hidden' name='id_producto' value='<?= $producto->id_producto ?>'>
-                                    <input type='hidden' name='nuevo_estatus_DP' value='<?= $producto->estatus == "activo" ? "inactivo" : "activo" ?>'>
-                                    <button type='submit' class='btn <?= $producto->estatus == "activo" ? "btn-success" : "btn-danger" ?> btn-sm mb-2 w-100 status-btn'>
-                                        <i class='bi <?= $producto->estatus == "activo" ? "bi-check" : "bi-x" ?>'></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        <?php
-                            endforeach;
-                        }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+          $('#search-input').on('input', function() {
+            const query = $(this).val();
+            $.ajax({
+              url: '', // Mismo archivo para manejar la solicitud
+              type: 'POST',
+              data: { query: query, offset: 0, limit: limit, sortEstatus: '' },
+              success: function(response) {
+                const newTable = $(response).find('#disenos-container').html();
+                $('#disenos-container').html(newTable);
+                offset = limit;
+              }
+            });
+          });
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var rows = document.querySelectorAll('.clickable-row');
-        rows.forEach(function(row) {
-            row.addEventListener('click', function(event) {
-                if (!event.target.classList.contains('status-btn') && !event.target.closest('.status-btn')) {
-                    var idDiseno = row.getAttribute('data-id');
-                    // Redirigir con el id del diseño en la URL
-                    window.location.href = "?id_diseno=" + idDiseno;
+          $(document).on('submit', '.update-status-form', function(e) {
+            e.preventDefault();
+
+            const form = $(this);
+            const idDiseno = form.find('input[name="id_diseno"]').val();
+            const nuevoEstatus = form.find('input[name="nuevo_estatus"]').val();
+
+            $.ajax({
+              url: form.attr('action'),
+              type: 'POST',
+              data: { id_diseno: idDiseno, nuevo_estatus: nuevoEstatus },
+              success: function(response) {
+                if (response.trim() === "Estatus actualizado") {
+                  form.find('input[name="nuevo_estatus"]').val(nuevoEstatus === 'activo' ? 'inactivo' : 'activo');
+                  form.find('.status-btn')
+                      .toggleClass('btn-success btn-danger')
+                      .find('i')
+                      .toggleClass('bi-check bi-x');
+                } else {
+                  alert("Error al actualizar el estatus.");
+                }
+              }
+            });
+          });
+        });
+
+        function sortCitas(estatus) {
+            $.ajax({
+                url: '', // Mismo archivo para manejar la solicitud
+                type: 'POST',
+                data: { query: $('#search-input').val(), offset: 0, limit: 15, sortEstatus: estatus },
+                success: function(response) {
+                    const newTable = $(response).find('#disenos-container').html();
+                    $('#disenos-container').html(newTable);
+                    offset = 15;
                 }
             });
-        });
-    });
-
-    const hamBurger = document.querySelector(".toggle-btn");
-
-    hamBurger.addEventListener("click", function () {
-        document.querySelector("#sidebar").classList.toggle("expand");
-    });
-    </script>
+        }
+      </script>
+    </div>
+  </div>
 </body>
 </html>
