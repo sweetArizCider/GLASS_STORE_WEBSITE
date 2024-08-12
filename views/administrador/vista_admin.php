@@ -224,7 +224,7 @@ try {
       </div>
       <ul class="sidebar-nav">
       <div class="sidebar-itemr">
-        <a href="./vista_admin.php" class="sidebar-link">
+        <a href="../../" class="sidebar-link">
           <img src="../../img/index/home.svg" alt="Volver">
           <span>Volver</span>
         </a>

@@ -144,10 +144,12 @@ $db->desconectarDB();
   </style>
 </head>
 <body>
+  
   <!--Logo flotante del negocio-->
   <div id="logotipo-flotante">
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
+  
 
 <!--Barra lateral-->
 <div class="wrapper">
@@ -269,6 +271,11 @@ $db->desconectarDB();
     
     <div class="main p-3">
       <div class="text-center">
+      <div class="col-12 mb-4 card-bienvenida">
+        <div class="text-center">
+          <h5 class="mensaje-bienvenida">Gestionar Citas</h5>
+        </div>
+      </div><br>
         
       </div>
       <br>
