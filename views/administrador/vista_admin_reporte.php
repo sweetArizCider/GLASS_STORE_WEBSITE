@@ -12,14 +12,15 @@ $stmt->execute([$user]);
 $result = $stmt->fetch(PDO::FETCH_OBJ);
 $stmt->closeCursor();
 
-if ($result && $result->nombre_rol == 'administrador') { 
-    $_SESSION["nombre_rol"] = $result->nombre_rol;
-    error_log("Usuario autenticado como Administrador: " . $user);
+if ($result && ($result->nombre_rol == 'administrador' || $result->nombre_rol == 'cliente')) { 
+  $_SESSION["nombre_rol"] = $result->nombre_rol;
+  error_log("Usuario autenticado como " . $result->nombre_rol . ": " . $user);
 } else {
-    error_log("Usuario sin privilegios de Administrador o rol no encontrado. Redirigiendo a iniciarSesion.php");
-    header("Location: ../iniciarSesion.php");
-    exit();
+  error_log("Usuario sin privilegios de Administrador o Cliente. Redirigiendo a iniciarSesion.php");
+  header("Location: ../iniciarSesion.php");
+  exit();
 }
+
 
 $stmt = $db->getPDO()->prepare("SELECT * FROM vista_reportes");
 $stmt->execute();

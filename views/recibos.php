@@ -18,15 +18,15 @@ $stmt = $db->getPDO()->prepare("CALL roles_usuario(?)");
 $stmt->execute([$user]);
 $result = $stmt->fetch(PDO::FETCH_OBJ);
 
-if ($result && $result->nombre_rol == 'administrador') { // Verificar el rol del usuario
-    $_SESSION["nombre_rol"] = $result->nombre_rol;
-    error_log("Usuario autenticado como Administrador: " . $user);
+if ($result && ($result->nombre_rol == 'administrador' || $result->nombre_rol == 'cliente')) { 
+  $_SESSION["nombre_rol"] = $result->nombre_rol;
+  error_log("Usuario autenticado como " . $result->nombre_rol . ": " . $user);
 } else {
-    // Si el usuario no es administrador o no se encontró el rol, redirigir a la página de inicio de sesión
-    error_log("Usuario sin privilegios de Administrador o rol no encontrado. Redirigiendo a iniciarSesion.php");
-    header("Location: ../iniciarSesion.php");
-    exit();
+  error_log("Usuario sin privilegios de Administrador o Cliente. Redirigiendo a iniciarSesion.php");
+  header("Location: ../iniciarSesion.php");
+  exit();
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
