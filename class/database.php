@@ -1,5 +1,7 @@
 <?php
   
+
+
 class database{
     // paramentros que le voy a enviar al objeto pdo
     private $PDOlocal;
