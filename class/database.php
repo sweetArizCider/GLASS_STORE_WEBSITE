@@ -87,7 +87,7 @@ class database{
         $stmt = $this->PDOlocal->prepare($query);
         try {
             foreach ($params as $key => $value) {
-                $stmt->bindValue($key, $value); // Aquí usamos directamente $key
+                $stmt->bindValue($key +1, $value); // Aquí usamos directamente $key
             }
             $stmt->execute();
             return $stmt;
@@ -96,7 +96,6 @@ class database{
             return false; // Asegúrate de devolver un valor en caso de error
         }
     }
-    
     
     function verificar($usuario, $contra)
     {
@@ -138,12 +137,12 @@ class database{
     // Método para preparar una consulta
     public function prepareQuery($query) {
         try {
-            return $this->PDOlocal->prepare($query); // Usa el objeto PDO interno para preparar la consulta
+            return $this->prepareQuery($query);
+            //return $this->prepare($query);
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
     }
-    
 
     // Método para ejecutar una consulta sin parámetros
     public function executeQuery($query) {
