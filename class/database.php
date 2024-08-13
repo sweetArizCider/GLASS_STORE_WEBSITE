@@ -87,7 +87,7 @@ class database{
         $stmt = $this->PDOlocal->prepare($query);
         try {
             foreach ($params as $key => $value) {
-                $stmt->bindValue($key, $value); // Aquí usamos directamente $key
+                $stmt->bindValue($key +1, $value); // Aquí usamos directamente $key
             }
             $stmt->execute();
             return $stmt;
@@ -96,6 +96,7 @@ class database{
             return false; // Asegúrate de devolver un valor en caso de error
         }
     }
+
     
     
     function verificar($usuario, $contra)
