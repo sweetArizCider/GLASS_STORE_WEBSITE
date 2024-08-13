@@ -30,7 +30,6 @@ if (isset($_SESSION["nom_usuario"])) {
             if ($nombre_rol == 'cliente' && isset($fila->id_cliente)) {
                 $id_cliente = $fila->id_cliente;
                 $id_usuario = $id_cliente;
-
                 // Cambia el nombre de la tabla a minúsculas
                 $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = :cliente";
                 $paramsNotificaciones = [':cliente' => $id_cliente];
@@ -109,38 +108,41 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                 <a id="carrito" data-bs-toggle="modal" data-bs-target="#carritoModal"><img src="./img/index/clip.svg" alt="" width="25px"></a>
 
                 <div class="dropdown">
-                    <a href="#" id="user-icon" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="./img/index/user.svg" alt="" width="25px" style="cursor: pointer">
-                    </a>
-                    <?php
-                    if (isset($_SESSION["nom_usuario"])) {
-                        echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
-                        echo '<li><a class="dropdown-item" href="perfil.php">Perfil</a></li>';
-                        echo '<li><a class="dropdown-item" href="#" id="notification-icon" data-bs-toggle="modal" data-bs-target="#notificationModal">Notificaciones</a></li>';
-                        
-                        $user = $_SESSION["nom_usuario"];
-                        $consulta = "CALL roles_usuario(?)";
-                        $params = [$user];
-                        $roles = $conexion->seleccionar($consulta, $params);
-                        if ($roles) {
-                            foreach ($roles as $rol) {
-                                if ($rol->nombre_rol == 'administrador') {
-                                    echo '<li><a class="dropdown-item" href="./views/administrador/vista_admin.php">Administrador</a></li>';
-                                } elseif ($rol->nombre_rol == 'instalador') {
-                                    echo '<li><a class="dropdown-item" href="./views/instalador/index_Instalador.php">Buzón</a></li>';
-                                }
-                            }
-                        }
-                        echo '<li><hr class="dropdown-divider"></li>';
-                        echo '<li><a class="dropdown-item" href="scripts/cerrarSesion.php">Cerrar Sesión</a></li>';
-                        echo '</ul>';
-                    } else {
-                        echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
-                        echo '<li><a class="dropdown-item" href="./views/iniciarSesion.php">Iniciar Sesión</a></li>';
-                        echo '</ul>';
+    <a href="#" id="user-icon" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="./img/index/user.svg" alt="" width="25px" style="cursor: pointer">
+    </a>
+    <?php if (isset($_SESSION["nom_usuario"])): ?>
+        <ul class="dropdown-menu" aria-labelledby="user-icon">
+            <li class="dropdown-item" style="color: #6c757d; font-size: .8em; pointer-events: none; cursor: default;"> <!-- Estilo del nombre de usuario en gris claro -->
+                <?php echo htmlspecialchars($_SESSION["nom_usuario"]); ?>
+            </li>
+            <li><a class="dropdown-item" href="./views/cliente/perfil.php">Perfil</a></li>
+            <li><a class="dropdown-item" href="#" id="notification-icon" data-bs-toggle="modal" data-bs-target="#notificationModal">Notificaciones</a></li>
+            <?php
+            $user = $_SESSION["nom_usuario"];
+            $consulta = "CALL roles_usuario(?)";
+            $params = [$user];
+            $roles = $conexion->seleccionar($consulta, $params);
+            if ($roles) {
+                foreach ($roles as $rol) {
+                    if ($rol->nombre_rol == 'administrador') {
+                        echo '<li><a class="dropdown-item" href="./views/administrador/vista_admin.php">Administrador</a></li>';
+                    } elseif ($rol->nombre_rol == 'instalador') {
+                        echo '<li><a class="dropdown-item" href="./views/instalador/index_Instalador.php">Buzón</a></li>';
                     }
-                    ?>
-                </div>
+                }
+            }
+            ?>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="scripts/cerrarSesion.php">Cerrar Sesión</a></li>
+        </ul>
+    <?php else: ?>
+        <ul class="dropdown-menu" aria-labelledby="user-icon">
+            <li><a class="dropdown-item" href="./views/iniciarSesion.php">Iniciar Sesión</a></li>
+        </ul>
+    <?php endif; ?>
+</div>
+
             </div>
         </div>
     </div> 
@@ -162,7 +164,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
               <div class="offcanvas-body">
                   <ul class="navbar-nav">
                       <li class="nav-item ">
-                          <a class="nav-link" href="https://api.whatsapp.com/send?phone=8717843809" target="_blank">Contacto</a>
+                          <a class="nav-link" href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">Contacto</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link nav-left" href="./views/productos.php">Productos</a>
@@ -188,7 +190,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
               ESTILO Y DISTINCIÓN
           </h1>
           <p>Dale un toque único a tu espacio con nuestros <br> productos de alta calidad. Soluciones elegantes y <br> personalizadas para tu hogar o negocio.</p>
-          <div id="btn1" ><a href="https://api.whatsapp.com/send?phone=8717843809" target="_blank"><button class="banner-boton" >Contáctanos</button></a></div>
+          <div id="btn1" ><a href="./views/productos.php" ><button class="banner-boton" >Ver Productos</button></a></div>
         </div> 
       </div>
      </main>
@@ -200,7 +202,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
         <div class="row" style="margin-top: 50px;">
             <div class="col-md-3 py-3 py-md-0 ">
                 <div class="card shadow">
-                    <img src="./img/index/PersianaCafeClaro.jpeg" alt="" class="card image-top img-card" height="200px">
+                    <img src="./img/index/PersianaCafeClaro.jpeg" alt="" class="card img-card" >
                     <div class="card-body">
                         <h5 class="card-titel text-center categoria-title">Persianas</h5>
                         <p class="text-center">Mejora tu hogar con nuestras elegantes persianas, disponibles en varios estilos y colores para un control óptimo de la luz y privacidad.</p>
@@ -273,7 +275,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                     </div>
                 </div>
                 <p class="testimonyReview">Obtén asesoramiento personalizado para transformar tu espacio con nuestras soluciones en vidrio templado, persianas, papel tapiz y herrajes. ¡Reserva tu cita ahora!</p>
-                <div id="btn4"><a href="/views/citas.php"><button class="agendar-boton">Agendar</button></a></div>
+                <div id="btn4"><a href="./views/citas.php"><button class="agendar-boton">Agendar</button></a></div>
             </div>
         </div>
     </div>
@@ -458,7 +460,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
       </div>
     </div>
     
-<!-- nuevo Modal de Favoritos -->
+<!-- Modal de Favoritos -->
 <div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -467,32 +469,59 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="favoritos-list" class="row">
-                    <!-- Aquí se cargarán los productos favoritos -->
-                </div>
+                <?php if (isset($_SESSION["nom_usuario"])): ?>
+                    <!-- Usuario logueado -->
+                    <p class="text-center">Guarda tus <a href="./views/productos.php">productos</a> favoritos y accede a ellos en cualquier momento.</p>
+                    <div id="favoritos-list" class="row">
+                        <!-- Aquí se cargarán los productos favoritos -->
+                    </div>
+                <?php else: ?>
+                    <!-- Usuario no logueado -->
+                    <div class="text-center">
+                        <p><a href="./views/iniciarSesion.php">Inicia sesión</a> para guardar tus productos favoritos y acceder a ellos cuando quieras. ¡ <a href="./views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
 
 
-<!-- detalles producto en el carrito -->
+
+<!-- Modal de Cotizaciones -->
 <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="carritoModalLabel">Carrito de Compras</h5>
+                <h5 class="modal-title" id="carritoModalLabel">Cotizaciones</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="carrito-list" class="row">
-                    <!-- Aquí se cargarán los detalles del carrito -->
-                </div>
+                <?php if (isset($_SESSION["nom_usuario"])): ?>
+                    <!-- Usuario logueado -->
+                    <?php if (!empty($productos_espera)): ?>
+                        <div id="carrito-list" class="row">
+                            <!-- Aquí se cargarán los detalles del carrito -->
+                        </div>
+                    <?php else: ?>
+                       
+                    <?php endif; ?>
+                <?php else: ?>
+                    <!-- Usuario no logueado -->
+                    <div class="text-center">
+                        <p><a href="./views/iniciarSesion.php">Inicia sesión</a> para ver tus cotizaciones y acceder a ellas cuando quieras. ¡ <a href="./views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                    </div>
+                <?php endif; ?>
             </div>
+            <div class="modal-footer">
+    <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
+        <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
+        <button type="button" id="limpiar-btn" class="btn btn-danger">Limpiar</button> <!-- Nuevo botón -->
+    <?php endif; ?>
+</div>
         </div>
     </div>
 </div>
-
  </body>
 <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -557,12 +586,12 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                         favoritosList.empty();
                         if (favoritos.length > 0) {
                             favoritos.forEach(function(favorito) {
-                                var imagen = favorito.imagen ? './img/index/' + favorito.imagen : './img/index/default.png';
+                                var imagen = favorito.imagen ? './img/disenos/' + favorito.imagen : './img/disenos/default.png';
                                 var favoritoHtml = `
                                     <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
-                                        <div class='card shadow'>
+                                        <div class='card shadow' >
                                             <a href='./views/perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
-                                                <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
+                                                <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top' >
                                                 <div class='card-body'>
                                                     <h5 class='card-title'>${favorito.nombre}</h5>
                                                     <p class='card-text'>$ ${favorito.precio}</p>
@@ -572,9 +601,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                                     </div>`;
                                 favoritosList.append(favoritoHtml);
                             });
-                        } else {
-                            favoritosList.append("<p>No tienes productos en favoritos.</p>");
-                        }
+                        } 
                     },
                     error: function(error) {
                         console.error('Error al obtener los favoritos:', error);
@@ -593,57 +620,86 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
 
 
 
-$(document).ready(function() {
-    $('#carritoModal').on('shown.bs.modal', function () {
-        cargarCarrito();
-    });
-
-    function cargarCarrito() {
-        $.ajax({
-            url: './scripts/obtener_carrito.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(carrito) {
-    var carritoList = $('#carrito-list');
-    carritoList.empty();
-    if (carrito.length > 0) {
-        carrito.forEach(function(item) {
-            console.log('Imagen Producto:', item.imagen_producto); // Verifica la URL de la imagen
-            var imagen = item.imagen_producto ? './img/index/' + item.imagen_producto : './img/index/default.png';
-            var productoHtml = `
-                <div class='col-md-12 mt-3 py-3 py-md-0'>
-                    <div class='card shadow' style='display: flex; flex-direction: row;'>
-                        <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
-                        <div class='card-body'>
-                            <h5 class='card-title'>${item.nombre_producto}</h5>
-                            ${item.alto ? `<p class='card-text'>Alto: ${item.alto}</p>` : ''}
-                            ${item.largo ? `<p class='card-text'>Largo: ${item.largo}</p>` : ''}
-                            ${item.cantidad ? `<p class='card-text'>Cantidad: ${item.cantidad}</p>` : ''}
-                            ${item.monto ? `<p class='card-text'>Monto: ${item.monto}</p>` : ''}
-                            ${item.grosor ? `<p class='card-text'>Grosor: ${item.grosor}</p>` : ''}
-                            ${item.tipo_tela ? `<p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p>` : ''}
-                            ${item.marco ? `<p class='card-text'>Marco: ${item.marco}</p>` : ''}
-                            ${item.tipo_cadena ? `<p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p>` : ''}
-                            ${item.color ? `<p class='card-text'>Color: ${item.color}</p>` : ''}
-                            ${item.codigo_diseno ? `<p class='card-text'>Diseño: ${item.codigo_diseno}</p>` : ''}
-                        </div>
-                    </div>
-                </div>`;
-            carritoList.append(productoHtml);
+    // Cargar carrito cuando el modal es mostrado
+    $(document).ready(function() {
+        $('#carritoModal').on('shown.bs.modal', function () {
+            cargarCarrito();
         });
-    } else {
-        carritoList.append("<p>No tienes productos en espera.</p>");
-    }
 
+        $('#aceptar-btn').on('click', function() {
+            actualizarEstadoProductos();
+        });
 
-            },
-            error: function(error) {
-                console.error('Error al obtener el carrito:', error);
-                $('#carrito-list').append("<p>Error al cargar el carrito.</p>");
+        function cargarCarrito() {
+    $.ajax({
+        url: './scripts/obtener_carrito.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function(carrito) {
+            var carritoList = $('#carrito-list');
+            carritoList.empty();
+            if (carrito.length > 0) {
+                carrito.forEach(function(item) {
+                    var imagen = item.imagen_producto ? './img/disenos/' + item.imagen_producto : './img/disenos/default.png';
+
+                    // Concatenar las propiedades en una sola línea
+                    var descripcion = [];
+                    if (item.alto) descripcion.push('Alto: ' + item.alto);
+                    if (item.largo) descripcion.push('Largo: ' + item.largo);
+                    if (item.cantidad) descripcion.push('Cantidad: ' + item.cantidad);
+                    if (item.monto) descripcion.push('Monto: ' + item.monto);
+                    if (item.grosor) descripcion.push('Grosor: ' + item.grosor);
+                    if (item.codigo_diseno) descripcion.push('Diseño: ' + item.codigo_diseno);
+                    if (item.marco) descripcion.push('Accesorios: ' + item.marco);
+                    if (item.monto) descripcion.push('Monto: $' + item.monto);
+
+                    
+                    
+                    var descripcionProducto = descripcion.join(', ');
+
+                    var productoHtml = `
+                        <div class='col-md-12 mt-3 py-3 py-md-0'>
+                            <div class='card shadow' style='display: flex; flex-direction: row;padding:1em 1em;'>
+                                <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 9px;'>
+                                <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
+                                <div class='card-body'>
+                                    <h5 class='card-title'>${item.nombre_producto}</h5>
+                                    <p class='card-text'>${descripcionProducto}</p>
+                                </div>
+                            </div>
+                        </div>`;
+                    carritoList.append(productoHtml);
+                });
+            } else {
+                carritoList.append(` <div class='text-center'>
+                ¿Aún no has solicitado una cotización? <a href='./productos.php'style='color: #007bff;'>¡Cotiza ahora!</a> y transforma tu espacio con nuestros productos.
+                </div>`);
             }
-        });
-    }
-});
+        },
+        error: function(error) {
+            console.error('Error al obtener los productos del carrito:', error);
+            $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
+        }
+    });
+}
+        function actualizarEstadoProductos() {
+            $('.producto-checkbox:checked').each(function() {
+                var idDetalleProducto = $(this).val();
+                $.ajax({
+                    url: './scripts/actualizar_carrito.php',
+                    method: 'POST',
+                    data: { id_detalle_producto: idDetalleProducto },
+                    success: function(response) {
+                        console.log('Producto actualizado:', response);
+                        window.location.href = './views/citas.php';
+                    },
+                    error: function(error) {
+                        console.error('Error al actualizar el producto:', error);
+                    }
+                });
+            });
+        }
+    });
 </script>
 <script src="../js/loginSuccess.js"></script>
 <script src="./js/bootstrap.bundle.min.js"></script>

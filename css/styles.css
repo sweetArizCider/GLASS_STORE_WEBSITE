@@ -67,6 +67,10 @@ html {
   background-size: cover;
   background-position: 70%;
 }
+.main-content .content{
+  margin-left: 4em;
+
+}
 
 
 /*--------------------------------- segunda barra---------------------------- */
@@ -125,7 +129,6 @@ html {
 .content{
   width: 50%;
   padding-top:  150px;
-  margin-left: 60px;
 
 }
 .content h1{
@@ -188,10 +191,12 @@ html {
 }
 /*Cards de categorias*/
 .img-card {
-  width: 100%;
-  height: 200px !important; /* Ajusta este valor al alto deseado */
+  width: 90%;
+  height: 200px !important;
   object-fit: cover;
   overflow: hidden;
+  margin: auto;
+  margin-top: 1rem;
 }
 .categoria-title{
   font-family: Inter;
@@ -289,6 +294,7 @@ html {
   right: 10px;
   width: 40px; 
   height: 40px; 
+  margin-right: 1em;
   background-color: white;
   border-radius: 50%;
   display: flex;
@@ -418,17 +424,22 @@ mark{
   padding-top: 2em;
   background-size: cover;
   background-position: 70%;
-  font-family: Inter;
+  font-family: 'Inter';
+  color: white !important;
 }
 .footer h5{
   color: white;
   padding-top: 30px;
-  font-family: Montserrat;
+  font-family: 'Montserrat';
   font-weight: 800;
 
 }
 .footer p{
   color: white;
+  font-size: .8em;
+}
+.footer li{
+ 
   font-size: .8em;
 }
 .footer a{
@@ -656,7 +667,7 @@ mark{
 
 /*titulos*/
 .formulario-registro{
-  width: 90% !important;
+  width: 80% !important;
   margin: auto !important;
 }
 .formulario-registro h1{
@@ -693,8 +704,9 @@ mark{
 }
 /*formulario*/
 
+
 .form-register .form-floating{
-  width: 75%;
+  width: 100%;
   margin: auto;
   border: 1px solid rgba(19, 38, 68, 0.53);
   margin-bottom: 0px !important;
@@ -758,8 +770,7 @@ mark{
   background-image:  radial-gradient(#4AB3D5 0.65px, transparent 0.65px), radial-gradient(#4AB3D5 0.65px, #132644 0.65px);
   background-size: 26px 26px;
   background-position: 0 0,13px 13px;
-  margin-top: 4em;
-  padding-top: .7em;
+  padding-top: -3em;
   padding-bottom: 4em;
   color: #fff;
   align-items: center;
@@ -830,6 +841,84 @@ mark{
   border: none;
   cursor: pointer;
 }
+.hidden {
+  display: none;
+}
+
+.address-form {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f9f9f9;
+}
+.address-form label {
+  font-weight: bold;
+}
+.address-form .form-control {
+  margin-bottom: 10px;
+}
+.calendar-day {
+padding: 10px;
+text-align: center;
+cursor: pointer;
+}
+
+.disabled-day {
+color: #ccc;
+pointer-events: none;
+}
+
+.selected-day {
+background-color: #cce5ff;
+border-radius: 5px;
+transform: scale(1.1);
+}
+
+.calendar-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+position: relative;
+}
+
+#calendarMonth {
+text-align: center;
+flex-grow: 1;
+position: absolute;
+left: 50%;
+transform: translateX(-50%);
+}
+
+.empty-day {
+visibility: hidden;
+}
+
+#backToTopButton {
+position: fixed;
+top: 20px;
+left: 20px;
+background-color: transparent;
+border: 1px solid rgba(74, 179, 213, 1); /* Borde azul */
+color: rgba(74, 179, 213, 1); /* Texto azul */
+padding: 5px 10px;
+border-radius: 30px;
+text-decoration: none;
+display: flex;
+align-items: center;
+}
+
+#backToTopButton:hover {
+background-color: #4ab2d515; /* Fondo azul clarito al hacer hover */
+text-decoration: none;
+/* Azul más oscuro al hacer hover */
+}
+
+#backToTopButton img {
+width: 20px;
+height: 20px;
+margin-left: 5px;
+margin-right: 5px;
+}
 /* FIN DEL CALENDARIO*/
 
 /*lado derecho*/
@@ -874,7 +963,7 @@ mark{
 
 }
 .agendar textarea{
-  width: 75%;
+  width: 100%;
   border: 1px solid rgba(19, 38, 68, 0.53);
   border-radius: 8px;
   padding: 1em;
@@ -882,7 +971,7 @@ mark{
   
 }
 .agendar select{
-  width: 75%;
+  width: 100%;
   margin: auto;
 }
 .submit-button-register{
@@ -915,8 +1004,8 @@ mark{
   margin-right: 10px;
 }
 .main-img{
-  min-width: 100%;
-  min-height: 400px;
+  width: 100%;
+  height: 60vh;
 }
 
 .design-gallery {
@@ -1001,11 +1090,11 @@ mark{
   color: #4AB3D5;
   font-size: 1.4em;
   font-weight:600;
-  margin-bottom: 1em;
 
 }
 .descripcionPerfil{
   font-family: 'Montserrat';
+  font-size: .9em;
   
 }
 .disenosPerfil{
@@ -1033,6 +1122,17 @@ mark{
 }
 #product-profile{
 margin-bottom: 3em;
+}
+.buttonPerfilProductocancelar{
+  background-color: #666666;
+  border: none;
+  padding: 10px 20px;
+  font-family: 'Inter';
+  font-size: .9em;
+  letter-spacing: 1px;
+  font-weight: 500;
+  color: #fff;
+  border-radius: 30px;
 }
 
 /*--------------------------------------AGENDAR CITAS-------------------------------------------------*/
@@ -1200,6 +1300,41 @@ font-size: 1em ;
 #navbar-color {
   z-index: 1000;
 }
-/*--------------------------------modal de notificaciones ----------------------------*/
+/*--------------------------------modal de favs ----------------------------*/
+#favoritos-list .product-item .card {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+#favoritos-list .product-item .card-img-top {
+  height: 120px !important; /* La imagen ocupará el 40% de la altura de la tarjeta */
+  object-fit: cover !important;
+ 
+}
+
+#favoritos-list .product-item .card-body {
+  height: 60%; /* El contenido ocupará el 60% restante */
+
+}
+
+#load-more{
+  background-color:transparent;
+    color:  #132644;
+    font-family: 'Montserrat';
+    font-weight: 600;
+    font-size: .9em;
+    margin: auto;
+    border: 1px solid #132644 ;
+    border-radius: 30px;
+    margin-bottom: 3em;
+    padding: 7px 15px;
+}
+
+#load-more:hover{
+  background-color: #132644;
+  color: #fff;
+ 
+}
 
 

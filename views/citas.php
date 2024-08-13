@@ -65,6 +65,23 @@ if (isset($_SESSION["nom_usuario"])) {
         .address-form .form-control {
             margin-bottom: 10px;
         }
+        .formulario-registro{
+  width: 90% !important;
+  margin: auto !important;
+
+}
+.agendar textarea{
+  width: 100%;
+  border: 1px solid rgba(19, 38, 68, 0.53);
+  border-radius: 8px;
+  padding: 1em;
+  font-family: 'Inter';
+  
+}
+.agendar select{
+  width: 100%;
+  margin: auto;
+}
     </style>
 </head>
 <body>
@@ -83,6 +100,10 @@ if (isset($_SESSION["nom_usuario"])) {
 
 <div class="row agendar">
     <div class="col-12 col-lg-5 back-left blue-left-citas">
+    <a href="../index.php" id="backToTopButton" class="btn btn-light btn-volver">
+    <img src="../img/index/aprev.svg" alt="Volver" style="width: 20px; height: 20px;">
+    
+</a>
         <img src="../img/index/GLASS.png" alt="" class="logo-citas">
         <h2 class="subtitle-agendar">¿Qué día tendremos el gusto de atenderte?</h2>
         
@@ -102,15 +123,15 @@ if (isset($_SESSION["nom_usuario"])) {
     </div>
 
     <div class="col-12 col-lg-7">
-        <div class="container formulario-registro">
+    <div class="container formulario-registro">
             <div class="row">
                 <div class="col-12">
                     <div class="form-register agendar">
                         <h1 class="title-agendar">¡Siempre es un placer atenderte!</h1>
                         <div class="row gy-3 overflow-hidden">
                             <!-- Dirección -->
+                            <h2 style="margin-top: 2em;" class="subtitle-agendar">Ingrese su Dirección</h2>
                             <div class="col-12 address-form">
-                                <h2 class="subtitle-agendar">Dirección</h2>
                                 <div class="row">
                                     <div class="col-12 col-md-6">
                                         <label for="calle" class="form-label">Calle</label>
@@ -118,11 +139,11 @@ if (isset($_SESSION["nom_usuario"])) {
                                     </div>
                                     <div class="col-12 col-md-3">
                                         <label for="numero" class="form-label">Número</label>
-                                        <input type="text" class="form-control" id="numero" name="numero" required>
+                                        <input type="number" class="form-control" id="numero" name="numero" required>
                                     </div>
                                     <div class="col-12 col-md-3">
                                         <label for="numero_interior" class="form-label">Número Interior</label>
-                                        <input type="text" class="form-control" id="numero_interior" name="numero_interior">
+                                        <input type="number" class="form-control" id="numero_interior" name="numero_interior">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -132,25 +153,27 @@ if (isset($_SESSION["nom_usuario"])) {
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <label for="ciudad" class="form-label">Ciudad</label>
-                                        <input type="text" class="form-control" id="ciudad" name="ciudad" required>
+                                        <select class="form-select" id="ciudad" name="ciudad" required>
+                                            <option value="Torreón">Torreón</option>
+                                            <option value="Gómez Palacio">Gómez Palacio</option>
+                                            <option value="Lerdo">Lerdo</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <input type="hidden" name="tipo" id="tipo" value="instalacion">
                                 <div class="row">
                                     <div class="col-12">
                                         <label for="referencias" class="form-label">Referencias</label>
-                                        <textarea class="form-control" id="referencias" name="referencias" rows="3"></textarea>
+                                        <textarea style="width:100%;" class="form-control" id="referencias" name="referencias" rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>
 
-                           
                             <div class="col-12">
                                 <label for="motivo" class="form-label">Cuéntanos el motivo de tu cita</label><br>
                                 <textarea name="motivo" id="motivo" cols="50" rows="7" class="text-motivo"></textarea>
                             </div>
 
-                            
                             <div class="col-12 container-select">
                                 <label for="hora" class="form-label">Selecciona el horario de tu preferencia</label>
                                 <select class="form-select form-select-custom custom-scrollbar" id="hora" name="hora" required>
@@ -216,61 +239,111 @@ if (isset($_SESSION["nom_usuario"])) {
 <script src="../js/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/agendarCita.js"></script>
 <script>
-    const calendarDays = document.getElementById('calendarDays');
+   const calendarDays = document.getElementById('calendarDays');
     const selectedDateInput = document.getElementById('selected_date');
     const selectedDateDisplay = document.getElementById('selectedDateDisplay');
+    const calendarMonth = document.getElementById('calendarMonth');
+    const nextMonthButton = document.getElementById('nextMonth');
+    const prevMonthButton = document.getElementById('prevMonth');
+    
+    const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    
+    let currentDate = new Date();
+    let selectedDate = null;
 
-   
-    function createCalendar() {
-     
-        const currentDate = new Date();
+    // Crear el calendario inicial
+    createCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    
+    nextMonthButton.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        createCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    });
 
-      
-        generateCalendarDays(currentDate.getFullYear(), currentDate.getMonth());
-    }
+    prevMonthButton.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        createCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    });
 
-
-    function generateCalendarDays(year, month) {
-
+    function createCalendar(year, month) {
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
-
-  
         const firstDayOfWeek = firstDay.getDay();
 
+        calendarMonth.textContent = `${monthNames[month]} ${year}`;
 
         calendarDays.innerHTML = '';
 
-   
+        // Mostrar u ocultar botones de navegación
+        if (month === new Date().getMonth() && year === new Date().getFullYear()) {
+            prevMonthButton.style.visibility = 'hidden';
+        } else {
+            prevMonthButton.style.visibility = 'visible';
+        }
+
+        if (month === new Date().getMonth() + 1 && year === new Date().getFullYear()) {
+            nextMonthButton.style.visibility = 'hidden';
+        } else {
+            nextMonthButton.style.visibility = 'visible';
+        }
+
+        // Rellenar con días vacíos hasta el primer día del mes
         for (let i = 0; i < firstDayOfWeek; i++) {
             const emptyDay = document.createElement('div');
             emptyDay.classList.add('empty-day');
             calendarDays.appendChild(emptyDay);
         }
 
- 
+        // Añadir los días del mes
         for (let day = 1; day <= lastDay.getDate(); day++) {
             const dayElement = document.createElement('div');
             dayElement.classList.add('calendar-day');
             dayElement.textContent = day;
-            dayElement.addEventListener('click', () => selectDate(year, month, day));
+
+            const currentDay = new Date(year, month, day);
+
+            // Deshabilitar días pasados y el día actual
+            if (currentDay <= new Date()) {
+                dayElement.classList.add('disabled-day');
+            } else {
+                dayElement.addEventListener('click', () => selectDate(year, month, day));
+            }
+
             calendarDays.appendChild(dayElement);
+        }
+
+        // Resaltar el día seleccionado si lo hay
+        if (selectedDate && selectedDate.getFullYear() === year && selectedDate.getMonth() === month) {
+            const selectedDayElement = calendarDays.querySelector(`.calendar-day:nth-child(${firstDayOfWeek + selectedDate.getDate()})`);
+            if (selectedDayElement) {
+                selectedDayElement.classList.add('selected-day');
+            }
         }
     }
 
- 
     function selectDate(year, month, day) {
- 
-        const selectedDate = new Date(year, month, day);
+        // Desmarcar el día anterior seleccionado
+        if (selectedDate) {
+            const previousSelectedElement = calendarDays.querySelector('.selected-day');
+            if (previousSelectedElement) {
+                previousSelectedElement.classList.remove('selected-day');
+            }
+        }
+
+        selectedDate = new Date(year, month, day);
         const formattedDate = selectedDate.toISOString().split('T')[0];
 
+        // Actualizar el día seleccionado en el calendario
+        const firstDay = new Date(year, month, 1).getDay();
+        const selectedDayElement = calendarDays.querySelector(`.calendar-day:nth-child(${firstDay + day})`);
+        if (selectedDayElement) {
+            selectedDayElement.classList.add('selected-day');
+        }
 
         selectedDateInput.value = formattedDate;
         selectedDateDisplay.textContent = formattedDate;
     }
 
-
-    createCalendar();
+    createCalendar(currentDate.getFullYear(), currentDate.getMonth());
 </script>
 </body>
 </html>

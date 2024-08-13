@@ -39,27 +39,27 @@ if ($result) {
   <div id="logotipo-flotante">
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
- <!-- Barra lateral -->
- <div class="wrapper">
+   <!--Barra lateral-->
+   <div class="wrapper">
     <aside id="sidebar">
-    <div class="d-flex">
+      <div class="d-flex">
         <button class="toggle-btn" type="button">
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="../../../../">GLASS STORE</a>
+          <a href="../../../">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#inicio" aria-expanded="false" aria-controls="inicio">
-            <img src="../../img/instalador/home.svg" alt="Inicio">
+             <img src="../../img/instalador/home.svg" alt="Perfil">
             <span>Inicio</span>
           </a>
           <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="../../../../" class="sidebar-link">Volver al Inicio</a>
+              <a href="./index_Instalador.php" class="sidebar-link">Volver al Inicio</a>
             </li>
           </ul>
         </li>
@@ -78,7 +78,7 @@ if ($result) {
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#citas" aria-expanded="false" aria-controls="citas">
-            <img src="../../img/admin/calendar.svg" alt="Citas">
+            <img src="../../img/admin/calendar.svg" alt="citas">
             <span>Citas</span>
           </a>
           <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
@@ -90,30 +90,35 @@ if ($result) {
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#reporte" aria-expanded="false" aria-controls="reporte">
-            <img src="../../img/admin/clipboard.svg" alt="Reportes">
+            <img src="../../img/admin/clipboard.svg" alt="citas">
             <span>Reportes</span>
           </a>
           <ul id="reporte" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="../../views/instalador/vista_instalador_reportes.php" class="sidebar-link">Hacer Reporte</a>
+              <a href="../../views/instalador/vista_instalador_reportes.php" class="sidebar-link">Hacer reporte</a>
             </li>
           </ul>
         </li>
       </ul>
       <div class="sidebar-footer">
-        <a href="./index_Instalador.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver">
-          <span>Volver</span>
+        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+            <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+            <span>Cerrar Sesión</span>
         </a>
-      </div>
-      <div class="sidebar-footer">
-      <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
-      <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
-          <span>Cerrar Sesión</span>
-        </a>
-      </div>
+    </div>
+     
     </aside>
+    
+
     <div class="main p-3">
+    <div class="col-12 mb-4 card-bienvenida">
+          <div class="text-center ">
+            <div class="">
+              <h5 class=" mensaje-bienvenida">Citas</h5>
+              <p class=" mensaje-sub"><mark class="marklued">¡ Esperamos que hoy te encuentres bien !</mark></p>
+            </div>
+          </div>
+        </div>
       <div class="text-center">
         <div class="busqueda mx-auto">
           <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
@@ -122,54 +127,46 @@ if ($result) {
       </div>
 
       <!-- contenido general-->
+       
       <div class="contenidoGeneral mt-4">
         <div class="general-container">
           <div class="d-flex justify-content-end mt-4">
-          <div class="dropdown">
-          <button class="btn btn-secondary filters" type="button" id="dropdownOrdenar" data-bs-toggle="dropdown" aria-expanded="false"> Ordenar <img src="../../img/instalador/filter.svg" alt="Filtrar" class="icono-filtro">
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
-            <li><a class="dropdown-item" href="#" id="ordenar-recientes">Recientes</a></li>
-            <li><a class="dropdown-item" href="#" id="ordenar-antiguas">Antiguas</a></li>
-          </ul>
-        </div>
 
           </div>
 
-<!-- Sección para mostrar citas -->
-<div class="citas-container" id="resultados">
-    <?php
-    if (isset($_SESSION["id_instalador"])) {
-        $id_instalador = $_SESSION["id_instalador"];
-        $citas = $db->obtenerCitasInstalador($id_instalador);
+          <!-- Sección para mostrar citas -->
+          <div class="citas-container" id="resultados">
+            <?php
+            if (isset($_SESSION["id_instalador"])) {
+                $id_instalador = $_SESSION["id_instalador"];
+                $citas = $db->obtenercitasinstalador($id_instalador);
+                $totalCitas = count($citas);
 
-        if ($citas) {
-            foreach ($citas as $cita) {
-                $fecha = date('d \d\e F \d\e Y', strtotime($cita->fecha));
-                $hora = date('h:i A', strtotime($cita->hora));
+                if ($citas) {
+                    foreach (array_slice($citas, 0, 3) as $cita) {
+                        $fecha = date('d \d\e F \d\e Y', strtotime($cita->fecha));
+                        $hora = date('h:i A', strtotime($cita->hora));
+                        $cliente = $cita->cliente;
+                        $direccion = $cita->direccion;
+                        $tipo = $cita->tipo;
 
-                $cliente = $cita->cliente ?? 'Desconocido';
-                $calle = $cita->calle ?? 'No disponible';
-                $numero = $cita->numero ?? 'No disponible';
-                $numero_int = $cita->numero_int ?? ''; // Puede estar vacío
-                $colonia = $cita->colonia ?? 'No disponible';
-                $ciudad = $cita->ciudad ?? 'No disponible';
-                $referencias = $cita->referencias ?? 'No disponible';
+                        echo '<div class="secc-sub-general cita-item">';
+                        echo '<p class="fecha">' . $fecha . '</p>';
+                        echo '<p><mark class="marklued">' . htmlspecialchars($cliente) . '</mark><br> Requiere <span class="bueld">' . htmlspecialchars($tipo) . '</span> en el domicilio: <span class="bueld">' . htmlspecialchars($direccion) . '</span> <br> el día <span class="bueld">' . $fecha . '</span> a las <span class="bueld">' . $hora . '</span></p>';
+                        echo '</div> <br>';
+                    }
 
-                echo '<div class="secc-sub-general cita-item">';
-                echo '<p class="fecha">' . $fecha . '</p>';
-                echo '<p><mark class="marklued">' . htmlspecialchars($cliente) . '</mark><br> Requiere <span class="bueld">una Instalación</span> en el domicilio: <span class="bueld">' . htmlspecialchars($calle) . ' #' . htmlspecialchars($numero) . ' ' . htmlspecialchars($numero_int) . ', ' . htmlspecialchars($colonia) . ', ' . htmlspecialchars($ciudad) . ' referencias: ' . htmlspecialchars($referencias) . '</span> <br> el día <span class="bueld">' . $fecha . '</span> a las <span class="bueld">' . $hora . '</span></p>';
-                echo '</div> <br>';
+                    if ($totalCitas > 3) {
+                        echo '<button id="verMasBtn" class="btn btn-secondary filters"">Ver más</button>';
+                    }
+                } else {
+                    echo '<p>No hay citas para mostrar.</p>';
+                }
+            } else {
+                echo '<p>No estás autorizado para ver las citas.</p>';
             }
-        } else {
-            echo '<p>No hay citas para mostrar.</p>';
-        }
-    } else {
-        echo '<p>No estás autorizado para ver las citas.</p>';
-    }
-    ?>
-</div>
-
+            ?>
+          </div>
         </div>
       </div>
     </div>
@@ -183,73 +180,67 @@ if ($result) {
     document.querySelector("#sidebar").classList.toggle("expand");
   });
 
-  // Filtro de citas por nombre en tiempo real
-  document.getElementById('search-input').addEventListener('input', function() {
-      const searchValue = this.value.toLowerCase();
-      const citas = document.querySelectorAll('.cita-item');
+  let citas = <?php echo json_encode($citas); ?>;
+  let loadedCitas = 3;
 
-      citas.forEach(cita => {
-          const cliente = cita.querySelector('.marklued').textContent.toLowerCase();
-          if (cliente.includes(searchValue)) {
-              cita.style.display = '';  // Mostrar cita si coincide
-          } else {
-              cita.style.display = 'none';  // Ocultar cita si no coincide
-          }
-      });
-  });
+  function renderCitas(citas) {
+    const container = document.getElementById('resultados');
+    container.innerHTML = '';
 
-  // Ordenar citas por fecha
-  document.getElementById('ordenar-recientes').addEventListener('click', function() {
-      ordenarCitas('recientes');
-  });
-
-  document.getElementById('ordenar-antiguas').addEventListener('click', function() {
-      ordenarCitas('antiguas');
-  });
-
-  function ordenarCitas(orden) {
-      const citas = Array.from(document.querySelectorAll('.cita-item'));
-      citas.sort((a, b) => {
-          const fechaA = convertirFecha(a.querySelector('.fecha').textContent);
-          const fechaB = convertirFecha(b.querySelector('.fecha').textContent);
-
-          return orden === 'recientes' ? fechaB - fechaA : fechaA - fechaB;
+    citas.forEach(cita => {
+      // Usa la fecha original y asegura el formateo correcto en inglés
+      const fechaOriginal = cita.fecha;
+      const [year, month, day] = fechaOriginal.split('-');
+      const formattedDate = new Date(year, month - 1, day).toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
       });
 
-      const container = document.getElementById('resultados');
-      container.innerHTML = '';
-      citas.forEach(cita => {
-          container.appendChild(cita);
+      // Formatear la hora correctamente
+      const hora = new Date(`1970-01-01T${cita.hora}`).toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit', hour12: true
       });
+
+      const cliente = cita.cliente;
+      const direccion = cita.direccion;
+      const tipo = cita.tipo;
+
+      container.innerHTML += `
+        <div class="secc-sub-general cita-item">
+          <p class="fecha">${formattedDate}</p>
+          <p><mark class="marklued">${cliente}</mark><br> Requiere <span class="bueld">${tipo}</span> en el domicilio: <span class="bueld">${direccion}</span> <br> el día <span class="bueld">${formattedDate}</span> a las <span class="bueld">${hora}</span></p>
+        </div> <br>
+      `;
+    });
   }
 
-  function convertirFecha(fechaTexto) {
-      const partes = fechaTexto.split(' ');
-      const dia = partes[0];
-      const mes = partes[2];
-      const anio = partes[4];
+  document.getElementById('verMasBtn').addEventListener('click', function () {
+    const newCitas = citas.slice(loadedCitas, loadedCitas + 3);
+    renderCitas(citas.slice(0, loadedCitas + 3));
+    loadedCitas += 3;
 
-      const meses = {
-          'enero': '01',
-          'febrero': '02',
-          'marzo': '03',
-          'abril': '04',
-          'mayo': '05',
-          'junio': '06',
-          'julio': '07',
-          'agosto': '08',
-          'septiembre': '09',
-          'octubre': '10',
-          'noviembre': '11',
-          'diciembre': '12'
-      };
+    if (loadedCitas >= citas.length) {
+      this.style.display = 'none';
+    }
 
-      const mesNumero = meses[mes.toLowerCase()];
+    // Hacer scroll hacia abajo después de cargar más citas
+    document.getElementById('verMasBtn').scrollIntoView({ behavior: 'smooth' });
+  });
 
-      return new Date(`${anio}-${mesNumero}-${dia}`);
-  }
-  </script>
+  document.getElementById('search-input').addEventListener('input', function () {
+    const searchValue = this.value.toLowerCase();
+    const filteredCitas = citas.filter(cita => cita.cliente.toLowerCase().includes(searchValue));
+    renderCitas(filteredCitas);
+  });
 
+  document.getElementById('ordenar-recientes').addEventListener('click', function () {
+    citas.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    renderCitas(citas.slice(0, loadedCitas));
+  });
 
+  document.getElementById('ordenar-antiguas').addEventListener('click', function () {
+    citas.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+    renderCitas(citas.slice(0, loadedCitas));
+  });
+</script>
 </body>
 </html>
