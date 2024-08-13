@@ -272,25 +272,7 @@ try {
             </li>
           </ul>
         </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#ventas" aria-expanded="false" aria-controls="ventas">
-            <img src="../../img/admin/recibos.svg" alt="Ventas">
-            <span>Ventas</span>
-          </a>
-          <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-          
-          <li class="sidebar-item">
-          <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="../recibos.php" class="sidebar-link">Historial</a>
-          </li>
-          </ul>
-        </li>
+        
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
@@ -334,84 +316,10 @@ try {
       <div class="">
       <div class="text-center ">
         <h2 class="mensaje-bienvenida">¡Bienvenido, <?php echo $nombreCompleto; ?>!</h2>
-        <p>Esperamos que te encuentres bien el día de hoy. Aquí tienes un resumen de tus estadísticas recientes.</p>
+        <p>Esperamos que te encuentres bien el día de hoy.</p>
       </div>
       </div>
 
-      <!-- Tarjetas de estadísticas de ventas -->
-      <div class="container main-content">
-        <div class="row">
-          <div class="col-md-4 col-lg-3 mb-3">
-            <div class="card card-custom">
-              <div class="card-body">
-                <h5 class="card-title">Total Vendido Este Mes</h5>
-                <p class="card-text">$<?php echo number_format($sumaTotalVentas, 2); ?></p>
-                <div class="indicator <?php echo $cambio >= 0 ? 'up' : 'down'; ?>">
-                  <i class="bi <?php echo $cambio >= 0 ? 'bi-arrow-up-circle' : 'bi-arrow-down-circle'; ?>"></i>
-                  <?php echo number_format(abs($cambio), 2); ?> <?php echo $cambio >= 0 ? '↑' : '↓'; ?>
-                </div>
-              </div>
-            </div>
-          </div>
-
-           <!-- Tarjeta del promedio de ventas con saldo cero -->
-           <div class="col-md-4 col-lg-3 mb-3">
-            <div class="card card-custom">
-              <div class="card-body">
-                <h5 class="card-title">Promedio Ventas en este mes</h5>
-                <p class="card-text">$<?php echo number_format($promedioTotalVentasSaldoCero, 2); ?></p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tarjeta para el máximo y mínimo total de ventas con saldo cero -->
-      <div class="col-md-4 mb-3">
-        <div class="card card-custom">
-          <div class="card-body">
-            <h5 class="card-title">Mayor y menor venta este mes</h5>
-            <p class="card-text">Mayor: $<?php echo number_format($maxTotalVentasSaldoCero, 2); ?></p>
-            <p class="card-text">Menor: $<?php echo number_format($minTotalVentasSaldoCero, 2); ?></p>
-          </div>
-        </div>
-      </div>
-        </div>
-      </div>
-
-      <!-- Mensaje extra -->
-      <div class="extra-message">
-        <p>Recuerda, cada pequeño esfuerzo suma a grandes logros. ¡Gracias por tu dedicación!</p>
-      </div>
-
-      <!-- Área de búsqueda y productos más vendidos -->
-      <div class="text-center my-4">
-        <h2>Productos Más Vendidos</h2>
-      </div>
-      
-      <div class="container main-content">
-        <div class="row">
-          <!-- Producto más vendido -->
-          <div class="col-md-4 mb-3">
-            <div class="card card-custom product-card">
-              <div class="card-body">
-                <h5 class="card-title"><?php echo htmlspecialchars($productoMasVendido['nombre'] ?? ''); ?></h5>
-                <img src="../../img/productos/<?php echo htmlspecialchars($productoMasVendido['imagen'] ?? ''); ?>" alt="<?php echo htmlspecialchars($productoMasVendido['imagen'] ?? ''); ?>" class="img-fluid">
-                <p class="card-text">Cantidad Vendida: <?php echo htmlspecialchars($productoMasVendido['cantidad_vendida'] ?? 0); ?></p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Productos menos vendidos -->
-          <?php foreach ($productoMenosVendidos as $producto): ?>
-            <div class="col-md-4 mb-3">
-              <div class="card card-custom product-card">
-                <div class="card-body">
-                  <h6 class="card-title product-card-title"><?php echo htmlspecialchars($producto['nombre']); ?></h6>
-                  <img src="../../img/productos/<?php echo htmlspecialchars($producto['imagen'] ?? ''); ?>" alt="<?php echo htmlspecialchars($producto['imagen'] ?? ''); ?>" class="img-fluid">
-                  <p class="card-text">Cantidad Vendida: <?php echo htmlspecialchars($producto['cantidad_vendida']); ?></p>
-                </div>
-              </div>
-            </div>
-          <?php endforeach; ?>
         </div>
       </div>
     </div>

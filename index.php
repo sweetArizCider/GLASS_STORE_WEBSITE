@@ -516,7 +516,6 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             <div class="modal-footer">
     <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
         <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
-        <button type="button" id="limpiar-btn" class="btn btn-danger">Limpiar</button> <!-- Nuevo botón -->
     <?php endif; ?>
 </div>
         </div>
@@ -661,7 +660,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                         <div class='col-md-12 mt-3 py-3 py-md-0'>
                             <div class='card shadow' style='display: flex; flex-direction: row;padding:1em 1em;'>
                                 <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 9px;'>
-                                <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
+                                <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left imagen-cotizacion-cliente-detalle' style='width: 150px; height: 150px;'>
                                 <div class='card-body'>
                                     <h5 class='card-title'>${item.nombre_producto}</h5>
                                     <p class='card-text'>${descripcionProducto}</p>

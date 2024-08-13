@@ -43,23 +43,3 @@ if (isset($_POST['cambiar_estatus'])) {
 // Mostrar mensajes de depuración en el HTML
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Depuración</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .debug { color: red; }
-    </style>
-</head>
-<body>
-    <h1>Mensajes de Depuración</h1>
-    <div class="debug">
-        <?php foreach ($debugMessages as $message): ?>
-            <p><?php echo htmlspecialchars($message); ?></p>
-        <?php endforeach; ?>
-    </div>
-</body>
-</html>

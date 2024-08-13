@@ -124,79 +124,83 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
               <img src="../img/index/GLASS.png" alt="" class="logo">
           </div>
           <div class="icons">
-                <a href="../../"><img src="../img/index/inicio.svg" alt="" width="25px"></a>
+                <a href="../index.php"><img src="../img/index/inicio.svg" alt="" width="25px"></a>
                 <button class="botonMostrarFavoritos" data-bs-toggle="modal" data-bs-target="#favoritosModal"><img src="../img/index/favorites.svg" alt="" width="25px"></button>
-
                 <a id="carrito" data-bs-toggle="modal" data-bs-target="#carritoModal"><img src="../img/index/clip.svg" alt="" width="25px"></a>
 
                 <div class="dropdown">
-                    <a href="#" id="user-icon" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="../img/index/user.svg" alt="" width="25px" style="cursor: pointer">
-                    </a>
-                    <?php
-                    
-                    if (isset($_SESSION["nom_usuario"])) {
-                        echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
-                        echo '<li><a class="dropdown-item" href="./cliente/perfil.php">Perfil</a></li>';
-                        echo '<li><a class="dropdown-item" href="#" id="notification-icon" data-bs-toggle="modal" data-bs-target="#notificationModal">Notificaciones</a></li>';
-                        $user = $_SESSION["nom_usuario"];
-                        $consulta = "CALL roles_usuario(?)";
-                        $params = [$user];
-                        $roles = $conexion->seleccionar($consulta, $params);
-                        if ($roles) {
-                            foreach ($roles as $rol) {
-                                if ($rol->nombre_rol == 'administrador') {
-                                    echo '<li><a class="dropdown-item" href="../views/administrador/vista_admin.php">Administrador</a></li>';
-                                } elseif ($rol->nombre_rol == 'instalador') {
-                                    echo '<li><a class="dropdown-item" href="../views/instalador/index_Instalador.php">Buzón</a></li>';
-                                }
-                            }
-                        }
-                        echo '<li><hr class="dropdown-divider"></li>';
-                        echo '<li><a class="dropdown-item" href="../scripts/cerrarSesion.php">Cerrar Sesión</a></li>';
-                        echo '</ul>';
-                    } else {
-                        echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
-                        echo '<li><a class="dropdown-item" href="../views/iniciarSesion.php">Iniciar Sesión</a></li>';
-                        echo '</ul>';
+    <a href="#" id="user-icon" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="../img/index/user.svg" alt="" width="25px" style="cursor: pointer">
+    </a>
+    <?php if (isset($_SESSION["nom_usuario"])): ?>
+        <ul class="dropdown-menu" aria-labelledby="user-icon">
+            <li class="dropdown-item" style="color: #6c757d; font-size: .8em; pointer-events: none; cursor: default;"> <!-- Estilo del nombre de usuario en gris claro -->
+                <?php echo htmlspecialchars($_SESSION["nom_usuario"]); ?>
+            </li>
+            <li><a class="dropdown-item" href="../views/cliente/perfil.php">Perfil</a></li>
+            <li><a class="dropdown-item" href="#" id="notification-icon" data-bs-toggle="modal" data-bs-target="#notificationModal">Notificaciones</a></li>
+            <?php
+            $user = $_SESSION["nom_usuario"];
+            $consulta = "CALL roles_usuario(?)";
+            $params = [$user];
+            $roles = $conexion->seleccionar($consulta, $params);
+            if ($roles) {
+                foreach ($roles as $rol) {
+                    if ($rol->nombre_rol == 'administrador') {
+                        echo '<li><a class="dropdown-item" href="../views/administrador/vista_admin.php">Administrador</a></li>';
+                    } elseif ($rol->nombre_rol == 'instalador') {
+                        echo '<li><a class="dropdown-item" href="../views/instalador/index_Instalador.php">Buzón</a></li>';
                     }
-                    ?>
-                </div>
-            </div>
-        </div>
-    </div>
+                }
+            }
+            ?>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="../scripts/cerrarSesion.php">Cerrar Sesión</a></li>
+        </ul>
+    <?php else: ?>
+        <ul class="dropdown-menu" aria-labelledby="user-icon">
+            <li><a class="dropdown-item" href="../views/iniciarSesion.php">Iniciar Sesión</a></li>
+        </ul>
+    <?php endif; ?>
+</div>
 
-  <!-- segunda barra -->
-  <nav class="navbar sticky-top navbar-expand-md" id="navbar-color">
-    <div class="container-fluid">
-        <!-- menú hamburguesa -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
-            <span><i><img src="../img/index/menu.svg" alt="Menu" width="30px"></i></span>
-        </button>
-        <div class="offcanvas offcanvas-start" id="offcanvasNavbar">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title">Menú</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-            </div>
-            <div class="offcanvas-body">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link"  href="/">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-left" href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">Contacto</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-left" href="/views/citas.php">Agendar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-left" href="/#about-us">Nosotros</a>
-                    </li>
-                </ul>
             </div>
         </div>
-    </div>
-</nav>
+    </div> 
+
+                
+    <!-- segunda barra -->
+    <nav class="navbar sticky-top navbar-expand-md" id="navbar-color">
+      <div class="container">
+          <!-- menú hamburguesa -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+              <span><i><img src="../img/index/menu.svg" alt="Menu" width="30px"></i></span>
+          </button>
+  
+          <div class="offcanvas offcanvas-start" id="offcanvasNavbar">
+              <div class="offcanvas-header">
+                  <h5 class="offcanvas-title">Menú</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+              </div>
+              <div class="offcanvas-body">
+                  <ul class="navbar-nav">
+                      <li class="nav-item ">
+                          <a class="nav-link" href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">Contacto</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link nav-left" href="../views/productos.php">Productos</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link nav-left" href="../views/citas.php">Agendar</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link nav-left" href="#about-us" id="link-nosotros">Nosotros</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+    </nav>
 
 <!-- banner -->
 <main>
@@ -286,7 +290,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             <div class="modal-footer">
     <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
         <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
-        <button type="button" id="limpiar-btn" class="btn btn-danger">Limpiar</button> <!-- Nuevo botón -->
+
     <?php endif; ?>
 </div>
         </div>

@@ -140,25 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST["nombre_cliente"])) {
             </li>
           </ul>
         </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#ventas" aria-expanded="false" aria-controls="ventas">
-            <img src="../../img/admin/recibos.svg" alt="Ventas">
-            <span>Ventas</span>
-          </a>
-          <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-          
-          <li class="sidebar-item">
-          <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="../recibos.php" class="sidebar-link">Historial</a>
-          </li>
-          </ul>
-        </li>
+        
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">

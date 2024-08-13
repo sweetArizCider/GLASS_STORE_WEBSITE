@@ -346,3 +346,30 @@ font-size: 3em;
     border-radius: 30px;
     padding: 10px 20px;
   }
+
+  @media (max-width: 768px) {
+    
+    .mensaje-bienvenida{
+        font-size: 1.5em !important;
+
+    }
+}
+#load-more{
+    background-color:transparent;
+      color:  #132644;
+      font-family: 'Montserrat';
+      font-weight: 600;
+      font-size: .9em;
+      margin: auto;
+      border: 1px solid #132644 ;
+      border-radius: 30px;
+      margin: auto;
+      margin-bottom: 3em;
+      padding: 7px 15px;
+  }
+  
+  #load-more:hover{
+    background-color: #132644;
+    color: #fff;
+   
+  }

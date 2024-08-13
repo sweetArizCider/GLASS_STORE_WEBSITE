@@ -172,9 +172,8 @@ $db->desconectarDB();
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
   
-
-<!--Barra lateral-->
-<div class="wrapper">
+  <!--Barra lateral-->
+  <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -234,25 +233,7 @@ $db->desconectarDB();
             </li>
           </ul>
         </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#ventas" aria-expanded="false" aria-controls="ventas">
-            <img src="../../img/admin/recibos.svg" alt="Ventas">
-            <span>Ventas</span>
-          </a>
-          <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-          
-          <li class="sidebar-item">
-          <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="../recibos.php" class="sidebar-link">Historial</a>
-          </li>
-          </ul>
-        </li>
+        
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
@@ -289,6 +270,7 @@ $db->desconectarDB();
       </ul>
       
     </aside>
+
 
     
     <div class="main p-3">
@@ -395,6 +377,11 @@ $db->desconectarDB();
 <script src="../../js/jquery.min.js"></script>
 
 <script>
+  const hamBurger = document.querySelector(".toggle-btn");
+
+hamBurger.addEventListener("click", function () {
+  document.querySelector("#sidebar").classList.toggle("expand");
+});
 
 $(document).ready(function() {
         $('.cotizacion-toggle').on('click', function() {
@@ -509,11 +496,7 @@ $(document).ready(function() {
     });
 });
 
-    const hamBurger = document.querySelector(".toggle-btn");
-
-    hamBurger.addEventListener("click", function () {
-      document.querySelector("#sidebar").classList.toggle("expand");
-    });
+    
   </script>
 </body>
 </html>

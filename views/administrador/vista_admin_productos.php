@@ -84,19 +84,24 @@ if ($categoriaSeleccionada) {
   <div id="logotipo-flotante">
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
-
-  <!--Barra lateral-->
-  <div class="wrapper">
+<!--Barra lateral-->
+<div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="#">GLASS STORE</a>
+          <a href="../../index.php">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
+      <div class="sidebar-itemr">
+        <a href="./vista_admin.php" class="sidebar-link">
+          <img src="../../img/index/home.svg" alt="Volver">
+          <span>Volver</span>
+        </a>
+      </div>
       <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
@@ -140,25 +145,7 @@ if ($categoriaSeleccionada) {
             </li>
           </ul>
         </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#ventas" aria-expanded="false" aria-controls="ventas">
-            <img src="../../img/admin/recibos.svg" alt="Ventas">
-            <span>Ventas</span>
-          </a>
-          <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-          
-          <li class="sidebar-item">
-          <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="../recibos.php" class="sidebar-link">Historial</a>
-          </li>
-          </ul>
-        </li>
+        
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
@@ -185,12 +172,7 @@ if ($categoriaSeleccionada) {
             </li>
           </ul>
         </li>
-        <div class="sidebar-itemr">
-        <a href="../../index.php" class="sidebar-link">
-          <img src="../../img/index/home.svg" alt="Volver">
-          <span>Volver</span>
-        </a>
-      </div>
+       
       <div class="sidebar-item">
         <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
         <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
@@ -200,6 +182,7 @@ if ($categoriaSeleccionada) {
       </ul>
       
     </aside>
+
 
     <div class="main p-3">
       <div class="text-center">

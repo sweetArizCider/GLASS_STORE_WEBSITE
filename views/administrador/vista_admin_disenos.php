@@ -14,6 +14,30 @@
     .clickable-row {
       cursor: pointer;
     }
+    .button-cita-ex {
+                background: #132644;
+                border: 1.5px solid #132644;
+                border-radius: 30px;
+                font-family: Inter;
+                font-size: .9em;
+                font-weight: 400;
+                color: #fff;
+                cursor: pointer;
+                padding: 8px 18px;
+                text-decoration: none;
+            }
+            .button-cita-ex-agg {
+                background:  #4AB3D5;
+                border: 1.5px solid  #4AB3D5;
+                border-radius: 30px;
+                font-family: Inter;
+                font-size: .9em;
+                font-weight: 400;
+                color: #fff;
+                cursor: pointer;
+                padding: 8px 18px;
+                text-decoration: none;
+            }
   </style>
 
 </head>
@@ -24,17 +48,24 @@
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-  <div class="wrapper">
+ <!--Barra lateral-->
+<div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="#">GLASS STORE</a>
+          <a href="../../index.php">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
+      <div class="sidebar-itemr">
+        <a href="./vista_admin.php" class="sidebar-link">
+          <img src="../../img/index/home.svg" alt="Volver">
+          <span>Volver</span>
+        </a>
+      </div>
       <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
@@ -78,25 +109,7 @@
             </li>
           </ul>
         </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#ventas" aria-expanded="false" aria-controls="ventas">
-            <img src="../../img/admin/recibos.svg" alt="Ventas">
-            <span>Ventas</span>
-          </a>
-          <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-          
-          <li class="sidebar-item">
-          <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="../recibos.php" class="sidebar-link">Historial</a>
-          </li>
-          </ul>
-        </li>
+        
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
@@ -123,12 +136,7 @@
             </li>
           </ul>
         </li>
-        <div class="sidebar-itemr">
-        <a href="../../index.php" class="sidebar-link">
-          <img src="../../img/index/home.svg" alt="Volver">
-          <span>Volver</span>
-        </a>
-      </div>
+       
       <div class="sidebar-item">
         <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
         <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
@@ -138,6 +146,7 @@
       </ul>
       
     </aside>
+
 
     <div class="main p-3">
       <div class="text-center">
@@ -159,18 +168,11 @@
 
       <!-- añadir diseño botón -->
       <br>
-      <button class="btn btn-secondary filters" type="button" id="dropdownOrdenar" data-bs-toggle="dropdown" aria-expanded="false">
-        Ordenar <img src="../../img/instalador/filter.svg" alt="Filtrar" class="icono-filtro">
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
-        <li><a class="dropdown-item" href="#" onclick="sortCitas('activo')">Activos</a></li>
-        <li><a class="dropdown-item" href="#" onclick="sortCitas('inactivo')">Inactivos</a></li>
-      </ul>
-      <div class="d-flex justify-content-end mb-3">
-        <a href="#addDisenoModal" class="btn btn-primary me-2" data-bs-toggle="modal">Añadir Diseño</a>
-      </div>
+      
+     
 
       <!-- Modal para añadir diseño -->
+       
       <div class="modal fade" id="addDisenoModal" tabindex="-1" aria-labelledby="addDisenoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -248,9 +250,21 @@
       ?>
 
       <div class="container">
+        
           <div class="row">
             <div class="col-md-2"></div>
               <div class="col-md-8 col-sm-1" >
+              <div class=" mb-3">
+        <a href="#addDisenoModal" class="button-cita-ex-agg" data-bs-toggle="modal">Añadir Diseño</a>
+      </div>
+              <button style="margin-bottom: 1em;" class="button-cita-ex" type="button" id="dropdownOrdenar" data-bs-toggle="dropdown" aria-expanded="false">
+        Ordenar <img src="../../img/instalador/filter.svg" alt="Filtrar" class="icono-filtro">
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
+        <li><a class="dropdown-item" href="#" onclick="sortCitas('activo')">Activos</a></li>
+        <li><a class="dropdown-item" href="#" onclick="sortCitas('inactivo')">Inactivos</a></li>
+      </ul>
+
                   <h3>Diseños</h3>
                   <div id="disenos-container">
                     <table class="table table-bordered">

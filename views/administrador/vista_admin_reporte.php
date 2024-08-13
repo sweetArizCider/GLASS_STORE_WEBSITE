@@ -51,7 +51,6 @@ foreach ($detalles_citas as $detalle) {
   <div id="logotipo-flotante">
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
-
 <!--Barra lateral-->
 <div class="wrapper">
     <aside id="sidebar">
@@ -113,25 +112,7 @@ foreach ($detalles_citas as $detalle) {
             </li>
           </ul>
         </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#ventas" aria-expanded="false" aria-controls="ventas">
-            <img src="../../img/admin/recibos.svg" alt="Ventas">
-            <span>Ventas</span>
-          </a>
-          <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-          
-          <li class="sidebar-item">
-          <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
-          </li>
-          <li class="sidebar-item">
-          <a href="../recibos.php" class="sidebar-link">Historial</a>
-          </li>
-          </ul>
-        </li>
+        
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
@@ -168,6 +149,7 @@ foreach ($detalles_citas as $detalle) {
       </ul>
       
     </aside>
+
     
     <div class="col-12 mb-4 card-bienvenida">
         <div class="text-center">
@@ -223,10 +205,9 @@ foreach ($detalles_citas as $detalle) {
                         $subtotal_monto += $detalle->monto;
                         $subtotal_extras += $detalle->extras;
                         ?>
-                        
-                        <!-- Checkboxes para seleccionar reportes -->
-                        <input type="checkbox" name="reportes_seleccionados[]" value="<?php echo htmlspecialchars($detalle->id_reporte); ?>">
                         <hr>
+                        <!-- Checkboxes para seleccionar reportes -->
+                        
                     <?php endforeach; ?>
 
                     <!-- Mostrar subtotal -->
@@ -234,7 +215,7 @@ foreach ($detalles_citas as $detalle) {
 
                     <!-- Botón para enviar reportes aceptados en este acordeón -->
                     <input type="hidden" name="id_cita" value="<?php echo htmlspecialchars($id_cita); ?>">
-                    <button type="submit" class="btn btn-primary">Procesar Reportes</button>
+
                 </form>
             </div>
         </div>

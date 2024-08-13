@@ -45,9 +45,44 @@ if (isset($_SESSION["nom_usuario"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendar Cita</title>
     <link rel="shortcut icon" href="../img/index/logoVarianteSmall.png" type="image/x-icon">
-    <link rel="stylesheet" href="../css/normalized.css">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/normalized.css">
+
+    <style>
+        .hidden {
+            display: none;
+        }
+        .address-form {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        .address-form label {
+            font-weight: bold;
+        }
+        .address-form .form-control {
+            margin-bottom: 10px;
+        }
+        .formulario-registro{
+  width: 90% !important;
+  margin: auto !important;
+
+}
+.agendar textarea{
+  width: 100%;
+  border: 1px solid rgba(19, 38, 68, 0.53);
+  border-radius: 8px;
+  padding: 1em;
+  font-family: 'Inter';
+  
+}
+.agendar select{
+  width: 100%;
+  margin: auto;
+}
+    </style>
 </head>
 <body>
 <!-- WhatsApp flotante -->
@@ -88,15 +123,15 @@ if (isset($_SESSION["nom_usuario"])) {
     </div>
 
     <div class="col-12 col-lg-7">
-        <div class="container formulario-registro">
+    <div class="container formulario-registro">
             <div class="row">
                 <div class="col-12">
                     <div class="form-register agendar">
                         <h1 class="title-agendar">¡Siempre es un placer atenderte!</h1>
                         <div class="row gy-3 overflow-hidden">
                             <!-- Dirección -->
+                            <h2 style="margin-top: 2em;" class="subtitle-agendar">Ingrese su Dirección</h2>
                             <div class="col-12 address-form">
-                                <h2 class="subtitle-agendar">Dirección</h2>
                                 <div class="row">
                                     <div class="col-12 col-md-6">
                                         <label for="calle" class="form-label">Calle</label>
@@ -104,11 +139,11 @@ if (isset($_SESSION["nom_usuario"])) {
                                     </div>
                                     <div class="col-12 col-md-3">
                                         <label for="numero" class="form-label">Número</label>
-                                        <input type="text" class="form-control" id="numero" name="numero" required>
+                                        <input type="number" class="form-control" id="numero" name="numero" required>
                                     </div>
                                     <div class="col-12 col-md-3">
                                         <label for="numero_interior" class="form-label">Número Interior</label>
-                                        <input type="text" class="form-control" id="numero_interior" name="numero_interior">
+                                        <input type="number" class="form-control" id="numero_interior" name="numero_interior">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -118,25 +153,27 @@ if (isset($_SESSION["nom_usuario"])) {
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <label for="ciudad" class="form-label">Ciudad</label>
-                                        <input type="text" class="form-control" id="ciudad" name="ciudad" required>
+                                        <select class="form-select" id="ciudad" name="ciudad" required>
+                                            <option value="Torreón">Torreón</option>
+                                            <option value="Gómez Palacio">Gómez Palacio</option>
+                                            <option value="Lerdo">Lerdo</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <input type="hidden" name="tipo" id="tipo" value="instalacion">
                                 <div class="row">
                                     <div class="col-12">
                                         <label for="referencias" class="form-label">Referencias</label>
-                                        <textarea class="form-control" id="referencias" name="referencias" rows="3"></textarea>
+                                        <textarea style="width:100%;" class="form-control" id="referencias" name="referencias" rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>
 
-                           
                             <div class="col-12">
                                 <label for="motivo" class="form-label">Cuéntanos el motivo de tu cita</label><br>
                                 <textarea name="motivo" id="motivo" cols="50" rows="7" class="text-motivo"></textarea>
                             </div>
 
-                            
                             <div class="col-12 container-select">
                                 <label for="hora" class="form-label">Selecciona el horario de tu preferencia</label>
                                 <select class="form-select form-select-custom custom-scrollbar" id="hora" name="hora" required>
@@ -175,12 +212,34 @@ if (isset($_SESSION["nom_usuario"])) {
 </form>
 <!-- TERMINA EL FORM -------------------------------------------------------------------------->
 <!-- footer -->
-
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <h5>Misión</h5>
+                <p>Transformar espacios con soluciones en vidrio y aluminio de alta calidad, creando ambientes modernos y funcionales que superen las expectativas de nuestros clientes.</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h5>Visión</h5>
+                <p>Ser la empresa líder en la industria del vidrio y aluminio en México, reconocida por nuestra innovación, calidad y servicio excepcional al cliente.</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h5>Valores</h5>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-check"></i> Calidad</li>
+                    <li><i class="bi bi-check"></i> Innovación</li>
+                    <li><i class="bi bi-check"></i> Servicio al Cliente</li>
+                    <li><i class="bi bi-check"></i> Integridad</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
 
 <script src="../js/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/agendarCita.js"></script>
 <script>
-    const calendarDays = document.getElementById('calendarDays');
+   const calendarDays = document.getElementById('calendarDays');
     const selectedDateInput = document.getElementById('selected_date');
     const selectedDateDisplay = document.getElementById('selectedDateDisplay');
     const calendarMonth = document.getElementById('calendarMonth');
@@ -286,7 +345,5 @@ if (isset($_SESSION["nom_usuario"])) {
 
     createCalendar(currentDate.getFullYear(), currentDate.getMonth());
 </script>
-
-
 </body>
 </html>

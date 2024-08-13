@@ -71,7 +71,7 @@ try {
   </div>
 
   <!--Barra lateral-->
-  <div class="wrapper">
+<div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -82,13 +82,13 @@ try {
         </div>
       </div>
       <ul class="sidebar-nav">
-        <div class="sidebar-itemr">
-          <a href="./vista_admin.php" class="sidebar-link">
-            <img src="../../img/index/home.svg" alt="Volver">
-            <span>Volver</span>
-          </a>
-        </div>
-        <li class="sidebar-item">
+      <div class="sidebar-itemr">
+        <a href="./vista_admin.php" class="sidebar-link">
+          <img src="../../img/index/home.svg" alt="Volver">
+          <span>Volver</span>
+        </a>
+      </div>
+      <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#personal" aria-expanded="false" aria-controls="personal">
             <img src="../../img/admin/admin_icon.svg" alt="Personal">
@@ -117,7 +117,7 @@ try {
         </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
+            data-bs-target="#cotizaciones" aria-expanded="false" aria-controls="cotizaciones">
             <img src="../../img/admin/clipboard.svg" alt="Cotizaciones">
             <span>Cotizaciones</span>
           </a>
@@ -125,32 +125,16 @@ try {
             <li class="sidebar-item">
               <a href="./vista_admin_cotizacion.php" class="sidebar-link">Ver cotizaciones</a>
             </li>
+
             <li class="sidebar-item">
               <a href="./vista_admin_reporte.php" class="sidebar-link">Ver reportes</a>
             </li>
           </ul>
         </li>
+        
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#ventas" aria-expanded="false" aria-controls="ventas">
-            <img src="../../img/admin/recibos.svg" alt="Ventas">
-            <span>Ventas</span>
-          </a>
-          <ul id="ventas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-            <li class="sidebar-item">
-              <a href="./vista_admin_crear_venta.php" class="sidebar-link" >Crear venta</a>
-            </li>
-            <li class="sidebar-item">
-              <a href="./vista_admin_ventas.php" class="sidebar-link">Gestionar ventas</a>
-            </li>
-            <li class="sidebar-item">
-              <a href="../recibos.php" class="sidebar-link">Historial</a>
-            </li>
-          </ul>
-        </li>
-        <li class="sidebar-item">
-          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
+            data-bs-target="#productos" aria-expanded="false" aria-controls="productos">
             <img src="../../img/admin/products.svg" alt="Productos">
             <span>Productos</span>
           </a>
@@ -162,10 +146,9 @@ try {
               <a href="./vista_admin_disenos.php" class="sidebar-link">Diseños</a>
             </li>
           </ul>
-        </li>
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-             data-bs-target="#promociones" aria-expanded="false" aria-controls="promociones">
+            data-bs-target="#promociones" aria-expanded="false" aria-controls="promociones">
             <img src="../../img/admin/off.svg" alt="Promociones">
             <span>Promociones</span>
           </a>
@@ -175,14 +158,17 @@ try {
             </li>
           </ul>
         </li>
-        <div class="sidebar-item">
-          <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
-            <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
-            <span>Cerrar Sesión</span>
-          </a>
-        </div>
+       
+      <div class="sidebar-item">
+        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+        <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+        <span>Cerrar Sesión</span>
+        </a>
+    </div>
       </ul>
+      
     </aside>
+
     <div class="main p-3">
       <div class="text-center">
       <div class="col-12 mb-4 card-bienvenida">

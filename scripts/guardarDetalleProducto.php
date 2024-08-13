@@ -187,6 +187,7 @@ text-decoration: none;
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Inicia Sesión</title>
+                <meta http-equiv="refresh" content="3;url=../views/iniciarSesion.php">
                 <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
                 <link rel="stylesheet" href="../css/styles.css">
                 <style>
@@ -257,6 +258,7 @@ text-decoration: none;
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Inicia Sesión</title>
+            <meta http-equiv="refresh" content="3;url=../views/iniciarSesion.php">
             <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
             <link rel="stylesheet" href="../css/styles.css">
             <style>
@@ -328,6 +330,7 @@ text-decoration: none;
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>Error al Guardar Cotización</title>
+                    <meta http-equiv="refresh" content="3;url=../views/productos.php">
                     <meta http-equiv="refresh" content="3;url=../views/productos.php">
                     <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
                     <link rel="stylesheet" href="../css/styles.css">
