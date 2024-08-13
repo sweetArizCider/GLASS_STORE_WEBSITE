@@ -65,6 +65,7 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
 
             if ($citaDetalles) {
                 $notificacion = "Se ha asignado una cita para el cliente {$citaDetalles['nombre_cliente']} el {$citaDetalles['fecha']} a las {$citaDetalles['hora']}. Dirección: {$citaDetalles['direccion']}. Notas: {$citaDetalles['notas']}. Cotizaciones: {$citaDetalles['cotizaciones']}";
+
             } else {
                 $notificacion = "No hay detalles disponibles para la cita.";
             }
@@ -78,15 +79,191 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
 
         $db->commit();
 
-        echo "<div class='alert alert-success'>INSTALADORES ASIGNADOS Y CITA ACEPTADA EXITOSAMENTE</div>";
-        header("refresh:3; url=../../views/administrador/vista_admin_citas.php");
+
+        ?>
+        <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignación Exitosa</title>
+    <meta http-equiv="refresh" content="5;url=../../views/administrador/vista_admin_citas.php">
+    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url('../../img/index/background.jpeg') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .confirmation-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        .confirmation-container h1 {
+            color: #132644;
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+        .confirmation-container p {
+            font-size: .9em;
+            margin-bottom: 15px;
+        }
+        .button-cita-ex {
+            background: #132644;
+            border: 1.5px solid #132644;
+            border-radius: 30px;
+            font-size: .9em;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px 18px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px;">
+        <h1>¡Asignación Exitosa!</h1>
+        <p>Los instaladores han sido asignados con éxito a la cita.</p>
+        <p>Se ha notificado a los instaladores sobre los detalles de la cita. Por favor, mantente pendiente de tus notificaciones para cualquier actualización.</p>
+        <a href="../../views/administrador/vista_admin_citas.php" class="button-cita-ex">Volver a Citas</a>
+    </div>
+</body>
+</html>
+         <?php
+
+       
     } catch (Exception $e) {
-        $db->rollBack();
-        echo "<div class='alert alert-danger'>No se pudo asignar instaladores ni aceptar la cita: {$e->getMessage()}</div>";
-        header("refresh:3; url=../../views/administrador/vista_admin_citas.php");
+        ?>
+        <!DOCTYPE html>
+     <html lang="es">
+     <head>
+         <meta charset="UTF-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+         <title>Error en la Asignación</title>
+         <meta http-equiv="refresh" content="5;url=../../views/administrador/vista_admin_citas.php">
+         <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+         <style>
+             body {
+                 background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url('../../img/index/background.jpeg') center/cover no-repeat;
+                 display: flex;
+                 justify-content: center;
+                 align-items: center;
+                 height: 100vh;
+                 font-family: Arial, sans-serif;
+             }
+             .error-container {
+                 background-color: rgba(255, 255, 255, 0.9);
+                 padding: 20px;
+                 border-radius: 10px;
+                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                 text-align: center;
+                 max-width: 500px;
+                 width: 100%;
+             }
+             .error-container h1 {
+                 color: #c82333;
+                 font-size: 2.5em;
+                 font-weight: 800;
+                 margin-bottom: 15px;
+             }
+             .error-container p {
+                 font-size: .9em;
+                 margin-bottom: 15px;
+             }
+             .button-retry {
+                 background: #c82333;
+                 border: 1.5px solid #c82333;
+                 border-radius: 30px;
+                 font-size: .9em;
+                 color: #fff;
+                 cursor: pointer;
+                 padding: 8px 18px;
+                 text-decoration: none;
+             }
+         </style>
+     </head>
+     <body>
+         <div class="error-container">
+             <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px;">
+             <h1>¡Lo Lamentamos!</h1>
+             <p>Ha ocurrido un error al intentar asignar los instaladores a la cita. Por favor, inténtalo de nuevo.</p>
+             <a href="../../views/administrador/vista_admin_citas.php" class="button-retry">Volver a Intentar</a>
+         </div>
+     </body>
+     </html>
+          <?php
     }
 } else {
-    header("Location: citas.php?status=error&message=Datos incompletos.");
+
+    ?>
+   <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error en la Asignación</title>
+    <meta http-equiv="refresh" content="5;url=../../views/administrador/vista_admin_citas.php">
+    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url('../../img/index/background.jpeg') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .error-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        .error-container h1 {
+            color: #c82333;
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+        .error-container p {
+            font-size: .9em;
+            margin-bottom: 15px;
+        }
+        .button-retry {
+            background: #c82333;
+            border: 1.5px solid #c82333;
+            border-radius: 30px;
+            font-size: .9em;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px 18px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px;">
+        <h1>¡Lo Lamentamos!</h1>
+        <p>Ha ocurrido un error al intentar asignar los instaladores a la cita. Por favor, inténtalo de nuevo.</p>
+        <a href="../../views/administrador/vista_admin_citas.php" class="button-retry">Volver a Intentar</a>
+    </div>
+</body>
+</html>
+     <?php
 }
 ?>
 </body>

@@ -219,6 +219,11 @@ $db->desconectarDB();
 
     <div class="main p-3">
       <div class="text-center">
+      <div class="col-12 mb-4 card-bienvenida">
+        <div class="text-center">
+          <h5 class="mensaje-bienvenida">Cotizaciones</h5>
+        </div>
+      </div>
         <div class="busqueda mx-auto">
           <input type="text" placeholder="Buscar Citas" class="buscar-input" id="search-input">
           <img src="../../img/productos/search.svg" alt="Buscar" id="search-button" style="cursor: pointer;">
@@ -226,49 +231,44 @@ $db->desconectarDB();
       </div>
       <br>
 
-      <div class="col-12 mb-4 card-bienvenida">
-        <div class="text-center">
-          <h5 class="mensaje-bienvenida">Cotizaciones</h5>
-        </div>
-      </div>
       <br><br>
-      <!-- Contenedor para los resultados de búsqueda -->
-      <div class="container">
+
+        <!-- Contenedor para los resultados de búsqueda -->
+        <div class="container">
         <div id="accordion">
             <!-- Aquí se actualizarán los resultados de búsqueda -->
             <?php foreach ($citas as $id_cita => $cita): ?>
-                <div class="card">
-                    <div class="card-header" id="heading<?php echo $id_cita; ?>">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link accordion-button collapsed" data-toggle="collapse" data-target="#collapse<?php echo $id_cita; ?>" aria-expanded="false" aria-controls="collapse<?php echo $id_cita; ?>">
-                                Cita <?php echo $id_cita; ?> - Cliente: <?php echo $cita['cliente']; ?>
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapse<?php echo $id_cita; ?>" class="collapse" aria-labelledby="heading<?php echo $id_cita; ?>" data-parent="#accordion">
-                        <div class="card-body">
+                <div class="secc-sub-general " style="margin-bottom: 1em;" data-bs-toggle="collapse" data-bs-target="#cotizaciones<?php echo $id_cita; ?>">
+                    <p style="font-size: .9em;" class="bueld">ID Cita: <?php echo $id_cita; ?></p>
+                    <p style="margin-top:-.5em; font-size: 1.2em; text-transform: capitalize;"><mark class="marklued"><?php echo htmlspecialchars($cita['cliente']); ?></mark></p>
+                    <div id="cotizaciones<?php echo $id_cita; ?>" class="collapse">
+                        <div class="detalle">
                             <?php foreach ($cita['detalles'] as $detalle): ?>
-                                <div class="detalle">
-                                    <?php foreach ($detalle as $key => $value): ?>
-                                        <?php if ($value !== null && $key !== 'id_cita' && $key !== 'nombre_cliente' && $key !== 'nombre_instalador' && $key !== 'id_detalle'): ?>
-                                            <p><?php echo ucfirst(str_replace('_', ' ', $key)); ?>: <?php echo $value; ?></p>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                    <hr>
-                                </div>
+                                <?php foreach ($detalle as $key => $value): ?>
+                                    <?php if ($value !== null && $key !== 'id_cita' && $key !== 'nombre_cliente' && $key !== 'nombre_instalador' && $key !== 'id_detalle'): ?>
+                                        <p><?php echo ucfirst(str_replace('_', ' ', $key)); ?>: <?php echo htmlspecialchars($value); ?></p>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                                <hr>
                             <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
-                <br>
             <?php endforeach; ?>
         </div>
+      </div>
     </div>
+  </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
+      $('.secc-sub-general').on('click', function() {
+                var target = $(this).data('bs-target');
+                $(target).collapse('toggle');
+            });
+
         $(document).ready(function() {
             // Función para realizar la búsqueda en tiempo real
             $('#search-input').on('input', function() {
