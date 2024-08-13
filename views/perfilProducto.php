@@ -109,30 +109,6 @@ if (isset($_GET['id'])) {
     exit;
 }
 
-$conexion = new database();
-$conexion->conectarDB();
-
-$productos_espera = [];
-if ($id_usuario != 0) {
-    // Obtener los detalles del producto en espera
-    $consulta_productos = "CALL carrito(?)";
-    $params_productos = [$id_usuario];
-    $productos_espera = $conexion->seleccionar($consulta_productos, $params_productos);
-}
-
-
-$productos_espera = $conexion->seleccionar($consulta_productos);
-
-function esReciente($fecha){
-    $fechaNotif = new DateTime($fecha);
-    $fechaActual = new DateTime();
-    $intervalo = $fechaActual->diff($fechaNotif);
-    return ($intervalo->d < 30); // Considera reciente si es de los últimos 30 días
-}
-
-$notificacionesRecientes = array_filter($notificaciones, function($notif) {
-    return esReciente($notif->fecha);
-});
 ?>
 
 <!DOCTYPE html>
@@ -155,6 +131,12 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     border-radius: 10px;
     margin-bottom: 20px;
 }
+@media (max-width: 768px) {
+    .buttonPerfilProductocancelar{
+        margin-left: 0 !important;
+    }
+
+}
 </style>
 </head>
 
@@ -165,8 +147,8 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
       <img src="../img/index/whatsappFloat.svg" alt="Contáctanos por WhatsApp">
     </a>
   </div>
-    <!-- barra superior -->
-    <div class="container blue">
+     <!-- barra superior -->
+     <div class="container blue">
       <div class="navbar-top">
           <div class="social-link">
               <a href="https://api.whatsapp.com/send?phone=528717843809" target="_blank" ><img src="../img/index/whatsapp.svg" alt="" width="30px"></a>
@@ -178,49 +160,48 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
               <img src="../img/index/GLASS.png" alt="" class="logo">
           </div>
           <div class="icons">
-                <a href="productos.php"><img src="../img/index/search.svg" alt="" width="25px"></a>
+                <a href="../index.php"><img src="../img/index/inicio.svg" alt="" width="25px"></a>
                 <button class="botonMostrarFavoritos" data-bs-toggle="modal" data-bs-target="#favoritosModal"><img src="../img/index/favorites.svg" alt="" width="25px"></button>
-
-                <a id="carrito" data-bs-toggle="modal" data-bs-target="#carritoModal"><img src="../img/index/clip.svg" alt="" width="25px"></a>
-
+               
                 <div class="dropdown">
-                    <a href="#" id="user-icon" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="../img/index/user.svg" alt="" width="25px" style="cursor: pointer">
-                    </a>
-                    <?php
-                    
-                    if (isset($_SESSION["nom_usuario"])) {
-                        echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
-                        echo '<li><a class="dropdown-item" href="perfil.php">Perfil</a></li>';
-                        echo '<li><a class="dropdown-item" href="#" id="notification-icon" data-bs-toggle="modal" data-bs-target="#notificationModal">Notificaciones</a></li>';
-                        require_once '../class/database.php';
-                       
-                        $user = $_SESSION["nom_usuario"];
-                        $consulta = "CALL roles_usuario(?)";
-                        $params = [$user];
-                        $roles = $conexion->seleccionar($consulta, $params);
-                        if ($roles) {
-                            foreach ($roles as $rol) {
-                                if ($rol->nombre_rol == 'administrador') {
-                                    echo '<li><a class="dropdown-item" href="../views/administrador/vista_admin.php">Administrador</a></li>';
-                                } elseif ($rol->nombre_rol == 'instalador') {
-                                    echo '<li><a class="dropdown-item" href="../views/instalador/index_Instalador.php">Buzón</a></li>';
-                                }
-                            }
-                        }
-                        echo '<li><hr class="dropdown-divider"></li>';
-                        echo '<li><a class="dropdown-item" href="../scripts/cerrarSesion.php">Cerrar Sesión</a></li>';
-                        echo '</ul>';
-                    } else {
-                        echo '<ul class="dropdown-menu" aria-labelledby="user-icon">';
-                        echo '<li><a class="dropdown-item" href="../views/iniciarSesion.php">Iniciar Sesión</a></li>';
-                        echo '</ul>';
+    <a href="#" id="user-icon" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="../img/index/user.svg" alt="" width="25px" style="cursor: pointer">
+    </a>
+    <?php if (isset($_SESSION["nom_usuario"])): ?>
+        <ul class="dropdown-menu" aria-labelledby="user-icon">
+            <li class="dropdown-item" style="color: #6c757d; font-size: .8em; pointer-events: none; cursor: default;"> <!-- Estilo del nombre de usuario en gris claro -->
+                <?php echo htmlspecialchars($_SESSION["nom_usuario"]); ?>
+            </li>
+            <li><a class="dropdown-item" href="../views/cliente/perfil.php">Perfil</a></li>
+           
+            <?php
+            $user = $_SESSION["nom_usuario"];
+            $consulta = "CALL roles_usuario(?)";
+            $params = [$user];
+            $roles = $db->seleccionar($consulta, $params);
+            if ($roles) {
+                foreach ($roles as $rol) {
+                    if ($rol->nombre_rol == 'administrador') {
+                        echo '<li><a class="dropdown-item" href="../views/administrador/vista_admin.php">Administrador</a></li>';
+                    } elseif ($rol->nombre_rol == 'instalador') {
+                        echo '<li><a class="dropdown-item" href="../views/instalador/index_Instalador.php">Buzón</a></li>';
                     }
-                    ?>
-                </div>
+                }
+            }
+            ?>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="../scripts/cerrarSesion.php">Cerrar Sesión</a></li>
+        </ul>
+    <?php else: ?>
+        <ul class="dropdown-menu" aria-labelledby="user-icon">
+            <li><a class="dropdown-item" href="../views/iniciarSesion.php">Iniciar Sesión</a></li>
+        </ul>
+    <?php endif; ?>
+</div>
+
             </div>
         </div>
-    </div>
+    </div> 
 
   <!-- segunda barra -->
   <nav class="navbar sticky-top navbar-expand-md" id="navbar-color">
@@ -367,7 +348,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
 
         <div class="d-grid d-md-flex justify-content-md-between">
             <button type="submit" class="buttonPerfilProducto mb-2 mb-md-0" style="width: 100%; max-width: 100%;">Guardar Cotización</button>
-            <a href="./productos.php" class="buttonPerfilProductocancelar" style="max-width: 100%; margin-left:1em; text-decoration: none;">Cancelar</a>
+            <a href="./productos.php" class="buttonPerfilProductocancelar" style="max-width: 100%; margin-left:1em; text-decoration: none; text-align: center;">Cancelar</a>
         </div>
         
     </form>
@@ -432,40 +413,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
 </div>
 
 
-<!-- Modal de Cotizaciones -->
-<div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="carritoModalLabel">Cotizaciones</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <?php if (isset($_SESSION["nom_usuario"])): ?>
-                    <!-- Usuario logueado -->
-                    <?php if (!empty($productos_espera)): ?>
-                        <div id="carrito-list" class="row">
-                            <!-- Aquí se cargarán los detalles del carrito -->
-                        </div>
-                    <?php else: ?>
-                       
-                    <?php endif; ?>
-                <?php else: ?>
-                    <!-- Usuario no logueado -->
-                    <div class="text-center">
-                        <p><a href="../views/iniciarSesion.php">Inicia sesión</a> para ver tus cotizaciones y acceder a ellas cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
-                    </div>
-                <?php endif; ?>
-            </div>
-            <div class="modal-footer">
-    <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
-        <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
 
-    <?php endif; ?>
-</div>
-        </div>
-    </div>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
