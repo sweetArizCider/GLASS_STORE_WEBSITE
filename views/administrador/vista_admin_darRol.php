@@ -188,7 +188,8 @@ try {
       <div class="col-12 mb-4 card-bienvenida">
           <div class="text-center ">
             <div class="">
-              <h5 class="mensaje-bienvenida">Gestión de Roles</h5>
+
+              <h5 class="mensaje-bienvenida" style="color:#132644;">Gestión de Roles</h5>
 
           </div>
         </div>
@@ -196,7 +197,7 @@ try {
           <div class="row">
             <!-- Columna para Asignar Rol -->
             <div class="col-md-6">
-              <h2>Asignar Rol</h2>
+              <h2  style="color:#132644;">Asignar Rol</h2>
               <form action="../../scripts/administrador/asignar_rol.php" method="POST">
                 <div class="mb-3">
                   <label for="nom_usuario_asignar" class="form-label">Nombre de Usuario</label>
@@ -213,13 +214,13 @@ try {
                     <?php endforeach; ?>
                   </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Asignar Rol</button>
+                <button type="submit"  class="buuton-dar-rol">Asignar Rol</button>
               </form>
             </div>
 
             <!-- Columna para Quitar Rol -->
             <div class="col-md-6">
-              <h2>Quitar Rol</h2>
+              <h2  style="color:#132644;">Quitar Rol</h2>
               <form action="../../scripts/administrador/quitar_rol.php" method="POST">
                 <div class="mb-3">
                   <label for="nom_usuario_quitar" class="form-label">Nombre de Usuario</label>
@@ -238,7 +239,7 @@ try {
                     <?php endforeach; ?>
                   </select>
                 </div>
-                <button type="submit" class="btn btn-danger">Quitar Rol</button>
+                <button type="submit" class="buuton-dar-rol">Quitar Rol</button>
               </form>
             </div>
           </div>

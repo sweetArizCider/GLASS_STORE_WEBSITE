@@ -332,8 +332,8 @@ if (isset($_GET['id'])) {
             <label class="labelPerfilProduct" for="color_accesorios">Color de Accesorios</label>
                 <select  name="color_accesorios" id="color_accesorios" class="form-control inputPerfilProductoCont">
                     <option value="blanco">Blanco</option>
-                    <option value="negro">Negro</option>
-                    <option value="gris">Gris</option>
+                    <option value="negro">Chocolate</option>
+                    <option value="gris">Ivory</option>
                     <!-- Añadir más opciones según sea necesario -->
                 </select>
                 
@@ -341,10 +341,15 @@ if (isset($_GET['id'])) {
         <?php endif; ?>
         </div>
 
-        <div class="d-grid">
-            <button type="submit" class="buttonPerfilProducto">Solicitar Cotización</button>
+        <div class="d-grid d-md-flex justify-content-md-between">
+            <button type="submit" class="buttonPerfilProducto mb-2 mb-md-0" style="width: 100%; max-width: 100%;">Guardar Cotización</button>
+            <a href="./productos.php" class="buttonPerfilProductocancelar" style="max-width: 100%; margin-left:1em; text-decoration: none;">Cancelar</a>
         </div>
+        
     </form>
+    <p class="text-muted mt-2 text-center" style="font-size: 0.6rem; margin-top:1px;padding-left:20px; padding-right:20px;">
+        Este es un simulador de cotización. Los precios mostrados son aproximados y están sujetos a cambios y modificaciones. Lamentamos cualquier inconveniente que esto pueda causar. ¡Gracias por su comprensión!. Para más información  <a href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">contáctate.</a>
+    </p>
 </div>
         </div>
     </div>
@@ -461,7 +466,20 @@ document.addEventListener('DOMContentLoaded', function () {
             anchoInput.value = ancho;
             cantidadInput.value = cantidad;
             const metrosCuadrados = alto * ancho;
-            total = (metrosCuadrados / 5) * precioPorMetroCuadrado * cantidad;
+            total = metrosCuadrados * precioPorMetroCuadrado * cantidad;
+
+            if ("<?php echo $categoria; ?>" === "tapices") {
+                let metrostapiz= metrosCuadrados*cantidad;
+                if (metrostapiz <= 5) {
+                    total = precioPorMetroCuadrado;
+                } else {
+                    
+                    let bloques = Math.ceil(metrostapiz / 5);
+                    total = bloques * precioPorMetroCuadrado ;
+                }
+            } else {
+                total = metrosCuadrados * precioPorMetroCuadrado * cantidad;
+            }
         }
 
         totalInput.value = total.toFixed(2) + ' MXN';
@@ -481,10 +499,10 @@ document.addEventListener('DOMContentLoaded', function () {
         actualizarPrecioTotal();
     }
 
-    if (altoInput) altoInput.addEventListener('blur', validarInput);
-    if (anchoInput) anchoInput.addEventListener('blur', validarInput);
-    if (largoInput) largoInput.addEventListener('blur', validarInput);
-    cantidadInput.addEventListener('blur', validarInput);
+    if (altoInput) altoInput.addEventListener('input', validarInput);
+    if (anchoInput) anchoInput.addEventListener('input', validarInput);
+    if (largoInput) largoInput.addEventListener('input', validarInput);
+    cantidadInput.addEventListener('input', validarInput);
 
     document.querySelectorAll('.design-image').forEach(function(image) {
         image.addEventListener('click', function() {
@@ -496,6 +514,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
 
 $(document).ready(function() {
     $('#favoritosModal').on('shown.bs.modal', function () {

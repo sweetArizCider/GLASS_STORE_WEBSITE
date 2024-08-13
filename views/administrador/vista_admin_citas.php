@@ -141,6 +141,28 @@ $db->desconectarDB();
     .accordion-button::after {
       filter: invert(1);
     }
+    .secc-sub-general {
+      border: 1px solid rgba(19, 38, 68, 0.30);
+      border-radius: 10px;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+    .text-end {
+      text-align: right;
+    }
+    .buuton-dar-rol-danger{
+      background-color: #c82333;
+    color: #fff;
+    font-family: 'Montserrat';
+    font-weight: 400;
+    margin: auto;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    }
   </style>
 </head>
 <body>
@@ -281,85 +303,107 @@ $db->desconectarDB();
       <br>
       
       <div id="contenido" class="text-center">
-    <div class="accordion" id="citasAccordion">
-        <?php while ($row = $result->fetch(PDO::FETCH_ASSOC)) { ?>
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="heading<?php echo $row['id_cita']; ?>">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $row['id_cita']; ?>" aria-expanded="false" aria-controls="collapse<?php echo $row['id_cita']; ?>">
-                    <?php echo htmlspecialchars($row['nombre_cliente']) . ' - ' . htmlspecialchars($row['fecha']) . ' - ' . htmlspecialchars($row['hora']); ?>
-                </button>
-            </h2>
-            <div id="collapse<?php echo $row['id_cita']; ?>" class="accordion-collapse collapse" aria-labelledby="heading<?php echo $row['id_cita']; ?>" data-bs-parent="#citasAccordion">
-                <div class="accordion-body">
-                    <p><?php echo htmlspecialchars($row['direccion']); ?></p>
-                    <p><?php echo nl2br(htmlspecialchars($row['cotizaciones'])); ?></p>
-                    <div class="text-end">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#asignarModal<?php echo $row['id_cita']; ?>" id="asignarButton<?php echo $row['id_cita']; ?>">Asignar</button>
-                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rechazarModal<?php echo $row['id_cita']; ?>" id="rechazarButton<?php echo $row['id_cita']; ?>">Rechazar</button>
-                    </div>
-                </div>
+        <div class="general-container">
+          <?php while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+            $cotizaciones = nl2br(htmlspecialchars($row['cotizaciones']));
+            $hasCotizaciones = $cotizaciones !== 'no hay cotizaciones';
+            $tipo_cita = $hasCotizaciones ? "Cita de toma de medidas" : "Instalación";
+            $fecha = date('d \d\e F \d\e Y', strtotime($row['fecha']));
+            $hora = date('h:i A', strtotime($row['hora']));
+          ?>
+          <div class="secc-sub-general">
+            <p class="fecha"><?php echo $fecha; ?></p>
+            <p><mark class="marklued"><?php echo htmlspecialchars($row['nombre_cliente']); ?></mark><br>
+              Requiere <span class="bueld"><?php echo $tipo_cita; ?></span> en el domicilio: 
+              <span class="bueld"><?php echo htmlspecialchars($row['direccion']); ?></span><br>
+              el día <span class="bueld"><?php echo $fecha; ?></span> a las <span class="bueld"><?php echo $hora; ?></span></p>
+            
+            <?php if ($hasCotizaciones): ?>
+            <p class="cotizacion-toggle" data-bs-toggle="collapse" data-bs-target="#cotizaciones<?php echo $row['id_cita']; ?>">Ver Cotizaciones</p>
+            <div id="cotizaciones<?php echo $row['id_cita']; ?>" class="collapse">
+              <p><?php echo $cotizaciones; ?></p>
             </div>
-        </div>
-        <br>
-        <!-- Modal para Asignar Instaladores -->
-        <div class="modal fade" id="asignarModal<?php echo $row['id_cita']; ?>" tabindex="-1" aria-labelledby="asignarModalLabel<?php echo $row['id_cita']; ?>" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="asignarModalLabel<?php echo $row['id_cita']; ?>">Asignar Instaladores</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form id="formAsignar<?php echo $row['id_cita']; ?>" method="POST" action="../../scripts/administrador/asignarInstalador.php">
-                        <div class="modal-body">
-                            <input type="hidden" name="id_cita" value="<?php echo $row['id_cita']; ?>">
-                            <?php foreach ($instaladores as $instalador): ?>
-                                <div class="form-check">
-                                    <input class="form-check-input instalador-checkbox" type="checkbox" name="instaladores[]" value="<?php echo $instalador['id_instalador']; ?>" id="instalador<?php echo $instalador['id_instalador']; ?>" data-cita-id="<?php echo $row['id_cita']; ?>">
-                                    <label class="form-check-label" for="instalador<?php echo $instalador['id_instalador']; ?>">
-                                        <?php echo $instalador['nombres'] . ' ' . $instalador['apellido_p'] . ' ' . $instalador['apellido_m']; ?>
-                                    </label>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" id="submitAsignar<?php echo $row['id_cita']; ?>">Asignar Instaladores</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+            <?php else: ?>
+            <p>No hay cotizaciones</p>
+            <?php endif; ?>
 
-        <!-- Modal para Rechazar -->
-        <div class="modal fade" id="rechazarModal<?php echo $row['id_cita']; ?>" tabindex="-1" aria-labelledby="rechazarModalLabel<?php echo $row['id_cita']; ?>" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="rechazarModalLabel<?php echo $row['id_cita']; ?>">Rechazar Cita</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form method="POST" action="../../scripts/administrador/rechazarCitas.php">
-                        <div class="modal-body">
-                            <textarea class="form-control" name="motivo" rows="3" placeholder="Escribe el motivo del rechazo..." required></textarea>
-                            <input type="hidden" name="id_cita" value="<?php echo $row['id_cita']; ?>">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-danger" id="confirmarRechazo<?php echo $row['id_cita']; ?>">Confirmar Rechazo</button>
-                        </div>
-                    </form>
-                </div>
+            <div class="text-end">
+              <button class="buuton-dar-rol" data-bs-toggle="modal" data-bs-target="#asignarModal<?php echo $row['id_cita']; ?>" id="asignarButton<?php echo $row['id_cita']; ?>">Asignar</button>
+              <button class="buuton-dar-rol-danger" data-bs-toggle="modal" data-bs-target="#rechazarModal<?php echo $row['id_cita']; ?>" id="rechazarButton<?php echo $row['id_cita']; ?>">Rechazar</button>
             </div>
+          </div>
+
+          <!-- Modal para Asignar Instaladores -->
+          <div class="modal fade" id="asignarModal<?php echo $row['id_cita']; ?>" tabindex="-1" aria-labelledby="asignarModalLabel<?php echo $row['id_cita']; ?>" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="asignarModalLabel<?php echo $row['id_cita']; ?>">Asignar Instaladores</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formAsignar<?php echo $row['id_cita']; ?>" method="POST" action="../../scripts/administrador/asignarInstalador.php">
+                  <div class="modal-body">
+                    <input type="hidden" name="id_cita" value="<?php echo $row['id_cita']; ?>">
+                    <?php foreach ($instaladores as $instalador): ?>
+                    <div class="form-check">
+                      <input class="form-check-input instalador-checkbox" type="checkbox" name="instaladores[]" value="<?php echo $instalador['id_instalador']; ?>" id="instalador<?php echo $instalador['id_instalador']; ?>" data-cita-id="<?php echo $row['id_cita']; ?>">
+                      <label class="form-check-label" for="instalador<?php echo $instalador['id_instalador']; ?>">
+                        <?php echo $instalador['nombres'] . ' ' . $instalador['apellido_p'] . ' ' . $instalador['apellido_m']; ?>
+                      </label>
+                    </div>
+                    <?php endforeach; ?>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" id="submitAsignar<?php echo $row['id_cita']; ?>">Asignar Instaladores</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal para Rechazar -->
+          <div class="modal fade" id="rechazarModal<?php echo $row['id_cita']; ?>" tabindex="-1" aria-labelledby="rechazarModalLabel<?php echo $row['id_cita']; ?>" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="rechazarModalLabel<?php echo $row['id_cita']; ?>">Rechazar Cita</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="../../scripts/administrador/rechazarCitas.php">
+                  <div class="modal-body">
+                    <textarea class="form-control" name="motivo" rows="3" placeholder="Escribe el motivo del rechazo..." required></textarea>
+                    <input type="hidden" name="id_cita" value="<?php echo $row['id_cita']; ?>">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-danger" id="confirmarRechazo<?php echo $row['id_cita']; ?>">Confirmar Rechazo</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <?php } ?>
         </div>
-        <?php } ?>
+      </div>
     </div>
-</div>
+  </div>
 
 
 <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../js/jquery.min.js"></script>
 
 <script>
+
+$(document).ready(function() {
+        $('.cotizacion-toggle').on('click', function() {
+            var target = $(this).data('target');
+            $(target).collapse('toggle');
+        });
+    });
+
+
     function asignarInstaladores(idCita) {
         const instaladores = Array.from(document.getElementById(`instaladores${idCita}`).selectedOptions).map(option => option.value);
         

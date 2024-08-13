@@ -1122,6 +1122,17 @@ margin-right: 5px;
 #product-profile{
 margin-bottom: 3em;
 }
+.buttonPerfilProductocancelar{
+  background-color: #666666;
+  border: none;
+  padding: 10px 20px;
+  font-family: 'Inter';
+  font-size: .9em;
+  letter-spacing: 1px;
+  font-weight: 500;
+  color: #fff;
+  border-radius: 30px;
+}
 
 /*--------------------------------------AGENDAR CITAS-------------------------------------------------*/
 /*lado izquierdo- calendario*/
