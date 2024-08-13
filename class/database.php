@@ -97,6 +97,20 @@ class database{
         }
     }
 
+    function ejecutar1($query, $params = []) {
+        $stmt = $this->PDOlocal->prepare($query);
+        try {
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key , $value); // Aquí usamos directamente $key
+            }
+            $stmt->execute();
+            return $stmt;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return false; // Asegúrate de devolver un valor en caso de error
+        }
+    }
+
     
     function verificar($usuario, $contra)
     {

@@ -101,20 +101,20 @@ if ($_POST['action'] == 'add' || $_POST['action'] == 'remove') {
                     $imagen = basename($_FILES["fileToUpload"]["name"]);
 
                     $sql = "SELECT id_producto FROM productos WHERE nombre = :nombre";
-                    $result = $db->ejecutar($sql, [':nombre' => $nuevo_nombre]);
+                    $result = $db->ejecutar1($sql, [':nombre' => $nuevo_nombre]);
 
                     if ($result && $result->rowCount() > 0) {
                         $producto = $result->fetch(PDO::FETCH_ASSOC)['id_producto'];
 
                         if ($_POST['upload_type'] == 'portada') {
                             $sql_imagen = "CALL actualizar_imagen_producto(:producto_id, :imagen_nombre)";
-                            $db->ejecutar($sql_imagen, [':producto_id' => $producto, ':imagen_nombre' => $imagen]);
+                            $db->ejecutar1($sql_imagen, [':producto_id' => $producto, ':imagen_nombre' => $imagen]);
                         } else if ($_POST['upload_type'] == 'imagenes') {
                             $sql_imagen = "INSERT INTO imagen (imagen, producto) VALUES (:imagen_nombre, :producto_id)";
-                            $db->ejecutar($sql_imagen, [':imagen_nombre' => $imagen, ':producto_id' => $producto]);
+                            $db->ejecutar1($sql_imagen, [':imagen_nombre' => $imagen, ':producto_id' => $producto]);
                         }
 
-                        $result_check = $db->ejecutar("SELECT * FROM imagen WHERE producto = :producto_id AND imagen = :imagen_nombre", [':producto_id' => $producto, ':imagen_nombre' => $imagen]);
+                        $result_check = $db->ejecutar1("SELECT * FROM imagen WHERE producto = :producto_id AND imagen = :imagen_nombre", [':producto_id' => $producto, ':imagen_nombre' => $imagen]);
                         if ($result_check && $result_check->rowCount() > 0) {
                             echo "<div class='alert alert-success'>Imagen verificada correctamente en la base de datos.</div>";
                         } else {
