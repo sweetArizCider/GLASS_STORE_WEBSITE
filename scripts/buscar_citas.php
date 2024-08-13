@@ -20,31 +20,24 @@ if ($resultado) {
 }
 
 foreach ($citas as $id_cita => $cita) {
-    echo '<div class="card">';
-    echo '<div class="card-header" id="heading'.$id_cita.'">';
-    echo '<h5 class="mb-0">';
-    echo '<button class="btn btn-link accordion-button collapsed" data-toggle="collapse" data-target="#collapse'.$id_cita.'" aria-expanded="false" aria-controls="collapse'.$id_cita.'">';
-    echo 'Cita '.$id_cita.' - Cliente: '.$cita['cliente'];
-    echo '</button>';
-    echo '</h5>';
-    echo '</div>';
-    echo '<div id="collapse'.$id_cita.'" class="collapse" aria-labelledby="heading'.$id_cita.'" data-parent="#accordion">';
-    echo '<div class="card-body">';
-    
+    echo '<div class="secc-sub-general" style="margin-bottom: 1em;" data-bs-toggle="collapse" data-bs-target="#cotizaciones'.$id_cita.'">';
+    echo '<p style="font-size: .9em;" class="bueld">ID Cita: '.$id_cita.'</p>';
+    echo '<p style="margin-top:-.5em; font-size: 1.2em; text-transform: capitalize;"><mark class="marklued">'.htmlspecialchars($cita['cliente']).'</mark></p>';
+    echo '<div id="cotizaciones'.$id_cita.'" class="collapse">';
+    echo '<div class="detalle">';
+
     foreach ($cita['detalles'] as $detalle) {
-        echo '<div class="detalle">';
         foreach ($detalle as $key => $value) {
             if ($value !== null && $key !== 'id_cita' && $key !== 'nombre_cliente' && $key !== 'nombre_instalador' && $key !== 'id_detalle') {
-                echo '<p>'.ucfirst(str_replace('_', ' ', $key)).': '.$value.'</p>';
+                echo '<p>'.ucfirst(str_replace('_', ' ', $key)).': '.htmlspecialchars($value).'</p>';
             }
         }
         echo '<hr>';
-        echo '</div>';
     }
-    
+
     echo '</div>';
     echo '</div>';
-    echo '</div><br>';
+    echo '</div>';
 }
 
 $db->desconectarDB();

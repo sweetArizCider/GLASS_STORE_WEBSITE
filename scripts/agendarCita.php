@@ -64,8 +64,76 @@ if (isset($_SESSION["nom_usuario"])) {
         }
     }
 } else {
-    echo "Error: No estás autenticado.";
+    ?>
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Inicia Sesión</title>
+        <meta http-equiv="refresh" content="5;url=../views/iniciarSesion.php">
+        <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/styles.css">
+        <style>
+            body {
+                background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../img/index/background.jpeg) center/cover no-repeat;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                font-family: Arial, sans-serif;
+            }
+            .auth-container {
+                background-color: rgba(255, 255, 255);
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                max-width: 500px;
+                width: 100%;
+            }
+            .auth-container h1 {
+                font-family: 'Montserrat';
+                color: #132644;
+                font-size: 2.5em;
+                font-weight: 800;
+                margin-bottom: 15px;
+            }
+            .auth-container p {
+                font-family: 'Montserrat';
+                font-size: .9em;
+                margin-bottom: 15px;
+            }
+            .button-cita-ex {
+                background: #132644;
+                border: 1.5px solid #132644;
+                border-radius: 30px;
+                font-family: Inter;
+                font-size: .9em;
+                font-weight: 400;
+                color: #fff;
+                cursor: pointer;
+                padding: 8px 18px;
+                text-decoration: none;
+            }
+            .auth-container .btn:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="auth-container">
+            <img src="../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+            <h1>Inicia Sesión</h1>
+            <p style="margin-bottom:2em;">Para agendar una cita y disfrutar de todos nuestros servicios, es necesario que inicies sesión.</p>
+            <a href="../views/iniciarSesion.php" class="button-cita-ex">Iniciar Sesión</a>
+            <br><br>
+        </div>
+    </body>
+    </html>
+    <?php
     exit;
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -108,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Cita Confirmada</title>
+                <meta http-equiv="refresh" content="3;url=../index.php">
                 <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
                 <link rel="stylesheet" href="../css/styles.css">
                 <style>
@@ -122,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         font-family: Arial, sans-serif;
                     }
                     .confirmation-container {
-                        background-color: rgba(255, 255, 255); /* Fondo semitransparente */
+                        background-color: rgba(255, 255, 255);
                         padding: 20px;
                         padding-bottom: 20px !important;
                         border-radius: 10px;
@@ -142,15 +211,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         font-family: 'Montserrat';
                         font-size: .9em;
                         margin-bottom: 15px;
-                    }
-                    .confirmation-container .btn {
-                        background-color: #007bff;
-                        color: #ffffff;
-                        padding: 10px 20px;
-                        border-radius: 5px;
-                        text-decoration: none;
-                        font-weight: bold;
-                        transition: background-color 0.3s;
                     }
                     .confirmation-container .btn:hover {
                         background-color: #0056b3;
@@ -217,6 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Error al Crear la Cita</title>
+                <meta http-equiv="refresh" content="5;url=../index.php">
                 <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
                 <link rel="stylesheet" href="../css/styles.css">
                 <style>
@@ -285,7 +346,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <img src="../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
                     <h1>¡Lo Lamentamos!</h1>
                     <p>Ha ocurrido un error al intentar crear tu cita. Por favor, inténtalo de nuevo.</p>
-                    <a href="../views/citas.php" class="button-retry">Volver a Intentar</a>
+                    <a href="../views/citas.php" class="button-retry" style="border-radius: 30px;">Volver a Intentar</a>
                     <br><br>
 
                 </div>
@@ -301,6 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Error al Crear la Cita</title>
+            <meta http-equiv="refresh" content="5;url=../index.php">
             <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
             <link rel="stylesheet" href="../css/styles.css">
             <style>

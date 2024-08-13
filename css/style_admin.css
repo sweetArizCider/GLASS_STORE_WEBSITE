@@ -335,3 +335,14 @@ font-size: 3em;
   .submit-button-register:hover{
     background-color: #4AB3D5;
   }
+
+  .buuton-dar-rol{
+    background-color: #132644;
+    color: #fff;
+    font-family: 'Montserrat';
+    font-weight: 400;
+    margin: auto;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+  }
