@@ -192,7 +192,7 @@ try {
       <div class="col-12 mb-4 card-bienvenida">
           <div class="text-center ">
             <div class="">
-              <h5 class=" mensaje-bienvenida">Notificaciones</h5>
+              <h5 class=" mensaje-bienvenida">Promociones</h5>
             </div>
           </div>
         </div>
