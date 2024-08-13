@@ -96,6 +96,7 @@ class database{
             return false; // Asegúrate de devolver un valor en caso de error
         }
     }
+
     
     function verificar($usuario, $contra)
     {
