@@ -138,12 +138,12 @@ class database{
     // Método para preparar una consulta
     public function prepareQuery($query) {
         try {
-            return $this->prepareQuery($query);
-            //return $this->prepare($query);
+            return $this->PDOlocal->prepare($query); // Usa el objeto PDO interno para preparar la consulta
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
     }
+    
 
     // Método para ejecutar una consulta sin parámetros
     public function executeQuery($query) {
