@@ -174,7 +174,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
       <div class="container">
           <!-- menú hamburguesa -->
           <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
-              <span><i><img src="./img/index/menu.svg" alt="Menu" width="30px"></i></span>
+              <span><i><img src="../img/index/menu.svg" alt="Menu" width="30px"></i></span>
           </button>
   
           <div class="offcanvas offcanvas-start" id="offcanvasNavbar">

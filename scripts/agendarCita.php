@@ -72,6 +72,9 @@ if (isset($_SESSION["nom_usuario"])) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Inicia Sesión</title>
         <meta http-equiv="refresh" content="5;url=../views/iniciarSesion.php">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="../css/styles.css">
         <style>
@@ -108,7 +111,7 @@ if (isset($_SESSION["nom_usuario"])) {
                 background: #132644;
                 border: 1.5px solid #132644;
                 border-radius: 30px;
-                font-family: Inter;
+                font-family: 'Montserrat';
                 font-size: .9em;
                 font-weight: 400;
                 color: #fff;
@@ -177,6 +180,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Cita Confirmada</title>
                 <meta http-equiv="refresh" content="3;url=../index.php">
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
                 <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
                 <link rel="stylesheet" href="../css/styles.css">
                 <style>
@@ -220,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   background: #132644;
   border: 1.5px solid #132644;
   border-radius: 30px;
-  font-family: Inter;
+  font-family: 'Montserrat';
   font-size: .9em;
   font-weight: 400;
   color: #fff;
@@ -278,6 +284,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Error al Crear la Cita</title>
                 <meta http-equiv="refresh" content="5;url=../index.php">
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
                 <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
                 <link rel="stylesheet" href="../css/styles.css">
                 <style>
@@ -326,10 +335,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         background-color: #a71d2a;
                     }
                     .button-retry{
+                        font-family: 'Montserrat';
                         background: #c82333;
                         border: 1.5px solid #c82333;
                         border-radius: 30px;
-                        font-family: Inter;
                         font-size: .9em;
                         font-weight: 400;
                         color: #fff;
@@ -363,6 +372,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Error al Crear la Cita</title>
             <meta http-equiv="refresh" content="5;url=../index.php">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
             <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
             <link rel="stylesheet" href="../css/styles.css">
             <style>
@@ -414,7 +426,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     background: #c82333;
                     border: 1.5px solid #c82333;
                     border-radius: 30px;
-                    font-family: Inter;
+                    font-family: 'Montserrat';
                     font-size: .9em;
                     font-weight: 400;
                     color: #fff;

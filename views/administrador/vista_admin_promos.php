@@ -55,6 +55,33 @@ try {
   <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../../css/normalized.css">
   <link rel="stylesheet" href="../../css/style_admin.css">
+  <style>
+
+.button-cita-ex {
+                background: #132644;
+                border: 1.5px solid #132644;
+                border-radius: 30px;
+                font-family: Inter;
+                font-size: .9em;
+                font-weight: 400;
+                color: #fff;
+                cursor: pointer;
+                padding: 8px 18px;
+                text-decoration: none;
+            }
+            .button-cita-ex-cancelar {
+                background: #c82333;
+                border: 1.5px solid #c82333;
+                border-radius: 30px;
+                font-family: Inter;
+                font-size: .9em;
+                font-weight: 400;
+                color: #fff;
+                cursor: pointer;
+                padding: 8px 18px;
+                text-decoration: none;
+            }
+  </style>
 </head>
 <body>
   <!--Logo flotante del negocio-->
@@ -252,8 +279,8 @@ try {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="button-cita-ex-cancelar" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="button-cita-ex">Guardar</button>
                 </div>
             </form>
         </div>

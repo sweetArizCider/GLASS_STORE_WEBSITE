@@ -128,3 +128,38 @@ body, html {
 .plogincuenta a{
 color: #4AB3D5;
 }
+
+@media (max-width: 768px) {
+  .offcanvas {
+      width: 250px;
+  }
+  .container-historias{
+    height: 115vh;
+  }
+  .busqueda {
+    background-color: #fff;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    height: 6vh;
+    
+  }
+
+  .imagen-cotizacion-cliente-detalle{
+    width: 0% !important;
+  }
+  
+  .calendar {
+
+    width: 95% !important;
+  }
+
+ 
+
+}

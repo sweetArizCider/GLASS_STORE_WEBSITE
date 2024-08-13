@@ -1,106 +1,107 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include '../class/database.php';
+
 $id_usuario = 0;
 $notificaciones = [];
 
+// Crear conexión a la base de datos
+$db = new database();
+$db->conectarDB();
+$pdo = $db->getPDO();
+
+if ($pdo === null) {
+    die("Error al conectar a la base de datos.");
+}
 
 if (isset($_SESSION["nom_usuario"])) {
     $user = $_SESSION["nom_usuario"];
-
-    // Crear conexión a la base de datos
-    $db = new database();
-    $db->conectarDB();
-
-    $pdo = $db->getPDO();
 
     // Consulta para obtener el rol del usuario basado en el nombre de usuario
     $consulta_rol = "CALL roles_usuario(?)";
     $params_rol = [$user];
     $resultado_rol = $db->seleccionar($consulta_rol, $params_rol);
 
-    if ($resultado_rol && !empty($resultado_rol)) {
-        $nombre_rol = $resultado_rol[0]->nombre_rol;
+    if (!$resultado_rol) {
+        die("Error al obtener el rol del usuario.");
+    }
 
-        // Consulta para obtener los IDs del cliente e instalador basado en el nombre de usuario
-        $consulta_ids = "CALL obtener_id_por_nombre_usuario(?)";
-        $params_ids = [$user];
-        $resultado_ids = $db->seleccionar($consulta_ids, $params_ids);
+    $nombre_rol = $resultado_rol[0]->nombre_rol;
 
-        if ($resultado_ids && !empty($resultado_ids)) {
-            $fila = $resultado_ids[0];
+    // Consulta para obtener los IDs del cliente e instalador basado en el nombre de usuario
+    $consulta_ids = "CALL obtener_id_por_nombre_usuario(?)";
+    $params_ids = [$user];
+    $resultado_ids = $db->seleccionar($consulta_ids, $params_ids);
 
-            if ($nombre_rol == 'cliente' && isset($fila->id_cliente)) {
-                $id_cliente = $fila->id_cliente;
-                $id_usuario = $id_cliente;
+    if (!$resultado_ids) {
+        die("Error al obtener los IDs.");
+    }
 
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
-                $paramsNotificaciones = [$id_cliente];
-                $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
+    $fila = $resultado_ids[0];
 
-            } elseif ($nombre_rol == 'instalador' && isset($fila->id_instalador)) {
-                $id_instalador = $fila->id_instalador;
-                $id_usuario = $id_instalador;
+    if ($nombre_rol == 'cliente' && isset($fila->id_cliente)) {
+        $id_cliente = $fila->id_cliente;
+        $id_usuario = $id_cliente;
 
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_instalador WHERE instalador = ?";
-                $paramsNotificaciones = [$id_instalador];
-                $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
-            }
-        }
+        $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
+        $paramsNotificaciones = [$id_cliente];
+        $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
+
+    } elseif ($nombre_rol == 'instalador' && isset($fila->id_instalador)) {
+        $id_instalador = $fila->id_instalador;
+        $id_usuario = $id_instalador;
+
+        $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_instalador WHERE instalador = ?";
+        $paramsNotificaciones = [$id_instalador];
+        $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
     }
 }
 
-$productos_espera = [];
-if ($id_usuario != 0) {
-    // Obtener los detalles del producto en espera
-    $consulta_productos = "CALL carrito(?)";
-    $params_productos = [$id_usuario];
-    $productos_espera = $db->seleccionar($consulta_productos, $params_productos);
-}
-
-function esReciente($fecha){
-    $fechaNotif = new DateTime($fecha);
-    $fechaActual = new DateTime();
-    $intervalo = $fechaActual->diff($fechaNotif);
-    return ($intervalo->d < 30); // Considera reciente si es de los últimos 30 días
-}
-
-$notificacionesRecientes = array_filter($notificaciones, function($notif) {
-    return esReciente($notif->fecha);
-});
-
-
-
+// Verificar si el ID del producto está presente en la URL
 if (isset($_GET['id'])) {
     $productId = $_GET['id'];
 
+    // Consultar los detalles del producto
     $stmt = $pdo->prepare("SELECT * FROM productos WHERE id_producto = :id");
-    $stmt->bindParam(':id', $productId, PDO::PARAM_INT);
-    $stmt->execute();
-    $producto = $stmt->fetch(PDO::FETCH_OBJ);
+    if ($stmt) {
+        $stmt->bindParam(':id', $productId, PDO::PARAM_INT);
+        $stmt->execute();
+        $producto = $stmt->fetch(PDO::FETCH_OBJ);
 
-    if ($producto) {
-        $stmtImg = $pdo->prepare("SELECT * FROM imagen WHERE producto = :id");
-        $stmtImg->bindParam(':id', $productId, PDO::PARAM_INT);
-        $stmtImg->execute();
-        $imagenes = $stmtImg->fetchAll(PDO::FETCH_OBJ);
+        if ($producto) {
+            // Consultar imágenes del producto
+            $stmtImg = $pdo->prepare("SELECT * FROM imagen WHERE producto = :id");
+            $stmtImg->bindParam(':id', $productId, PDO::PARAM_INT);
+            $stmtImg->execute();
+            $imagenes = $stmtImg->fetchAll(PDO::FETCH_OBJ);
 
-        $stmtCategory = $pdo->prepare("
-            SELECT c.nombre
-            FROM categorias c
-            JOIN productos p ON c.id_categoria = p.categoria
-            WHERE p.id_producto = :id
-        ");
-        $stmtCategory->bindParam(':id', $productId, PDO::PARAM_INT);
-        $stmtCategory->execute();
-        $categoria = $stmtCategory->fetchColumn();
+            // Consultar la categoría del producto
+            $stmtCategory = $pdo->prepare("
+                SELECT c.nombre
+                FROM categorias c
+                JOIN productos p ON c.id_categoria = p.categoria
+                WHERE p.id_producto = :id
+            ");
+            $stmtCategory->bindParam(':id', $productId, PDO::PARAM_INT);
+            $stmtCategory->execute();
+            $categoria = $stmtCategory->fetchColumn();
 
-        $stmtDisenos = $pdo->prepare("SELECT id_diseno, codigo, file_path FROM disenos WHERE muestrario = :id");
-        $stmtDisenos->bindParam(':id', $productId, PDO::PARAM_INT);
-        $stmtDisenos->execute();
-        $disenos = $stmtDisenos->fetchAll(PDO::FETCH_OBJ);
+            // Consultar diseños del producto
+            $stmtDisenos = $pdo->prepare("SELECT id_diseno, codigo, file_path FROM disenos WHERE muestrario = :id");
+            $stmtDisenos->bindParam(':id', $productId, PDO::PARAM_INT);
+            $stmtDisenos->execute();
+            $disenos = $stmtDisenos->fetchAll(PDO::FETCH_OBJ);
+
+        } else {
+            echo "Producto no encontrado.";
+            exit;
+        }
     } else {
-        echo "Producto no encontrado.";
+        echo "Error al preparar la consulta del producto.";
         exit;
     }
 } else {
@@ -108,6 +109,7 @@ if (isset($_GET['id'])) {
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -127,6 +129,12 @@ if (isset($_GET['id'])) {
 .card {
     border-radius: 10px;
     margin-bottom: 20px;
+}
+@media (max-width: 768px) {
+    .buttonPerfilProductocancelar{
+        margin-left: 0 !important;
+    }
+
 }
 </style>
 </head>
@@ -214,10 +222,10 @@ if (isset($_GET['id'])) {
                         <a class="nav-link"  href="./productos.php">Volver</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-left" href="https://api.whatsapp.com/send?phone=8717843809" target="_blank">Contacto</a>
+                        <a class="nav-link nav-left" href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">Contacto</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-left" href="/citas">Agendar</a>
+                        <a class="nav-link nav-left" href="./citas.php">Agendar</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link nav-left" href="/#about-us">Nosotros</a>
@@ -227,7 +235,8 @@ if (isset($_GET['id'])) {
         </div>
     </div>
 </nav>
-
+<div class="container mt-3 d-flex justify-content-end">
+</div>
  <div class="container mt-5" id="product-profile">
     <div class="row">
          <div class="col-md-6">
@@ -238,7 +247,7 @@ if (isset($_GET['id'])) {
                         if (!empty($imagenes)) {
                             $first = true;
                             foreach ($imagenes as $img) {
-                                $imagePath = !empty($img->imagen) ? '../img/index/' . $img->imagen : '../img/index/default.png';
+                                $imagePath = !empty($img->imagen) ? '../img/disenos/' . $img->imagen : '../img/index/default.png';
                                 $activeClass = $first ? 'active' : '';
                                 echo "<div class='carousel-item $activeClass'>
                                     <img src='" . htmlspecialchars($imagePath) . "' class='img-fluid h-100' alt='Imagen del Producto' style='object-fit: cover;'>
@@ -263,7 +272,7 @@ if (isset($_GET['id'])) {
                 <?php
                 if (!empty($imagenes)) {
                     foreach ($imagenes as $img) {
-                        $imagePath = !empty($img->imagen) ? '../img/index/' . $img->imagen : '../img/index/default.png';
+                        $imagePath = !empty($img->imagen) ? '../img/disenos/' . $img->imagen : '../img/index/default.png';
                         echo "<div class='container-sub-img'>
                                 <img src='" . htmlspecialchars($imagePath) . "' class='sub-img' alt='Imagen del Producto'>
                               </div>";
@@ -282,73 +291,71 @@ if (isset($_GET['id'])) {
             <h2 class="precioPerfil">$<?php echo number_format($producto->precio, 2); ?> MXN</h2>
             <p class="descripcionPerfil"><?php echo htmlspecialchars($producto->descripcion); ?></p>
            
-
             <?php if (!empty($disenos)) : ?>
                 <h5 class="disenosPerfil">Diseños disponibles:</h5>
                 <div class="design-gallery">
-    <?php foreach ($disenos as $diseno) : ?>
-        <div class="design-item">
-            <img src="../img/disenos/<?php echo htmlspecialchars($diseno->file_path); ?>" 
-                 alt="<?php echo htmlspecialchars($diseno->codigo); ?>" 
-                 class="design-image" 
-                 data-id="<?php echo $diseno->id_diseno; ?>">
-        </div>
-    <?php endforeach; ?>
-</div>
-
-
-
+                    <?php foreach ($disenos as $diseno) : ?>
+                        <div class="design-item">
+                            <img src="../img/disenos/<?php echo htmlspecialchars($diseno->file_path); ?>" 
+                                 alt="<?php echo htmlspecialchars($diseno->codigo); ?>" 
+                                 class="design-image" 
+                                 data-id="<?php echo $diseno->id_diseno; ?>">
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
            
-           
-            <div id="cotizacionContainer" class=" mt-5">
+            <div id="cotizacionContainer" class="mt-5">
     <form id="cotizacionForm" method="POST" action="../scripts/guardarDetalleProducto.php" class="formPerfil">
-        
         <input type="hidden" name="producto" value="<?php echo $productId; ?>">
         <input type="hidden" name="diseno" id="diseno">
-            <div class="input-group">
+        <div class="input-group">
+            <?php if (strpos(strtolower($producto->nombre), 'pasamanos') !== false) : ?>
                 <div class="inputPerfil mb-3">
-                <label class="labelPerfilProduct" for="alto" class="form-label">Alto (metros)</label>
-                    <input  type="number" class="form-control inputPerfilProductoCont " id="alto" name="alto" step="0.01" required>
-                   
+                    <label class="labelPerfilProduct" for="largo" class="form-label">Largo (metros)</label>
+                    <input type="number" class="form-control inputPerfilProductoCont" id="largo" name="largo" step="0.01" max="50" required>
+                </div>
+            <?php else : ?>
+                <div class="inputPerfil mb-3">
+                    <label class="labelPerfilProduct" for="alto" class="form-label">Alto (metros)</label>
+                    <input type="number" class="form-control inputPerfilProductoCont" id="alto" name="alto" step="0.01" max="10" required>
                 </div>
                 <div class="inputPerfil mb-3">
-                <label class="labelPerfilProduct" for="ancho" class="form-label">Ancho (metros)</label>
-                     <input type="number" class="form-control inputPerfilProductoCont" id="ancho" name="ancho" step="0.01" required>
-                    
+                    <label class="labelPerfilProduct" for="ancho" class="form-label">Ancho (metros)</label>
+                    <input type="number" class="form-control inputPerfilProductoCont" id="ancho" name="ancho" step="0.01" max="10" required>
                 </div>
-                <div class="inputPerfil mb-3">
+            <?php endif; ?>
+            <div class="inputPerfil mb-3">
                 <label class="labelPerfilProduct" for="cantidad" class="form-label">Cantidad</label>
-                    <input type="number" class="form-control inputPerfilProductoCont " id="cantidad" name="cantidad" required>
-            
-        </div>
-        <div class="inputPerfil total mb-3">
-        <label class="labelPerfilProduct" for="total" class="form-label">Precio Total</label>
-            <input type="text" class="form-control inputPerfilProductoCont total" id="total" name="total" readonly>
-            
-        </div>
+                <input type="number" class="form-control inputPerfilProductoCont" id="cantidad" name="cantidad" max="10" required>
             </div>
-        
-       
-        
-
-        <?php if ($categoria === 'persianas') : ?>
+            <div class="inputPerfil total mb-3">
+                <label class="labelPerfilProduct" for="total" class="form-label">Precio Total</label>
+                <input type="text" class="form-control inputPerfilProductoCont total" id="total" name="total" readonly>
+            </div>
+            <?php if ($categoria === 'persianas') : ?>
             <div class="inputPerfil mb-3">
             <label class="labelPerfilProduct" for="color_accesorios">Color de Accesorios</label>
                 <select  name="color_accesorios" id="color_accesorios" class="form-control inputPerfilProductoCont">
                     <option value="blanco">Blanco</option>
-                    <option value="negro">Negro</option>
-                    <option value="gris">Gris</option>
+                    <option value="negro">Chocolate</option>
+                    <option value="gris">Ivory</option>
                     <!-- Añadir más opciones según sea necesario -->
                 </select>
                 
             </div>
         <?php endif; ?>
-
-        <div class="d-grid">
-            <button type="submit" class=" buttonPerfilProducto">Solicitar Cotización</button>
         </div>
+
+        <div class="d-grid d-md-flex justify-content-md-between">
+            <button type="submit" class="buttonPerfilProducto mb-2 mb-md-0" style="width: 100%; max-width: 100%;">Guardar Cotización</button>
+            <a href="./productos.php" class="buttonPerfilProductocancelar" style="max-width: 100%; margin-left:1em; text-decoration: none; text-align: center;">Cancelar</a>
+        </div>
+        
     </form>
+    <p class="text-muted mt-2 text-center" style="font-size: 0.6rem; margin-top:1px;padding-left:20px; padding-right:20px;">
+        Este es un simulador de cotización. Los precios mostrados son aproximados y están sujetos a cambios y modificaciones. Lamentamos cualquier inconveniente que esto pueda causar. ¡Gracias por su comprensión!. Para más información  <a href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">contáctate.</a>
+    </p>
 </div>
         </div>
     </div>
@@ -380,7 +387,7 @@ if (isset($_GET['id'])) {
     </div>
 </div>
 
-<!-- nuevo Modal de Favoritos, se estarian cargando abajo con js -->
+<!-- Modal de Favoritos -->
 <div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -389,9 +396,18 @@ if (isset($_GET['id'])) {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="favoritos-list" class="row">
-                    <!-- Aquí se cargarán los productos favoritos -->
-                </div>
+                <?php if (isset($_SESSION["nom_usuario"])): ?>
+                    <!-- Usuario logueado -->
+                    <p class="text-center">Guarda tus <a href="./productos.php">productos</a> favoritos y accede a ellos en cualquier momento.</p>
+                    <div id="favoritos-list" class="row">
+                        <!-- Aquí se cargarán los productos favoritos -->
+                    </div>
+                <?php else: ?>
+                    <!-- Usuario no logueado -->
+                    <div class="text-center">
+                        <p><a href="../views/iniciarSesion.php">Inicia sesión</a> para guardar tus productos favoritos y acceder a ellos cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -425,24 +441,74 @@ if (isset($_GET['id'])) {
 document.addEventListener('DOMContentLoaded', function () {
     const altoInput = document.getElementById('alto');
     const anchoInput = document.getElementById('ancho');
+    const largoInput = document.getElementById('largo');
     const cantidadInput = document.getElementById('cantidad');
     const totalInput = document.getElementById('total');
     const disenoInput = document.getElementById('diseno');
     const precioPorMetroCuadrado = <?php echo $producto->precio; ?>;
 
     function actualizarPrecioTotal() {
-        const alto = parseFloat(altoInput.value) || 0;
-        const ancho = parseFloat(anchoInput.value) || 0;
-        const cantidad = parseInt(cantidadInput.value) || 0;
+        let total = 0;
+        let cantidad = parseInt(cantidadInput.value) || 0;
 
-        const metrosCuadrados = alto * ancho;
-        const precioTotal = metrosCuadrados * precioPorMetroCuadrado * cantidad;
-        totalInput.value = precioTotal.toFixed(2) + ' MXN';
+        if (largoInput) {
+            let largo = parseFloat(largoInput.value) || 0;
+            largo = Math.max(0, largo);
+            largo = largo > 50 ? 50 : largo;
+            cantidad = cantidad > 10 ? 10 : cantidad;
+            largoInput.value = largo;
+            cantidadInput.value = cantidad;
+            total = largo * precioPorMetroCuadrado * cantidad;
+        } else {
+            let alto = parseFloat(altoInput.value) || 0;
+            let ancho = parseFloat(anchoInput.value) || 0;
+            alto = Math.max(0, alto);
+            ancho = Math.max(0, ancho);
+            cantidad = Math.max(0, cantidad);
+            alto = alto > 50 ? 50 : alto;
+            ancho = ancho > 50 ? 50 : ancho;
+            cantidad = cantidad > 10 ? 10 : cantidad;
+            altoInput.value = alto;
+            anchoInput.value = ancho;
+            cantidadInput.value = cantidad;
+            const metrosCuadrados = alto * ancho;
+            total = metrosCuadrados * precioPorMetroCuadrado * cantidad;
+
+            if ("<?php echo $categoria; ?>" === "tapices") {
+                let metrostapiz= metrosCuadrados*cantidad;
+                if (metrostapiz <= 5) {
+                    total = precioPorMetroCuadrado;
+                } else {
+                    
+                    let bloques = Math.ceil(metrostapiz / 5);
+                    total = bloques * precioPorMetroCuadrado ;
+                }
+            } else {
+                total = metrosCuadrados * precioPorMetroCuadrado * cantidad;
+            }
+        }
+
+        totalInput.value = total.toFixed(2) + ' MXN';
     }
 
-    altoInput.addEventListener('input', actualizarPrecioTotal);
-    anchoInput.addEventListener('input', actualizarPrecioTotal);
-    cantidadInput.addEventListener('input', actualizarPrecioTotal);
+    function validarInput(event) {
+        let value = event.target.value;
+        if (parseFloat(value) < 0) {
+            value = 0;
+        }
+        const partes = value.split('.');
+        if (partes.length > 1 && partes[1].length > 2) {
+            partes[1] = partes[1].slice(0, 2);
+            value = partes.join('.');
+        }
+        event.target.value = value;
+        actualizarPrecioTotal();
+    }
+
+    if (altoInput) altoInput.addEventListener('input', validarInput);
+    if (anchoInput) anchoInput.addEventListener('input', validarInput);
+    if (largoInput) largoInput.addEventListener('input', validarInput);
+    cantidadInput.addEventListener('input', validarInput);
 
     document.querySelectorAll('.design-image').forEach(function(image) {
         image.addEventListener('click', function() {
@@ -456,13 +522,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-  // Cerrar el modal
-  function closeForm() {
-    document.getElementById('login-form').style.display = 'none';
-  }
-
-
- 
 $(document).ready(function() {
     $('#favoritosModal').on('shown.bs.modal', function () {
         cargarFavoritos();
@@ -478,7 +537,7 @@ $(document).ready(function() {
                 favoritosList.empty();
                 if (favoritos.length > 0) {
                     favoritos.forEach(function(favorito) {
-                        var imagen = favorito.imagen ? '../img/index/' + favorito.imagen : '../img/index/default.png';
+                        var imagen = favorito.imagen ? '../img/disenos/' + favorito.imagen : '../img/index/default.png';
                         var favoritoHtml = `
                             <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
                                 <div class='card shadow'>
@@ -493,9 +552,7 @@ $(document).ready(function() {
                             </div>`;
                         favoritosList.append(favoritoHtml);
                     });
-                } else {
-                    favoritosList.append("<p>No tienes productos en favoritos.</p>");
-                }
+                } 
             },
             error: function(error) {
                 console.error('Error al obtener los favoritos:', error);
@@ -504,7 +561,6 @@ $(document).ready(function() {
         });
     }
 });
-
 
 $(document).ready(function() {
     $('#carritoModal').on('shown.bs.modal', function () {
@@ -525,7 +581,7 @@ $(document).ready(function() {
                 carritoList.empty();
                 if (carrito.length > 0) {
                     carrito.forEach(function(item) {
-                        var imagen = item.imagen_producto ? '../img/index/' + item.imagen_producto : '../img/index/default.png';
+                        var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/index/default.png';
                         var productoHtml = `
                             <div class='col-md-12 mt-3 py-3 py-md-0'>
                                 <div class='card shadow' style='display: flex; flex-direction: row;'>
@@ -548,9 +604,7 @@ $(document).ready(function() {
                             </div>`;
                         carritoList.append(productoHtml);
                     });
-                } else {
-                    carritoList.append("<p>No tienes productos en espera.</p>");
-                }
+                } 
             },
             error: function(error) {
                 console.error('Error al obtener los productos del carrito:', error);
@@ -560,28 +614,25 @@ $(document).ready(function() {
     }
 
     function actualizarEstadoProductos() {
-    $('.producto-checkbox:checked').each(function() {
-        var idDetalleProducto = $(this).val(); // Este valor debe ser el ID del detalle del producto
-        $.ajax({
-            url: '../scripts/actualizar_carrito.php',
-            method: 'POST',
-            data: {
-                id_detalle_producto: idDetalleProducto
-            },
-            success: function(response) {
-                console.log('Producto actualizado:', response);
-                window.location.href = 'citas.php';
-            },
-            error: function(error) {
-                console.error('Error al actualizar el producto:', error);
-            }
+        $('.producto-checkbox:checked').each(function() {
+            var idDetalleProducto = $(this).val(); // Este valor debe ser el ID del detalle del producto
+            $.ajax({
+                url: '../scripts/actualizar_carrito.php',
+                method: 'POST',
+                data: {
+                    id_detalle_producto: idDetalleProducto
+                },
+                success: function(response) {
+                    console.log('Producto actualizado:', response);
+                    window.location.href = 'citas.php';
+                },
+                error: function(error) {
+                    console.error('Error al actualizar el producto:', error);
+                }
+            });
         });
-    });
-}
-
+    }
 });
 </script>
-
-
 </body>
 </html>

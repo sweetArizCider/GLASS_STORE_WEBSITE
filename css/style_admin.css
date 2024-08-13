@@ -346,3 +346,11 @@ font-size: 3em;
     border-radius: 30px;
     padding: 10px 20px;
   }
+
+  @media (max-width: 768px) {
+    
+    .mensaje-bienvenida{
+        font-size: 1.5em !important;
+
+    }
+}

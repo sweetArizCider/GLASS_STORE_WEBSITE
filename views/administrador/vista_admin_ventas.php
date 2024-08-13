@@ -75,6 +75,33 @@ $db->desconectarDB();
   <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../../css/normalized.css">
   <link rel="stylesheet" href="../../css/style_admin.css">
+  <style>
+    .button-buscar-abono{
+      background: #132644;
+  border: 1.5px solid #132644;
+  border-radius: 30px;
+  font-family: Inter;
+  font-size: .9em;
+  font-weight: 400;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px 23px;
+  text-decoration: none;
+    }
+    .button-buscar-abono-cerrar{
+      background: #c82333;
+  border: 1.5px solid #c82333;
+  border-radius: 30px;
+  font-family: Inter;
+  font-size: .9em;
+  font-weight: 400;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px 23px;
+  text-decoration: none;
+
+    }
+  </style>
 </head>
 <body>
   <!--Logo flotante del negocio-->
@@ -202,63 +229,29 @@ $db->desconectarDB();
 
       <div class="contenidoGeneral mt-4">
         <div class="general-container">
-            <div class="d-flex justify-content-end mt-4">
-                <!-- Filtros u otros elementos -->
-            </div>
 
-            <div class="ventas-container">
-                <div class="accordion" id="recibosAccordion">
+        <div class="container">
+        <div id="accordion">
                     <?php if ($resultados): ?>
-                        <?php foreach ($resultados as $index => $fila): ?>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="heading<?php echo $index; ?>">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $index; ?>" aria-expanded="false" aria-controls="collapse<?php echo $index; ?>">
-                                        <div class="d-flex flex-column">
-                                            <span><strong>ID Venta:</strong> <?php echo htmlspecialchars($fila->id_venta); ?></span>
-                                            <span><strong>Fecha Venta:</strong> <?php echo htmlspecialchars($fila->fecha); ?></span>
-                                            <span><strong>Total:</strong> <?php echo htmlspecialchars($fila->total); ?></span>
-                                            <span><strong>Saldo:</strong> <?php echo htmlspecialchars($fila->saldo); ?></span>
-                                        </div>
-                                    </button>
-                                </h2>
-                                <div id="collapse<?php echo $index; ?>" class="accordion-collapse collapse" aria-labelledby="heading<?php echo $index; ?>" data-bs-parent="#recibosAccordion">
-                                    <div class="accordion-body">
-                                        <p><strong>Subtotal:</strong> <?php echo htmlspecialchars($fila->subtotal); ?></p>
-                                        <p><strong>Total Promoción:</strong> <?php echo htmlspecialchars($fila->total_promocion); ?></p>
-                                        <p><strong>Extras:</strong> <?php echo htmlspecialchars($fila->extras); ?></p>
-                                        <p><strong>Total Abonos:</strong> <?php echo htmlspecialchars($fila->total_abonos); ?></p>
-                                        <p><strong>Fecha Último Abono:</strong> <?php echo htmlspecialchars($fila->fecha_ultimo_abono); ?></p>
-                                        <button class="btn button-primary" data-bs-toggle="modal" data-bs-target="#modalExtras<?php echo $index; ?>">Añadir extras</button>
-                                        <button class="btn button-primary" data-bs-toggle="modal" data-bs-target="#modalAbonos<?php echo $index; ?>">Abonar</button>
-                                        <button class="btn button-primary" data-bs-toggle="modal" data-bs-target="#modalPromos<?php echo $index; ?>">Aplicar promoción</button>
-                                        <button class="btn button-primary" data-bs-toggle="modal" data-bs-target="#modalQuitarPromos<?php echo $index; ?>">Quitar promoción</button>
+                      <?php foreach ($resultados as $index => $fila): ?>
+                <div class="secc-sub-general " style="margin-bottom: 1em;" data-bs-toggle="collapse" data-bs-target="#venta<?php echo $index; ?>">
+                    <p style="font-size: .9em;" class="bueld">ID Venta: <?php echo htmlspecialchars($fila->id_venta); ?></p>
+                    <p style="margin-top:-.5em; font-size: 1.2em; text-transform: capitalize;"><mark class="marklued">Total: $<?php echo htmlspecialchars($fila->total); ?></mark></p>
+                    <div id="venta<?php echo $index; ?>" class="collapse">
+                        <div class="detalle">
+                            <p><strong>Fecha Venta:</strong> <?php echo htmlspecialchars($fila->fecha); ?></p>
+                            <p><strong>Saldo:</strong> $<?php echo htmlspecialchars($fila->saldo); ?></p>
+                            <p><strong>Subtotal:</strong> $<?php echo htmlspecialchars($fila->subtotal); ?></p>
+                            <p><strong>Total Promoción:</strong> $<?php echo htmlspecialchars($fila->total_promocion); ?></p>
+                            <p><strong>Extras:</strong> $<?php echo htmlspecialchars($fila->extras); ?></p>
+                            <p><strong>Total Abonos:</strong> $<?php echo htmlspecialchars($fila->total_abonos); ?></p>
+                            <p><strong>Fecha Último Abono:</strong> <?php echo htmlspecialchars($fila->fecha_ultimo_abono); ?></p>
+                            <button class="button-buscar-abono" data-bs-toggle="modal" data-bs-target="#modalAbonos<?php echo $index; ?>">Abonar</button>
+                                        
+
                                     </div>
                                 </div>
                             </div><br>
-                            <!-- Modal para Añadir Extras -->
-                            <div class="modal fade" id="modalExtras<?php echo $index; ?>" tabindex="-1" aria-labelledby="modalExtrasLabel<?php echo $index; ?>" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalExtrasLabel<?php echo $index; ?>">Añadir Extras</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form id="formExtras<?php echo $index; ?>" action="../../scripts/administrador/agregar_extras.php" method="POST">
-                                                <input type="hidden" name="id_venta" value="<?php echo $fila->id_venta; ?>">
-                                                <div class="mb-3">
-                                                    <label for="inputExtras<?php echo $index; ?>" class="form-label">Cantidad de dinero</label>
-                                                    <input type="number" class="form-control" id="inputExtras<?php echo $index; ?>" name="extras" placeholder="Ingrese la cantidad de dinero" step="0.01" required>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                            <button type="submit" class="btn btn-primary" form="formExtras<?php echo $index; ?>">Guardar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             <!-- Modal para Abonar -->
                             <div class="modal fade" id="modalAbonos<?php echo $index; ?>" tabindex="-1" aria-labelledby="modalAbonosLabel<?php echo $index; ?>" aria-hidden="true">
@@ -278,73 +271,15 @@ $db->desconectarDB();
                                             </form>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                            <button type="submit" class="btn btn-primary" form="formAbonos<?php echo $index; ?>">Guardar</button>
+                                            <button type="button" class="button-buscar-abono-cerrar" data-bs-dismiss="modal">Cerrar</button>
+                                            <button type="submit" class="button-buscar-abono" form="formAbonos<?php echo $index; ?>">Aceptar</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Modal para Aplicar Promociones -->
-                            <div class="modal fade" id="modalPromos<?php echo $index; ?>" tabindex="-1" aria-labelledby="modalPromosLabel<?php echo $index; ?>" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalPromosLabel<?php echo $index; ?>">Aplicar Promociones</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form id="formPromos<?php echo $index; ?>" action="../../scripts/administrador/agregar_promocion.php" method="POST">
-                                                <input type="hidden" name="id_venta" value="<?php echo $fila->id_venta; ?>">
-                                                <div class="mb-3">
-                                                    <label for="selectPromocion<?php echo $index; ?>" class="form-label">Seleccione la promoción a aplicar</label>
-                                                    <select class="form-select" id="selectPromocion<?php echo $index; ?>" name="promocion" required>
-                                                        <?php foreach ($promociones as $promocion): ?>
-                                                            <option value="<?php echo htmlspecialchars($promocion->nombre_promocion); ?>"><?php echo htmlspecialchars($promocion->nombre_promocion); ?></option>
-                                                        <?php endforeach; ?>
-                                                    </select>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                            <button type="submit" class="btn btn-primary" form="formPromos<?php echo $index; ?>">Aplicar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Modal para Quitar Promociones -->
-<div class="modal fade" id="modalQuitarPromos<?php echo $index; ?>" tabindex="-1" aria-labelledby="modalQuitarPromosLabel<?php echo $index; ?>" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalQuitarPromosLabel<?php echo $index; ?>">Quitar Promociones</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formQuitarPromos<?php echo $index; ?>" action="../../scripts/administrador/quitar_promocion.php" method="POST">
-                    <input type="hidden" name="id_venta" value="<?php echo htmlspecialchars($fila->id_venta); ?>">
-                    <div class="mb-3">
-                        <label for="selectQuitarPromocion<?php echo $index; ?>" class="form-label">Seleccione la promoción a quitar</label>
-                        <select class="form-select" id="selectQuitarPromocion<?php echo $index; ?>" name="nombre_promocion" required>
-                            <?php foreach ($promociones as $promocion): ?>
-                                <option value="<?php echo htmlspecialchars($promocion->nombre_promocion); ?>">
-                                    <?php echo htmlspecialchars($promocion->nombre_promocion); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" form="formQuitarPromos<?php echo $index; ?>">Quitar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
+                           
+                           
                             
                         <?php endforeach; ?>
                     <?php else: ?>

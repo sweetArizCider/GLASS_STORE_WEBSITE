@@ -58,6 +58,7 @@ try {
   <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../../css/normalized.css">
   <link rel="stylesheet" href="../../css/style_admin.css">
+
 </head>
 <body>
   <!--Logo flotante del negocio-->
@@ -85,7 +86,7 @@ try {
           </a>
           <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="./index_Instalador.php" class="sidebar-link">Volver al Inicio</a>
+              <a href="../../index.php" class="sidebar-link">Volver al Inicio</a>
             </li>
           </ul>
         </li>
@@ -146,8 +147,8 @@ try {
         <div class="col-12 mb-4 card-bienvenida">
           <div class="text-center ">
             <div class="">
-              <h5 class=" mensaje-bienvenida">Bienvenido, <?php echo $nombreCompleto; ?></h5>
-              <p class=" mensaje-sub"><mark class="marklued">¡ Esperamos que hoy te encuentres bien !</mark></p>
+              <h5 class="mensaje-bienvenida">Bienvenido, <?php echo $nombreCompleto; ?></h5>
+              <p class="mensaje-sub"><mark class="marklued">¡ Esperamos que hoy te encuentres bien !</mark></p>
             </div>
           </div>
         </div>
