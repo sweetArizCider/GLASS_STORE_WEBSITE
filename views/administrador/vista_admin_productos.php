@@ -200,6 +200,14 @@ if ($categoriaSeleccionada) {
         </div>
       </div>
 
+<?php
+if (isset($_GET['message'])) {
+  $message = htmlspecialchars($_GET['message']);
+  echo "<div class='alert alert-info'>$message</div>";
+
+}
+?>
+
       <div class="contenidoGeneral mt-4">
         <div class="d-flex justify-content-end mt-4 flex-column flex-md-row">
           <a href="#addProductModal" class="btn btn-primary me-2 mb-2 mb-md-0" data-bs-toggle="modal">Añadir Producto</a>
@@ -305,8 +313,8 @@ if ($categoriaSeleccionada) {
                     <div class="mb-3">
                         <label for="edit-product-estatus-<?php echo $producto->id_producto; ?>" class="form-label">Estatus</label>
                         <select class="form-control" name="estatus" id="edit-product-estatus-<?php echo $producto->id_producto; ?>">
+                        <option value="inactivo" <?php echo $producto->estatus == 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
                             <option value="activo" <?php echo $producto->estatus == 'activo' ? 'selected' : ''; ?>>Activo</option>
-                            <option value="inactivo" <?php echo $producto->estatus == 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
                         </select>
                     </div>
                     <div class="mb-3">

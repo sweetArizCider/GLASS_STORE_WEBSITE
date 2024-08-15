@@ -1,13 +1,10 @@
 <?php
-  
-
-
 class database{
     // paramentros que le voy a enviar al objeto pdo
     private $PDOlocal;
-    private $user = 'arizpe1';
-    private $password = "arizpe1";
-    private $server = "mysql:host=54.214.99.251;dbname=glass_store_ana";
+    private $user = 'root';
+    private $password = "M*%:qYC6~.UjCdb";
+    private $server = "mysql:host=localhost;dbname=glass_store_ana";
 
     // le ponemos la sig cadena: host, base de datos
     function conectarDB()
