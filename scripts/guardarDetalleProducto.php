@@ -101,7 +101,7 @@ try {
                         <div class="success-container">
                             <img src="../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
                             <h1>¡Cotización Guardada!</h1>
-                            <p style="margin-bottom:2em;">Tu cotización ha sido guardada exitosamente. Puedes revisarla en la sección <strong>Mis Cotizaciones</strong> para concluir tu compra.</p>
+                            <p style="margin-bottom:2em;">Tu cotización ha sido guardada exitosamente. Puedes revisarla en la sección <strong>Mis Cotizaciones</strong> para concluir tu cita.</p>
                             <a href="../views/productos.php" class="button-cita-ex">Seguir Cotizando</a>
                             <br><br>
                         </div>
@@ -196,7 +196,7 @@ try {
                     <div class="success-container">
                         <img src="../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
                         <h1>¡Cotización Guardada!</h1>
-                        <p style="margin-bottom:2em;">Tu cotización ha sido guardada exitosamente. Por favor, inicia sesión para revisarla y concluir tu compra.</p>
+                        <p style="margin-bottom:2em;">Tu cotización ha sido guardada exitosamente. Por favor, inicia sesión para revisarla y concluir tu cita.</p>
                         <a href="../views/iniciarSesion.php" class="button-cita-ex">Iniciar Sesión</a>
                         <br><br>
                     </div>
