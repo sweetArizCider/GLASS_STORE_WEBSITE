@@ -145,6 +145,23 @@ if (isset($_GET['id'])) {
     }
 
 }
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    margin: 0; 
+}
+
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Aplicar el estilo a todos los inputs de número en la página */
+input[type=number] {
+    appearance: none; 
+}
+
 </style>
 </head>
 
@@ -320,7 +337,7 @@ if (isset($_GET['id'])) {
             <?php if (strpos(strtolower($producto->nombre), 'pasamanos') !== false) : ?>
                 <div class="inputPerfil mb-3">
                     <label class="labelPerfilProduct" for="largo" class="form-label">Largo (metros)</label>
-                    <input type="number" class="form-control inputPerfilProductoCont" id="largo" name="largo" step="0.01" max="50" required>
+                    <input type="number" class="form-control inputPerfilProductoCont" id="largo" name="largo" step="0.01" max="50" required style="">
                 </div>
             <?php else : ?>
                 <div class="inputPerfil mb-3">
@@ -454,6 +471,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const disenoInput = document.getElementById('diseno');
     const precioPorMetroCuadrado = <?php echo $producto->precio; ?>;
 
+    let updateTimeout; // Variable para almacenar el temporizador
+
     function actualizarPrecioTotal() {
         let total = 0;
         let cantidad = parseInt(cantidadInput.value) || 0;
@@ -463,8 +482,6 @@ document.addEventListener('DOMContentLoaded', function () {
             largo = Math.max(0, largo);
             largo = largo > 50 ? 50 : largo;
             cantidad = cantidad > 10 ? 10 : cantidad;
-            largoInput.value = largo;
-            cantidadInput.value = cantidad;
             total = largo * precioPorMetroCuadrado * cantidad;
         } else {
             let alto = parseFloat(altoInput.value) || 0;
@@ -475,20 +492,16 @@ document.addEventListener('DOMContentLoaded', function () {
             alto = alto > 50 ? 50 : alto;
             ancho = ancho > 50 ? 50 : ancho;
             cantidad = cantidad > 10 ? 10 : cantidad;
-            altoInput.value = alto;
-            anchoInput.value = ancho;
-            cantidadInput.value = cantidad;
             const metrosCuadrados = alto * ancho;
             total = metrosCuadrados * precioPorMetroCuadrado * cantidad;
 
             if ("<?php echo $categoria; ?>" === "tapices") {
-                let metrostapiz= metrosCuadrados*cantidad;
+                let metrostapiz = metrosCuadrados * cantidad;
                 if (metrostapiz <= 5) {
                     total = precioPorMetroCuadrado;
                 } else {
-                    
                     let bloques = Math.ceil(metrostapiz / 5);
-                    total = bloques * precioPorMetroCuadrado ;
+                    total = bloques * precioPorMetroCuadrado;
                 }
             } else {
                 total = metrosCuadrados * precioPorMetroCuadrado * cantidad;
@@ -499,19 +512,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function validarInput(event) {
-        let value = event.target.value;
-        if (parseFloat(value) < 0) {
-            value = 0;
-        }
-        const partes = value.split('.');
-        if (partes.length > 1 && partes[1].length > 2) {
-            partes[1] = partes[1].slice(0, 2);
-            value = partes.join('.');
-        }
-        event.target.value = value;
-        actualizarPrecioTotal();
+        let value = parseFloat(event.target.value);
+
+        // Limpiar el temporizador anterior
+        clearTimeout(updateTimeout);
+
+        // Configurar un nuevo temporizador que actualice el precio después de un breve momento
+        updateTimeout = setTimeout(function() {
+            if (isNaN(value) || value <= 0) {
+                value = 0.01; // Ajustar el valor mínimo permitido a 0.01
+            }
+
+            // Redondear a dos decimales si es necesario
+            const partes = value.toString().split('.');
+            if (partes.length > 1 && partes[1].length > 2) {
+                partes[1] = partes[1].slice(0, 2);
+                value = parseFloat(partes.join('.'));
+            }
+            event.target.value = value.toFixed(2); // Mostrar el valor redondeado con dos decimales
+            actualizarPrecioTotal();
+        }, 700); 
     }
 
+    // Asociar el evento 'input' a todos los campos de entrada relevantes
     if (altoInput) altoInput.addEventListener('input', validarInput);
     if (anchoInput) anchoInput.addEventListener('input', validarInput);
     if (largoInput) largoInput.addEventListener('input', validarInput);
