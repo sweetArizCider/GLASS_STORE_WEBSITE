@@ -595,6 +595,10 @@ $(document).ready(function() {
     });
 
 function changeIcon(element, id_producto) {
+    <?php if (!isset($_SESSION["nom_usuario"])): ?>
+        // Redirigir a la página de inicio de sesión si el usuario no está logueado
+        window.location.href = "../views/iniciarSesion.php";
+    <?php else: ?>
         var icon = element.querySelector('.icon-overlay');
         var isFavorite = icon.getAttribute('src') === '../img/index/heartCover.svg';
         if (isFavorite) {
@@ -603,21 +607,22 @@ function changeIcon(element, id_producto) {
             icon.setAttribute('src', '../img/index/heartCover.svg');
         }
         saveToFavorites(id_producto);
-    }
+    <?php endif; ?>
+}
 
-    function saveToFavorites(id_producto) {
-        $.ajax({
-            url: '../scripts/guardar_favorito.php',
-            method: 'POST',
-            data: { id_producto: id_producto },
-            success: function(response) {
-                console.log(response);
-            },
-            error: function(error) {
-                console.error('Error:', error);
-            }
-        });
-    }
+function saveToFavorites(id_producto) {
+    $.ajax({
+        url: '../scripts/guardar_favorito.php',
+        method: 'POST',
+        data: { id_producto: id_producto },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
      // Cargar favoritos cuando el modal es mostrado
      $('#favoritosModal').on('shown.bs.modal', function () {
         cargarFavoritos();

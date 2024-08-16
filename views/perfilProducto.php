@@ -59,6 +59,15 @@ if (isset($_SESSION["nom_usuario"])) {
         $paramsNotificaciones = [$id_instalador];
         $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
     }
+} else {
+    if (!isset($_SESSION['invitado_id'])) {
+        $invitado_id = 'invitado_' . uniqid(); // Generar un ID único
+        $_SESSION['invitado_id'] = $invitado_id;
+        setcookie("invitado_id", $invitado_id, time() + 3600, "/");  // Guardar la ID en una cookie
+    } else {
+        setcookie("invitado_id", $_SESSION['invitado_id'], time() + 3600, "/");  // Refrescar la cookie si ya existe
+    }
+    $id_usuario = $_SESSION['invitado_id']; // Usar el ID del invitado
 }
 
 // Verificar si el ID del producto está presente en la URL
@@ -108,7 +117,6 @@ if (isset($_GET['id'])) {
     echo "ID de producto no proporcionado.";
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -348,7 +356,7 @@ if (isset($_GET['id'])) {
 
         <div class="d-grid d-md-flex justify-content-md-between">
             <button type="submit" class="buttonPerfilProducto mb-2 mb-md-0" style="width: 100%; max-width: 100%;">Guardar Cotización</button>
-            <a href="./productos.php" class="buttonPerfilProductocancelar" style="max-width: 100%; margin-left:1em; text-decoration: none; text-align: center;">Cancelar</a>
+            <a href="./productos.php" class="buttonPerfilProductocancelar" style="max-width: 100%; margin-left:1em; text-decoration: none;">Cancelar</a>
         </div>
         
     </form>
@@ -413,7 +421,25 @@ if (isset($_GET['id'])) {
 </div>
 
 
-
+<!-- detalles producto en el carrito -->
+<div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="carritoModalLabel">Cotizaciones</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="carrito-list" class="row">
+                    <!-- Aquí se cargarán los detalles del carrito -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
@@ -543,86 +569,77 @@ $(document).ready(function() {
     }
 });
 
- // Cargar carrito cuando el modal es mostrado
- $(document).ready(function() {
-        $('#carritoModal').on('shown.bs.modal', function () {
-            cargarCarrito();
-        });
+$(document).ready(function() {
+    $('#carritoModal').on('shown.bs.modal', function () {
+        cargarCarrito();
+    });
 
-        $('#aceptar-btn').on('click', function() {
-            actualizarEstadoProductos();
-        });
+    $('#aceptar-btn').on('click', function() {
+        actualizarEstadoProductos();
+    });
 
-        function cargarCarrito() {
-    $.ajax({
-        url: '../scripts/obtener_carrito.php',
-        method: 'GET',
-        dataType: 'json',
-        success: function(carrito) {
-            var carritoList = $('#carrito-list');
-            carritoList.empty();
-            if (carrito.length > 0) {
-                carrito.forEach(function(item) {
-                    var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/disenos/default.png';
-
-                    // Concatenar las propiedades en una sola línea
-                    var descripcion = [];
-                    if (item.alto) descripcion.push('Alto: ' + item.alto);
-                    if (item.largo) descripcion.push('Largo: ' + item.largo);
-                    if (item.cantidad) descripcion.push('Cantidad: ' + item.cantidad);
-                    if (item.monto) descripcion.push('Monto: ' + item.monto);
-                    if (item.grosor) descripcion.push('Grosor: ' + item.grosor);
-                    if (item.codigo_diseno) descripcion.push('Diseño: ' + item.codigo_diseno);
-                    if (item.marco) descripcion.push('Accesorios: ' + item.marco);
-                    if (item.monto) descripcion.push('Monto: $' + item.monto);
-
-                    
-                    
-                    var descripcionProducto = descripcion.join(', ');
-
-                    var productoHtml = `
-                        <div class='col-md-12 mt-3 py-3 py-md-0'>
-                            <div class='card shadow' style='display: flex; flex-direction: row;padding:1em 1em;'>
-                                <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 9px;'>
-                                <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
-                                <div class='card-body'>
-                                    <h5 class='card-title'>${item.nombre_producto}</h5>
-                                    <p class='card-text'>${descripcionProducto}</p>
+    function cargarCarrito() {
+        $.ajax({
+            url: '../scripts/obtener_carrito.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(carrito) {
+                var carritoList = $('#carrito-list');
+                carritoList.empty();
+                if (carrito.length > 0) {
+                    carrito.forEach(function(item) {
+                        var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/index/default.png';
+                        var productoHtml = `
+                            <div class='col-md-12 mt-3 py-3 py-md-0'>
+                                <div class='card shadow' style='display: flex; flex-direction: row;'>
+                                    <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 15px;'>
+                                    <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
+                                    <div class='card-body'>
+                                        <h5 class='card-title'>${item.nombre_producto}</h5>
+                                        ${item.alto ? `<p class='card-text'>Alto: ${item.alto}</p>` : ''}
+                                        ${item.largo ? `<p class='card-text'>Largo: ${item.largo}</p>` : ''}
+                                        ${item.cantidad ? `<p class='card-text'>Cantidad: ${item.cantidad}</p>` : ''}
+                                        ${item.monto ? `<p class='card-text'>Monto: ${item.monto}</p>` : ''}
+                                        ${item.grosor ? `<p class='card-text'>Grosor: ${item.grosor}</p>` : ''}
+                                        ${item.tipo_tela ? `<p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p>` : ''}
+                                        ${item.marco ? `<p class='card-text'>Marco: ${item.marco}</p>` : ''}
+                                        ${item.tipo_cadena ? `<p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p>` : ''}
+                                        ${item.color ? `<p class='card-text'>Color: ${item.color}</p>` : ''}
+                                        ${item.codigo_diseno ? `<p class='card-text'>Diseño: ${item.codigo_diseno}</p>` : ''}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>`;
-                    carritoList.append(productoHtml);
-                });
-            } else {
-                carritoList.append(` <div class='text-center'>
-                ¿Aún no has solicitado una cotización? <a href='./productos.php'style='color: #007bff;'>¡Cotiza ahora!</a> y transforma tu espacio con nuestros productos.
-                </div>`);
+                            </div>`;
+                        carritoList.append(productoHtml);
+                    });
+                } 
+            },
+            error: function(error) {
+                console.error('Error al obtener los productos del carrito:', error);
+                $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
             }
-        },
-        error: function(error) {
-            console.error('Error al obtener los productos del carrito:', error);
-            $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
-        }
-    });
-}
-        function actualizarEstadoProductos() {
-            $('.producto-checkbox:checked').each(function() {
-                var idDetalleProducto = $(this).val();
-                $.ajax({
-                    url: '../scripts/actualizar_carrito.php',
-                    method: 'POST',
-                    data: { id_detalle_producto: idDetalleProducto },
-                    success: function(response) {
-                        console.log('Producto actualizado:', response);
-                        window.location.href = './citas.php';
-                    },
-                    error: function(error) {
-                        console.error('Error al actualizar el producto:', error);
-                    }
-                });
+        });
+    }
+
+    function actualizarEstadoProductos() {
+        $('.producto-checkbox:checked').each(function() {
+            var idDetalleProducto = $(this).val(); // Este valor debe ser el ID del detalle del producto
+            $.ajax({
+                url: '../scripts/actualizar_carrito.php',
+                method: 'POST',
+                data: {
+                    id_detalle_producto: idDetalleProducto
+                },
+                success: function(response) {
+                    console.log('Producto actualizado:', response);
+                    window.location.href = 'citas.php';
+                },
+                error: function(error) {
+                    console.error('Error al actualizar el producto:', error);
+                }
             });
-        }
-    });
+        });
+    }
+});
 </script>
 </body>
 </html>
