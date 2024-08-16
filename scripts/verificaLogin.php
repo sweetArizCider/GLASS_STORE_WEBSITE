@@ -57,7 +57,7 @@ if (isset($_POST['usuario']) && isset($_POST['contrasena'])) {
         }
     } catch (PDOException $e) {
         // Manejo de errores
-        echo "Error en la base de datos: " . $e->getMessage();
+        header("Location: ../views/iniciarSesion.php");
     }
 } else {
     // Datos incompletos
