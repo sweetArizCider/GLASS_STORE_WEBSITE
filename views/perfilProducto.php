@@ -519,17 +519,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Configurar un nuevo temporizador que actualice el precio después de un breve momento
         updateTimeout = setTimeout(function() {
-            if (isNaN(value) || value <= 0) {
-                value = 0.01; // Ajustar el valor mínimo permitido a 0.01
-            }
+            if (event.target.id === 'cantidad') {
+                // Validación específica para el campo cantidad (solo números enteros)
+                value = parseInt(value);
+                if (isNaN(value) || value <= 0) {
+                    value = 1; // Ajustar el valor mínimo permitido a 1
+                }
+                event.target.value = value; // Asignar el valor entero sin decimales
+            } else {
+                // Validación para los campos de medidas
+                if (isNaN(value) || value <= 0) {
+                    value = 0.01; // Ajustar el valor mínimo permitido a 0.01
+                }
 
-            // Redondear a dos decimales si es necesario
-            const partes = value.toString().split('.');
-            if (partes.length > 1 && partes[1].length > 2) {
-                partes[1] = partes[1].slice(0, 2);
-                value = parseFloat(partes.join('.'));
+                // Redondear a dos decimales si es necesario
+                const partes = value.toString().split('.');
+                if (partes.length > 1 && partes[1].length > 2) {
+                    partes[1] = partes[1].slice(0, 2);
+                    value = parseFloat(partes.join('.'));
+                }
+                event.target.value = value.toFixed(2); // Mostrar el valor redondeado con dos decimales
             }
-            event.target.value = value.toFixed(2); // Mostrar el valor redondeado con dos decimales
             actualizarPrecioTotal();
         }, 700); 
     }
