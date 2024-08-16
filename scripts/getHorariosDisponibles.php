@@ -1,30 +1,16 @@
 <?php
-header('Content-Type: application/json');
+include '../class/database.php';
 
-// Obtener la fecha desde la solicitud GET
-$fecha = $_GET['fecha'];
+if (isset($_GET['fecha'])) {
+    $fecha = $_GET['fecha'];
 
-// Crear una instancia de la clase database
-require_once 'path/to/database.php'; // Asegúrate de incluir la ruta correcta a tu archivo database.php
-$db = new database();
-$db->conectarDB(); // Conectar a la base de datos
+    $conexion = new Database();
+    $conexion->conectarDB();
 
-// Preparar la consulta SQL
-$sql = "SELECT hora FROM citas WHERE fecha = :fecha AND estatus IN ('aceptada', 'en espera')";
+    $query = "CALL consultar_horas_disponibles(?)";
+    $horarios = $conexion->seleccionar($query, [$fecha]);
 
-// Ejecutar la consulta con parámetros
-$params = ['fecha' => $fecha];
-$resultado = $db->executeQueryWithParams($sql, $params);
-
-// Procesar los resultados
-$horariosOcupados = [];
-foreach ($resultado as $row) {
-    $horariosOcupados[] = $row->hora;
+    header('Content-Type: application/json');
+    echo json_encode($horarios);
 }
-
-// Enviar los resultados en formato JSON
-echo json_encode($horariosOcupados);
-
-// Desconectar de la base de datos
-$db->desconectarDB();
 ?>

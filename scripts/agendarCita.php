@@ -2,44 +2,14 @@
 session_start();
 include '../class/database.php';
 
-// Función para obtener el ID de la relación cliente-dirección
-function obtenerIdClienteDireccion($cliente_id, $calle, $numero, $numero_interior, $colonia, $ciudad, $referencias, $conexion) {
-    // Verificar si la dirección ya existe
-    $query_verificar_direccion = "SELECT id_direccion FROM direcciones 
-                                  WHERE calle = ? AND numero = ? AND numero_int = ? 
-                                  AND colonia = ? AND ciudad = ?";
-    $stmt_verificar_direccion = $conexion->getPDO()->prepare($query_verificar_direccion);
-    $stmt_verificar_direccion->execute([$calle, $numero, $numero_interior, $colonia, $ciudad]);
-    $direccion_existente = $stmt_verificar_direccion->fetch(PDO::FETCH_ASSOC);
+echo $id_cliente;
+echo $tipo;
+echo $fecha;
+echo $hora;
+echo $direccion;
+echo $notas;
 
-    if ($direccion_existente) {
-        $direccion_id = $direccion_existente['id_direccion'];
-    } else {
-        $query_insertar_direccion = "INSERT INTO direcciones (calle, numero, numero_int, colonia, ciudad, referencias) 
-                                     VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt_insertar_direccion = $conexion->getPDO()->prepare($query_insertar_direccion);
-        $stmt_insertar_direccion->execute([$calle, $numero, $numero_interior, $colonia, $ciudad, $referencias]);
-        $direccion_id = $conexion->getPDO()->lastInsertId();
-    }
-
-    $query_verificar_cliente_direccion = "SELECT id_cliente_direcciones FROM cliente_direcciones 
-                                          WHERE cliente = ? AND direccion = ?";
-    $stmt_verificar_cliente_direccion = $conexion->getPDO()->prepare($query_verificar_cliente_direccion);
-    $stmt_verificar_cliente_direccion->execute([$cliente_id, $direccion_id]);
-    $cliente_direccion_existente = $stmt_verificar_cliente_direccion->fetch(PDO::FETCH_ASSOC);
-
-    if ($cliente_direccion_existente) {
-        return $cliente_direccion_existente['id_cliente_direcciones'];
-    } else {
-        $query_insertar_cliente_direccion = "INSERT INTO cliente_direcciones (cliente, direccion) 
-                                             VALUES (?, ?)";
-        $stmt_insertar_cliente_direccion = $conexion->getPDO()->prepare($query_insertar_cliente_direccion);
-        $stmt_insertar_cliente_direccion->execute([$cliente_id, $direccion_id]);
-
-        return $conexion->getPDO()->lastInsertId();
-    }
-}
-
+// Verificación de inicio de sesión--------------------------------------------
 if (isset($_SESSION["nom_usuario"])) {
     $user = $_SESSION["nom_usuario"];
     $conexion = new database();
@@ -142,31 +112,75 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    $calle = $_POST['calle'];
-    $numero = $_POST['numero'];
-    $numero_interior = $_POST['numero_interior'] ?? null;
-    $colonia = $_POST['colonia'];
-    $ciudad = $_POST['ciudad'];
-    $referencias = $_POST['referencias'] ?? null;
-    $motivo = $_POST['motivo'];
-    $hora = $_POST['hora'];
-    $fecha = $_POST['selected_date'];
-    $id_cliente = $_SESSION['id_cliente'];
 
-    $conexion = new database();
-    $conexion->conectarDB();
 
-    try {
-        $id_cliente_direccion = obtenerIdClienteDireccion($id_cliente, $calle, $numero, $numero_interior, $colonia, $ciudad, $referencias, $conexion);
+// Procesar el post--------------------------------------------
 
-        $query = "CALL crear_cita(?, ?, ?, ?, ?, @id_cita)";
-        $stmt = $conexion->getPDO()->prepare($query);
-        $stmt->execute(['instalacion', $fecha, $hora, $id_cliente_direccion, $motivo]);
 
-        $result = $conexion->getPDO()->query("SELECT @id_cita as id_cita");
-        $row = $result->fetch(PDO::FETCH_ASSOC);
-        $id_cita = $row['id_cita'] ?? null;
 
+$tipo = $_POST['tipo'];
+$fecha = $_POST['selected_date'];
+$hora = $_POST['hora'];
+$direccion = $_POST['direccion'];
+$notas = $_POST['motivo'];
+
+// Verificar que las variables requeridas no estén vacías
+if (empty($tipo) || empty($fecha) || empty($hora) || empty($direccion) || empty($notas)) {
+    echo "Todos los campos son obligatorios.";
+    exit();
+}
+
+try {
+    // Obtener id_cliente de la sesión usando las tablas usuarios y persona
+    $consulta_cliente = "SELECT c.id_cliente 
+                         FROM cliente c
+                         INNER JOIN persona p ON c.persona = p.id_persona
+                         INNER JOIN usuarios u ON p.usuario = u.id_usuario
+                         WHERE u.nom_usuario = :usuario";
+    $stmt_cliente = $conexion->getPDO()->prepare($consulta_cliente);
+    $stmt_cliente->bindParam(':usuario', $_SESSION['nom_usuario']);
+    $stmt_cliente->execute();
+    $id_cliente = $stmt_cliente->fetchColumn();
+
+    if ($id_cliente === false) {
+        echo "No se encontró el cliente para el usuario.";
+        exit();
+    }
+
+    // Obtener el id_cliente_direcciones correspondiente
+    $consulta_direccion = "SELECT id_cliente_direcciones FROM cliente_direcciones WHERE cliente = :cliente AND direccion = :direccion";
+    $stmt_direccion = $conexion->getPDO()->prepare($consulta_direccion);
+    $stmt_direccion->bindParam(':cliente', $id_cliente);
+    $stmt_direccion->bindParam(':direccion', $direccion);
+    $stmt_direccion->execute();
+    $id_cliente_direcciones = $stmt_direccion->fetchColumn();
+
+    if ($id_cliente_direcciones === false) {
+        echo "No se encontró una dirección válida para el cliente.";
+        exit();
+    }
+
+    // Preparar la consulta INSERT
+    $consulta = "INSERT INTO CITAS (tipo, fecha, hora, cliente_direccion, notas, estatus)
+    VALUES (:tipo, :fecha, :hora, :direccion, :notas, 'en espera')";
+    
+    $stmt = $conexion->getPDO()->prepare($consulta);
+    $stmt->bindParam(':tipo', $tipo);
+    $stmt->bindParam(':fecha', $fecha);
+    $stmt->bindParam(':hora', $hora);
+    $stmt->bindParam(':direccion', $id_cliente_direcciones); // Usar el id_cliente_direcciones
+    $stmt->bindParam(':notas', $notas);
+    $stmt->execute();
+
+
+
+
+
+
+
+
+
+// Mensaje de procesamiento--------------------------------------------
         if ($id_cita) {
             $username = $_SESSION["nom_usuario"];
             ?>
@@ -244,8 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </html>
             <?php
             
-
-            // Obtener los productos en carrito del cliente
+// Obtener los productos del carrito--------------------------------------------
             $query_productos_carrito = "SELECT id_detalle_producto FROM detalle_producto WHERE estatus = 'en carrito' AND cliente = ?";
             $stmt_productos_carrito = $conexion->getPDO()->prepare($query_productos_carrito);
             $stmt_productos_carrito->execute([$id_cliente]);
@@ -260,8 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if ($stmt_detalle_cita->rowCount() > 0) {
                        
-                        // Asegúrate de que el estatus es válido para la columna
-                        $estatus_valido = 'aceptada';  // Asegúrate de que este valor es válido para la columna 'estatus'
+                        $estatus_valido = 'aceptada'; 
                         $query_actualizar_estatus = "UPDATE detalle_producto SET estatus = ? WHERE id_detalle_producto = ?";
                         $stmt_actualizar_estatus = $conexion->getPDO()->prepare($query_actualizar_estatus);
                         $stmt_actualizar_estatus->execute([$estatus_valido, $detalle_producto_id]);

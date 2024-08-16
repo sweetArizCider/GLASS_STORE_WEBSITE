@@ -38,7 +38,7 @@ print_r(compact('usuario', 'calle', 'numero', 'numero_int', 'colonia', 'ciudad',
 echo "</pre>"; */
 
 // Preparar y ejecutar la consulta
-$sql = "CALL creardireccion(:usuario, :calle, :numero, :numero_int, :colonia, :ciudad, :referencias)";
+$sql = "CALL CrearDireccion(:usuario, :calle, :numero, :numero_int, :colonia, :ciudad, :referencias)";
 $stmt = $pdo->prepare($sql);
 
 $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR);
