@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../../css/style_admin.css">
     <style>
         .form-control:invalid {
-            border-color: #dc3545; //rojito
+            border-color: #dc3545; 
         }
         .form-control:valid {
             border-color: #0E2238;
@@ -83,8 +83,22 @@
             <li class="sidebar-item">
               <a href="../../../" class="sidebar-link">Volver al Inicio</a>
             </li>
+
           </ul>
         </li>
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+             data-bs-target="#citas" aria-expanded="false" aria-controls="citas">
+            <img src="../../img/admin/clipboard.svg" alt="Citas">
+            <span>Citas</span>
+          </a>
+          <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="./citas_cliente.php" class="sidebar-link">Tus Citas</a>
+            </li>
+          </ul>
+        </li>
+        
         
       </ul>
 
