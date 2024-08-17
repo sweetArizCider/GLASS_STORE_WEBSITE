@@ -162,6 +162,25 @@ input[type=number] {
     appearance: none; 
 }
 
+.icon-overlay-container-fav {
+    position: absolute;
+    bottom: 10px; /* Ajusta la distancia desde el borde inferior */
+    right: 10px; /* Ajusta la distancia desde el borde derecho */
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.8); /* Opcional: Fondo blanco semitransparente */
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.card {
+    position: relative; /* Necesario para que el ícono se posicione correctamente dentro de la tarjeta */
+}
+
+.icon-overlay-fav {
+    width: 25px; /* Ajusta el tamaño del ícono */
+    height: 25px;
+}
+
 </style>
 </head>
 
@@ -187,7 +206,8 @@ input[type=number] {
           <div class="icons">
                 <a href="../index.php"><img src="../img/index/inicio.svg" alt="" width="25px"></a>
                 <button class="botonMostrarFavoritos" data-bs-toggle="modal" data-bs-target="#favoritosModal"><img src="../img/index/favorites.svg" alt="" width="25px"></button>
-               
+                <a id="carrito" data-bs-toggle="modal" data-bs-target="#carritoModal"><img src="../img/index/clip.svg" alt="" width="25px"></a>
+
                 <div class="dropdown">
     <a href="#" id="user-icon" data-bs-toggle="dropdown" aria-expanded="false">
         <img src="../img/index/user.svg" alt="" width="25px" style="cursor: pointer">
@@ -420,6 +440,41 @@ input[type=number] {
     </div>
 </div>
 
+<!-- Modal de Cotizaciones -->
+<div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="carritoModalLabel">Cotizaciones</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <?php if (isset($_SESSION["nom_usuario"])): ?>
+                    <!-- Usuario logueado -->
+                    <?php if (!empty($productos_espera)): ?>
+                        <div id="carrito-list" class="row">
+                            <!-- Aquí se cargarán los detalles del carrito -->
+                        </div>
+                    <?php else: ?>
+                       
+                    <?php endif; ?>
+                    <?php else: ?>
+                    <!-- Usuario no logueado -->
+                         <div class="text-center">
+                            <p><a href="../views/iniciarSesion.php">Inicia sesión</a> para ver tus cotizaciones y acceder a ellas cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <div class="modal-footer">
+            <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
+                <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
+                <button type="button" id="limpiar-btn" class="btn btn-danger">Limpiar</button>
+            <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal de Favoritos -->
 <div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -431,7 +486,7 @@ input[type=number] {
             <div class="modal-body">
                 <?php if (isset($_SESSION["nom_usuario"])): ?>
                     <!-- Usuario logueado -->
-                    <p class="text-center">Guarda tus <a href="./productos.php">productos</a> favoritos y accede a ellos en cualquier momento.</p>
+                    <p class="text-center">Guarda tus productos favoritos y accede a ellos en cualquier momento.</p>
                     <div id="favoritos-list" class="row">
                         <!-- Aquí se cargarán los productos favoritos -->
                     </div>
@@ -446,26 +501,6 @@ input[type=number] {
     </div>
 </div>
 
-
-<!-- detalles producto en el carrito -->
-<div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="carritoModalLabel">Cotizaciones</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="carrito-list" class="row">
-                    <!-- Aquí se cargarán los detalles del carrito -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
@@ -570,13 +605,124 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+  // Cargar carrito cuando el modal es mostrado
+  $(document).ready(function() {
+        $('#carritoModal').on('shown.bs.modal', function () {
+            cargarCarrito();
+        });
 
-$(document).ready(function() {
-    $('#favoritosModal').on('shown.bs.modal', function () {
+        $('#aceptar-btn').on('click', function() {
+            actualizarEstadoProductos();
+        });
+
+        function cargarCarrito() {
+    $.ajax({
+        url: '../scripts/obtener_carrito.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function(carrito) {
+            var carritoList = $('#carrito-list');
+            carritoList.empty();
+            if (carrito.length > 0) {
+                carrito.forEach(function(item) {
+                    var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/disenos/default.png';
+
+                    // Concatenar las propiedades en una sola línea
+                    var descripcion = [];
+                    if (item.alto) descripcion.push('Alto: ' + item.alto);
+                    if (item.largo) descripcion.push('Largo: ' + item.largo);
+                    if (item.cantidad) descripcion.push('Cantidad: ' + item.cantidad);
+                    if (item.monto) descripcion.push('Monto: ' + item.monto);
+                    if (item.grosor) descripcion.push('Grosor: ' + item.grosor);
+                    if (item.codigo_diseno) descripcion.push('Diseño: ' + item.codigo_diseno);
+                    if (item.marco) descripcion.push('Accesorios: ' + item.marco);
+                    if (item.monto) descripcion.push('Monto: $' + item.monto);
+
+                    
+                    
+                    var descripcionProducto = descripcion.join(', ');
+
+                    var productoHtml = `
+                        <div class='col-md-12 mt-3 py-3 py-md-0'>
+                            <div class='card shadow' style='display: flex; flex-direction: row;padding:1em 1em;'>
+                                <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 9px;'>
+                                <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
+                                <div class='card-body'>
+                                    <h5 class='card-title'>${item.nombre_producto}</h5>
+                                    <p class='card-text'>${descripcionProducto}</p>
+                                </div>
+                            </div>
+                        </div>`;
+                    carritoList.append(productoHtml);
+                });
+            } else {
+                carritoList.append(` <div class='text-center'>
+                ¿Aún no has solicitado una cotización? <a href='./productos.php'style='color: #007bff;'>¡Cotiza ahora!</a> y transforma tu espacio con nuestros productos.
+                </div>`);
+            }
+        },
+        error: function(error) {
+            console.error('Error al obtener los productos del carrito:', error);
+            $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
+        }
+    });
+}
+        function actualizarEstadoProductos() {
+            $('.producto-checkbox:checked').each(function() {
+                var idDetalleProducto = $(this).val();
+                $.ajax({
+                    url: '../scripts/actualizar_carrito.php',
+                    method: 'POST',
+                    data: { id_detalle_producto: idDetalleProducto },
+                    success: function(response) {
+                        console.log('Producto actualizado:', response);
+                        window.location.href = './citas.php';
+                    },
+                    error: function(error) {
+                        console.error('Error al actualizar el producto:', error);
+                    }
+                });
+            });
+        }
+    });
+
+function changeIcon(element, id_producto) {
+    <?php if (!isset($_SESSION["nom_usuario"])): ?>
+        // Redirigir a la página de inicio de sesión si el usuario no está logueado
+        window.location.href = "../views/iniciarSesion.php";
+    <?php else: ?>
+        var icon = element.querySelector('.icon-overlay');
+        var isFavorite = icon.getAttribute('src') === '../img/index/heartCover.svg';
+        if (isFavorite) {
+            icon.setAttribute('src', '../img/index/addFavorites.svg');
+        } else {
+            icon.setAttribute('src', '../img/index/heartCover.svg');
+        }
+        saveToFavorites(id_producto);
+    <?php endif; ?>
+}
+
+function saveToFavorites(id_producto) {
+    $.ajax({
+        url: '../scripts/guardar_favorito.php',
+        method: 'POST',
+        data: { id_producto: id_producto },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+     // Cargar favoritos cuando el modal es mostrado
+     $('#favoritosModal').on('shown.bs.modal', function () {
         cargarFavoritos();
     });
-    
+
+    // Función para cargar favoritos
     function cargarFavoritos() {
+    <?php if (isset($_SESSION["nom_usuario"])): ?>
         $.ajax({
             url: '../scripts/obtener_favoritos.php',
             method: 'GET',
@@ -587,101 +733,92 @@ $(document).ready(function() {
                 if (favoritos.length > 0) {
                     favoritos.forEach(function(favorito) {
                         var imagen = favorito.imagen ? '../img/disenos/' + favorito.imagen : '../img/index/default.png';
+                        var iconoFavorito = '../img/index/heartCover.svg';
+
                         var favoritoHtml = `
-                            <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
+                           <div class='col-md-3 mt-3 py-3 py-md-0 product-item' id='favorito-${favorito.id_producto}'>
                                 <div class='card shadow'>
                                     <a href='./perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
                                         <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
                                         <div class='card-body'>
                                             <h5 class='card-title'>${favorito.nombre}</h5>
-                                            <p class='card-text'>$ ${favorito.precio}</p>
+                                            <p class='card-text'>$${favorito.precio}</p>
                                         </div>
                                     </a>
+                                    <div class='icon-overlay-container-fav' onclick='eliminarFavoritoDesdeModal(${favorito.id_producto})'>
+                                        <img src='${iconoFavorito}' alt='Remove Favorite Icon' class='icon-overlay-fav'>
+                                    </div>
                                 </div>
                             </div>`;
+
                         favoritosList.append(favoritoHtml);
                     });
-                } 
+                } else {
+                    favoritosList.append("<p class='text-center'>No tienes productos en favoritos.</p>");
+                }
             },
             error: function(error) {
                 console.error('Error al obtener los favoritos:', error);
                 $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
             }
         });
-    }
-});
+    <?php else: ?>
+        var favoritosList = $('#favoritos-list');
+        favoritosList.empty();
+        favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
+    <?php endif; ?>
+}
 
-$(document).ready(function() {
-    $('#carritoModal').on('shown.bs.modal', function () {
-        cargarCarrito();
-    });
-
-    $('#aceptar-btn').on('click', function() {
-        actualizarEstadoProductos();
-    });
-
-    function cargarCarrito() {
-        $.ajax({
-            url: '../scripts/obtener_carrito.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(carrito) {
-                var carritoList = $('#carrito-list');
-                carritoList.empty();
-                if (carrito.length > 0) {
-                    carrito.forEach(function(item) {
-                        var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/index/default.png';
-                        var productoHtml = `
-                            <div class='col-md-12 mt-3 py-3 py-md-0'>
-                                <div class='card shadow' style='display: flex; flex-direction: row;'>
-                                    <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 15px;'>
-                                    <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
-                                    <div class='card-body'>
-                                        <h5 class='card-title'>${item.nombre_producto}</h5>
-                                        ${item.alto ? `<p class='card-text'>Alto: ${item.alto}</p>` : ''}
-                                        ${item.largo ? `<p class='card-text'>Largo: ${item.largo}</p>` : ''}
-                                        ${item.cantidad ? `<p class='card-text'>Cantidad: ${item.cantidad}</p>` : ''}
-                                        ${item.monto ? `<p class='card-text'>Monto: ${item.monto}</p>` : ''}
-                                        ${item.grosor ? `<p class='card-text'>Grosor: ${item.grosor}</p>` : ''}
-                                        ${item.tipo_tela ? `<p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p>` : ''}
-                                        ${item.marco ? `<p class='card-text'>Marco: ${item.marco}</p>` : ''}
-                                        ${item.tipo_cadena ? `<p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p>` : ''}
-                                        ${item.color ? `<p class='card-text'>Color: ${item.color}</p>` : ''}
-                                        ${item.codigo_diseno ? `<p class='card-text'>Diseño: ${item.codigo_diseno}</p>` : ''}
-                                    </div>
-                                </div>
-                            </div>`;
-                        carritoList.append(productoHtml);
-                    });
-                } 
-            },
-            error: function(error) {
-                console.error('Error al obtener los productos del carrito:', error);
-                $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
-            }
-        });
-    }
-
-    function actualizarEstadoProductos() {
+   $(document).ready(function() {
+    $('#limpiar-btn').on('click', function() {
         $('.producto-checkbox:checked').each(function() {
-            var idDetalleProducto = $(this).val(); // Este valor debe ser el ID del detalle del producto
+            var idDetalleProducto = $(this).val();
+            var card = $(this).closest('.card'); // Guardar referencia al elemento de la tarjeta para eliminarlo
+
             $.ajax({
-                url: '../scripts/actualizar_carrito.php',
+                url: '../scripts/desactivar_cotizacion.php', // Archivo PHP que manejará la desactivación
                 method: 'POST',
-                data: {
-                    id_detalle_producto: idDetalleProducto
-                },
+                data: { id_detalle_producto: idDetalleProducto },
                 success: function(response) {
-                    console.log('Producto actualizado:', response);
-                    window.location.href = 'citas.php';
+                    console.log('Producto desactivado:', response);
+                    card.remove(); // Eliminar la tarjeta del DOM
                 },
                 error: function(error) {
-                    console.error('Error al actualizar el producto:', error);
+                    console.error('Error al desactivar el producto:', error);
                 }
             });
         });
-    }
+    });
 });
+
+function eliminarFavoritoDesdeModal(id_producto) {
+    $.ajax({
+        url: '../scripts/guardar_favorito.php',
+        method: 'POST',
+        data: { id_producto: id_producto },
+        success: function(response) {
+            if (response.mensaje === 'Producto eliminado de favoritos.') {
+                // Eliminar el producto del modal de favoritos
+                $('#favorito-' + id_producto).remove();
+
+                // Opcional: Mostrar un mensaje si ya no hay más favoritos
+                if ($('#favoritos-list').children().length === 0) {
+                    $('#favoritos-list').append("<p class='text-center'>No tienes productos en favoritos.</p>");
+                }
+            } else if (response.error) {
+                console.error('Error:', response.error);
+            }
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+$('#favoritosModal').on('hidden.bs.modal', function () {
+        location.reload(); // Recarga la página al cerrar el modal
+    });
+
+
 </script>
 </body>
 </html>
