@@ -47,7 +47,7 @@ if (isset($_SESSION["nom_usuario"])) {
         $id_cliente = $fila->id_cliente;
         $id_usuario = $id_cliente;
 
-        $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
+        $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ? order by fecha desc";
         $paramsNotificaciones = [$id_cliente];
         $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
 
@@ -59,6 +59,15 @@ if (isset($_SESSION["nom_usuario"])) {
         $paramsNotificaciones = [$id_instalador];
         $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
     }
+} else {
+    if (!isset($_SESSION['invitado_id'])) {
+        $invitado_id = 'invitado_' . uniqid(); // Generar un ID único
+        $_SESSION['invitado_id'] = $invitado_id;
+        setcookie("invitado_id", $invitado_id, time() + 3600, "/");  // Guardar la ID en una cookie
+    } else {
+        setcookie("invitado_id", $_SESSION['invitado_id'], time() + 3600, "/");  // Refrescar la cookie si ya existe
+    }
+    $id_usuario = $_SESSION['invitado_id']; // Usar el ID del invitado
 }
 
 // Verificar si el ID del producto está presente en la URL
@@ -108,7 +117,6 @@ if (isset($_GET['id'])) {
     echo "ID de producto no proporcionado.";
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -137,6 +145,23 @@ if (isset($_GET['id'])) {
     }
 
 }
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    margin: 0; 
+}
+
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Aplicar el estilo a todos los inputs de número en la página */
+input[type=number] {
+    appearance: none; 
+}
+
 </style>
 </head>
 
@@ -287,7 +312,16 @@ if (isset($_GET['id'])) {
         <div class="col-md-6">
             <!-- Información del producto -->
             <h1 class="titleProductPerfil"><?php echo htmlspecialchars($producto->nombre); ?></h1>
-            <h2 class="precioPerfil">$<?php echo number_format($producto->precio, 2); ?> MXN</h2>
+            <?php
+  if ($producto->categoria == 3) {
+    echo '<h2 class="precioPerfil">$' . number_format($producto->precio, 2) . ' MXN p/Rollo</h2>';
+}elseif (strpos(strtolower($producto->nombre), 'pasamanos') !== false) {
+    echo '<h2 class="precioPerfil">$' . number_format($producto->precio, 2) . ' MXN m</h2>';
+} else {
+    echo '<h2 class="precioPerfil">$' . number_format($producto->precio, 2) . ' MXN m<sup>2</sup></h2>';
+}
+?>
+
             <p class="descripcionPerfil"><?php echo htmlspecialchars($producto->descripcion); ?></p>
            
             <?php if (!empty($disenos)) : ?>
@@ -312,7 +346,7 @@ if (isset($_GET['id'])) {
             <?php if (strpos(strtolower($producto->nombre), 'pasamanos') !== false) : ?>
                 <div class="inputPerfil mb-3">
                     <label class="labelPerfilProduct" for="largo" class="form-label">Largo (metros)</label>
-                    <input type="number" class="form-control inputPerfilProductoCont" id="largo" name="largo" step="0.01" max="50" required>
+                    <input type="number" class="form-control inputPerfilProductoCont" id="largo" name="largo" step="0.01" max="50" required style="">
                 </div>
             <?php else : ?>
                 <div class="inputPerfil mb-3">
@@ -348,7 +382,7 @@ if (isset($_GET['id'])) {
 
         <div class="d-grid d-md-flex justify-content-md-between">
             <button type="submit" class="buttonPerfilProducto mb-2 mb-md-0" style="width: 100%; max-width: 100%;">Guardar Cotización</button>
-            <a href="./productos.php" class="buttonPerfilProductocancelar" style="max-width: 100%; margin-left:1em; text-decoration: none; text-align: center;">Cancelar</a>
+            <a href="./productos.php" class="buttonPerfilProductocancelar" style="max-width: 100%; margin-left:1em; text-decoration: none;">Cancelar</a>
         </div>
         
     </form>
@@ -373,7 +407,7 @@ if (isset($_GET['id'])) {
                 if (!empty($notificacionesRecientes)) {
                     foreach ($notificacionesRecientes as $notif) {
                         echo '<div class="notification">';
-                        echo '<p>' . htmlspecialchars($notif->notificacion) . '</p>';
+                        echo '<mark><p>' . htmlspecialchars($notif->notificacion) . '</p></mark>';
                         echo '<small>' . htmlspecialchars($notif->fecha) . '</small>';
                         echo '</div>';
                     }
@@ -413,7 +447,25 @@ if (isset($_GET['id'])) {
 </div>
 
 
-
+<!-- detalles producto en el carrito -->
+<div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="carritoModalLabel">Cotizaciones</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="carrito-list" class="row">
+                    <!-- Aquí se cargarán los detalles del carrito -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
@@ -428,6 +480,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const disenoInput = document.getElementById('diseno');
     const precioPorMetroCuadrado = <?php echo $producto->precio; ?>;
 
+    let updateTimeout; // Variable para almacenar el temporizador
+
     function actualizarPrecioTotal() {
         let total = 0;
         let cantidad = parseInt(cantidadInput.value) || 0;
@@ -437,8 +491,6 @@ document.addEventListener('DOMContentLoaded', function () {
             largo = Math.max(0, largo);
             largo = largo > 50 ? 50 : largo;
             cantidad = cantidad > 10 ? 10 : cantidad;
-            largoInput.value = largo;
-            cantidadInput.value = cantidad;
             total = largo * precioPorMetroCuadrado * cantidad;
         } else {
             let alto = parseFloat(altoInput.value) || 0;
@@ -449,20 +501,16 @@ document.addEventListener('DOMContentLoaded', function () {
             alto = alto > 50 ? 50 : alto;
             ancho = ancho > 50 ? 50 : ancho;
             cantidad = cantidad > 10 ? 10 : cantidad;
-            altoInput.value = alto;
-            anchoInput.value = ancho;
-            cantidadInput.value = cantidad;
             const metrosCuadrados = alto * ancho;
             total = metrosCuadrados * precioPorMetroCuadrado * cantidad;
 
             if ("<?php echo $categoria; ?>" === "tapices") {
-                let metrostapiz= metrosCuadrados*cantidad;
+                let metrostapiz = metrosCuadrados * cantidad;
                 if (metrostapiz <= 5) {
                     total = precioPorMetroCuadrado;
                 } else {
-                    
                     let bloques = Math.ceil(metrostapiz / 5);
-                    total = bloques * precioPorMetroCuadrado ;
+                    total = bloques * precioPorMetroCuadrado;
                 }
             } else {
                 total = metrosCuadrados * precioPorMetroCuadrado * cantidad;
@@ -473,19 +521,39 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function validarInput(event) {
-        let value = event.target.value;
-        if (parseFloat(value) < 0) {
-            value = 0;
-        }
-        const partes = value.split('.');
-        if (partes.length > 1 && partes[1].length > 2) {
-            partes[1] = partes[1].slice(0, 2);
-            value = partes.join('.');
-        }
-        event.target.value = value;
-        actualizarPrecioTotal();
+        let value = parseFloat(event.target.value);
+
+        // Limpiar el temporizador anterior
+        clearTimeout(updateTimeout);
+
+        // Configurar un nuevo temporizador que actualice el precio después de un breve momento
+        updateTimeout = setTimeout(function() {
+            if (event.target.id === 'cantidad') {
+                // Validación específica para el campo cantidad (solo números enteros)
+                value = parseInt(value);
+                if (isNaN(value) || value <= 0) {
+                    value = 1; // Ajustar el valor mínimo permitido a 1
+                }
+                event.target.value = value; // Asignar el valor entero sin decimales
+            } else {
+                // Validación para los campos de medidas
+                if (isNaN(value) || value <= 0) {
+                    value = 0.01; // Ajustar el valor mínimo permitido a 0.01
+                }
+
+                // Redondear a dos decimales si es necesario
+                const partes = value.toString().split('.');
+                if (partes.length > 1 && partes[1].length > 2) {
+                    partes[1] = partes[1].slice(0, 2);
+                    value = parseFloat(partes.join('.'));
+                }
+                event.target.value = value.toFixed(2); // Mostrar el valor redondeado con dos decimales
+            }
+            actualizarPrecioTotal();
+        }, 700); 
     }
 
+    // Asociar el evento 'input' a todos los campos de entrada relevantes
     if (altoInput) altoInput.addEventListener('input', validarInput);
     if (anchoInput) anchoInput.addEventListener('input', validarInput);
     if (largoInput) largoInput.addEventListener('input', validarInput);
@@ -543,86 +611,77 @@ $(document).ready(function() {
     }
 });
 
- // Cargar carrito cuando el modal es mostrado
- $(document).ready(function() {
-        $('#carritoModal').on('shown.bs.modal', function () {
-            cargarCarrito();
-        });
+$(document).ready(function() {
+    $('#carritoModal').on('shown.bs.modal', function () {
+        cargarCarrito();
+    });
 
-        $('#aceptar-btn').on('click', function() {
-            actualizarEstadoProductos();
-        });
+    $('#aceptar-btn').on('click', function() {
+        actualizarEstadoProductos();
+    });
 
-        function cargarCarrito() {
-    $.ajax({
-        url: '../scripts/obtener_carrito.php',
-        method: 'GET',
-        dataType: 'json',
-        success: function(carrito) {
-            var carritoList = $('#carrito-list');
-            carritoList.empty();
-            if (carrito.length > 0) {
-                carrito.forEach(function(item) {
-                    var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/disenos/default.png';
-
-                    // Concatenar las propiedades en una sola línea
-                    var descripcion = [];
-                    if (item.alto) descripcion.push('Alto: ' + item.alto);
-                    if (item.largo) descripcion.push('Largo: ' + item.largo);
-                    if (item.cantidad) descripcion.push('Cantidad: ' + item.cantidad);
-                    if (item.monto) descripcion.push('Monto: ' + item.monto);
-                    if (item.grosor) descripcion.push('Grosor: ' + item.grosor);
-                    if (item.codigo_diseno) descripcion.push('Diseño: ' + item.codigo_diseno);
-                    if (item.marco) descripcion.push('Accesorios: ' + item.marco);
-                    if (item.monto) descripcion.push('Monto: $' + item.monto);
-
-                    
-                    
-                    var descripcionProducto = descripcion.join(', ');
-
-                    var productoHtml = `
-                        <div class='col-md-12 mt-3 py-3 py-md-0'>
-                            <div class='card shadow' style='display: flex; flex-direction: row;padding:1em 1em;'>
-                                <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 9px;'>
-                                <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
-                                <div class='card-body'>
-                                    <h5 class='card-title'>${item.nombre_producto}</h5>
-                                    <p class='card-text'>${descripcionProducto}</p>
+    function cargarCarrito() {
+        $.ajax({
+            url: '../scripts/obtener_carrito.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(carrito) {
+                var carritoList = $('#carrito-list');
+                carritoList.empty();
+                if (carrito.length > 0) {
+                    carrito.forEach(function(item) {
+                        var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/index/default.png';
+                        var productoHtml = `
+                            <div class='col-md-12 mt-3 py-3 py-md-0'>
+                                <div class='card shadow' style='display: flex; flex-direction: row;'>
+                                    <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 15px;'>
+                                    <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
+                                    <div class='card-body'>
+                                        <h5 class='card-title'>${item.nombre_producto}</h5>
+                                        ${item.alto ? `<p class='card-text'>Alto: ${item.alto}</p>` : ''}
+                                        ${item.largo ? `<p class='card-text'>Largo: ${item.largo}</p>` : ''}
+                                        ${item.cantidad ? `<p class='card-text'>Cantidad: ${item.cantidad}</p>` : ''}
+                                        ${item.monto ? `<p class='card-text'>Monto: ${item.monto}</p>` : ''}
+                                        ${item.grosor ? `<p class='card-text'>Grosor: ${item.grosor}</p>` : ''}
+                                        ${item.tipo_tela ? `<p class='card-text'>Tipo de Tela: ${item.tipo_tela}</p>` : ''}
+                                        ${item.marco ? `<p class='card-text'>Marco: ${item.marco}</p>` : ''}
+                                        ${item.tipo_cadena ? `<p class='card-text'>Tipo de Cadena: ${item.tipo_cadena}</p>` : ''}
+                                        ${item.color ? `<p class='card-text'>Color: ${item.color}</p>` : ''}
+                                        ${item.codigo_diseno ? `<p class='card-text'>Diseño: ${item.codigo_diseno}</p>` : ''}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>`;
-                    carritoList.append(productoHtml);
-                });
-            } else {
-                carritoList.append(` <div class='text-center'>
-                ¿Aún no has solicitado una cotización? <a href='./productos.php'style='color: #007bff;'>¡Cotiza ahora!</a> y transforma tu espacio con nuestros productos.
-                </div>`);
+                            </div>`;
+                        carritoList.append(productoHtml);
+                    });
+                } 
+            },
+            error: function(error) {
+                console.error('Error al obtener los productos del carrito:', error);
+                $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
             }
-        },
-        error: function(error) {
-            console.error('Error al obtener los productos del carrito:', error);
-            $('#carrito-list').append("<p>Error al cargar los productos del carrito.</p>");
-        }
-    });
-}
-        function actualizarEstadoProductos() {
-            $('.producto-checkbox:checked').each(function() {
-                var idDetalleProducto = $(this).val();
-                $.ajax({
-                    url: '../scripts/actualizar_carrito.php',
-                    method: 'POST',
-                    data: { id_detalle_producto: idDetalleProducto },
-                    success: function(response) {
-                        console.log('Producto actualizado:', response);
-                        window.location.href = './citas.php';
-                    },
-                    error: function(error) {
-                        console.error('Error al actualizar el producto:', error);
-                    }
-                });
+        });
+    }
+
+    function actualizarEstadoProductos() {
+        $('.producto-checkbox:checked').each(function() {
+            var idDetalleProducto = $(this).val(); // Este valor debe ser el ID del detalle del producto
+            $.ajax({
+                url: '../scripts/actualizar_carrito.php',
+                method: 'POST',
+                data: {
+                    id_detalle_producto: idDetalleProducto
+                },
+                success: function(response) {
+                    console.log('Producto actualizado:', response);
+                    window.location.href = 'citas.php';
+                },
+                error: function(error) {
+                    console.error('Error al actualizar el producto:', error);
+                }
             });
-        }
-    });
+        });
+    }
+});
 </script>
 </body>
 </html>

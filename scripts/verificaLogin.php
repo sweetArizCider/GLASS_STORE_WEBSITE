@@ -1,71 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container">
+<?php
+session_start();
+include '../class/database.php';
 
-    <?php
-    include '../class/database.php';
+if (isset($_POST['usuario']) && isset($_POST['contrasena'])) {
+    try {
+        $db = new database();
+        $db->conectarDB();
+        $pdo = $db->getPDO();
 
-    $db = new Database();
-    $db->conectarDB();
-
-    $mensaje = '';
-    $redirectUrl = '../views/iniciarSesion.php'; // URL por defecto en caso de error
-
-    if (isset($_POST['usuario']) && isset($_POST['contrasena'])) {
         $usuario = $_POST['usuario'];
-        $contra = $_POST['contrasena'];  // No hashees la contraseña aquí; el procedimiento lo hace
+        $contrasena = $_POST['contrasena'];
 
-        try {
-            // Usar el método corregido
-            $query = "CALL autenticacion(:usuario, :contrasena)";
-            $params = [
-                ':usuario' => $usuario,
-                ':contrasena' => $contra
-            ];
+        // Llamar al procedimiento almacenado de autenticación
+        $stmt = $pdo->prepare("CALL autenticacion1(:usuario, :contrasena)");
+        $stmt->bindParam(':usuario', $usuario);
+        $stmt->bindParam(':contrasena', $contrasena);
+        $stmt->execute();
 
-            // Ejecutar procedimiento y obtener resultados
-            $result = $db->ejecutarProcedimiento($query, $params);
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($result && count($result) > 0) {
-                // Asumiendo que el resultado es un array de objetos o stdClass
-                $mensaje = $result[0]->mensaje ?? 'Error en la autenticación';
-                
-                if ($mensaje == 'Autenticación exitosa') {
-                    session_start();
-                    $_SESSION["nom_usuario"] = $usuario;
-                    $_SESSION["rol"] = $result[0]->rol ?? 'default'; // Asumiendo que el procedimiento almacenado devuelve el rol
-                    $mensaje = "<h2 align='center'>BIENVENIDO ". $_SESSION["nom_usuario"]. "</h2>";
-                    $redirectUrl = '../index.php'; // Cambia la URL de redirección
-                } else {
-                    $mensaje = $mensaje;
-                }
-            } else {
-                $mensaje = 'Error en la autenticación.';
+        // Cerrar el cursor para liberar la conexión para nuevas consultas
+        $stmt->closeCursor();
+
+        if ($resultado) {
+            // Autenticación exitosa, almacenar la sesión del usuario
+            $_SESSION['nom_usuario'] = $usuario;
+
+            // Recuperar el ID del usuario autenticado
+            $id_usuario = $resultado['id_usuario'];
+
+            // Verificar si el usuario tiene cotizaciones como invitado
+            if (isset($_SESSION['invitado_id'])) {
+                $invitado_id = $_SESSION['invitado_id'];
+
+                // Asignar las cotizaciones del invitado al usuario autenticado
+                $updateStmt = $pdo->prepare("
+                    UPDATE detalle_producto
+                    SET cliente = :id_usuario, invitado_id = NULL
+                    WHERE invitado_id = :invitado_id
+                ");
+                $updateStmt->bindParam(':id_usuario', $id_usuario);
+                $updateStmt->bindParam(':invitado_id', $invitado_id);
+                $updateStmt->execute();
+
+                // Limpiar la sesión del invitado
+                unset($_SESSION['invitado_id']);
             }
-        } catch (Exception $e) {
-            $mensaje = 'Error: ' . $e->getMessage();
+
+            // Redirigir al inicio o a la página principal
+            header("Location: ../index.php");
+            exit();
+        } else {
+            // Autenticación fallida
+            header("Location: ../views/iniciarSesion.php?error=1");
+            exit();
         }
-    } else {
-        $mensaje = 'Debes llenar todos los campos';
+    } catch (PDOException $e) {
+        // Manejo de errores
+        header("Location: ../views/iniciarSesion.php");
     }
-
-    // Mostrar mensaje y redirigir
-    echo "<div class='alert alert-danger' align='center'>" . $mensaje . "</div>";
-    header("Location: $redirectUrl");
-    exit(); // Asegúrate de llamar a exit() después de header()
-
-    // Desconectar la base de datos
-    $db->desconectarDB();
-    ?>
-
-    </div>
-</body>
-</html>
-
+} else {
+    // Datos incompletos
+    header("Location: ../views/iniciarSesion.php?error=2");
+    exit();
+}
+?>

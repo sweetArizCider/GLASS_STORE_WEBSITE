@@ -44,7 +44,10 @@ try {
 
 $db = new Database();
 $db->conectarDB();
-$cadena = "select
+
+$order = isset($_GET['order']) && $_GET['order'] === 'asc' ? 'ASC' : 'DESC';
+
+$cadena = "SELECT
     c.id_cita,
     concat(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) as nombre_cliente,
     c.fecha,
@@ -75,18 +78,20 @@ $cadena = "select
         ),
         'no hay cotizaciones'
     ) as cotizaciones
-from
+FROM
     citas c
-join
+JOIN
     cliente_direcciones cd on c.cliente_direccion = cd.id_cliente_direcciones
-join
+JOIN
     cliente cli on cd.cliente = cli.id_cliente
-join
+JOIN
     persona p on cli.persona = p.id_persona
-join
+JOIN
     direcciones d on cd.direccion = d.id_direccion
-where
-    c.estatus = 'en espera';";
+WHERE
+    c.estatus = 'en espera'
+ORDER BY c.fecha $order";
+
 
 $result = $db->ejecutar($cadena, []);
 
@@ -214,6 +219,7 @@ $db->desconectarDB();
           <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
               <a href="./vista_admin_citas.php" class="sidebar-link">Gestionar citas</a>
+          
             </li>
           </ul>
         </li>
@@ -277,7 +283,12 @@ $db->desconectarDB();
       <div class="text-center">
       <div class="col-12 mb-4 card-bienvenida">
         <div class="text-center">
-          <h5 class="mensaje-bienvenida">Gestionar Citas</h5>
+          <h6 class="mensaje-bienvenida">Gestionar Citas</h6>
+          <br>
+          <div class="text-center">         
+              <button class="buuton-dar-rol" onclick="window.location.href='?order=asc'">Citas Más Antiguas</button>
+              <button class="buuton-dar-rol" onclick="window.location.href='?order=desc'">Citas Más Recientes</button>
+          </div>
         </div>
       </div><br>
         
