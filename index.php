@@ -31,7 +31,7 @@ if (isset($_SESSION["nom_usuario"])) {
                 $id_cliente = $fila->id_cliente;
                 $id_usuario = $id_cliente;
                 // Cambia el nombre de la tabla a minúsculas
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = :cliente";
+                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = :cliente order by fecha desc";
                 $paramsNotificaciones = [':cliente' => $id_cliente];
                 $notificaciones = $conexion->seleccionar($consultaNotificaciones, $paramsNotificaciones);
 

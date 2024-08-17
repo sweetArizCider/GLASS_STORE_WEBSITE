@@ -47,7 +47,7 @@ if (isset($_SESSION["nom_usuario"])) {
         $id_cliente = $fila->id_cliente;
         $id_usuario = $id_cliente;
 
-        $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
+        $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ? order by fecha desc";
         $paramsNotificaciones = [$id_cliente];
         $notificaciones = $db->seleccionar($consultaNotificaciones, $paramsNotificaciones);
 
@@ -312,7 +312,16 @@ input[type=number] {
         <div class="col-md-6">
             <!-- Información del producto -->
             <h1 class="titleProductPerfil"><?php echo htmlspecialchars($producto->nombre); ?></h1>
-            <h2 class="precioPerfil">$<?php echo number_format($producto->precio, 2); ?> MXN</h2>
+            <?php
+  if ($producto->categoria == 3) {
+    echo '<h2 class="precioPerfil">$' . number_format($producto->precio, 2) . ' MXN p/Rollo</h2>';
+}elseif (strpos(strtolower($producto->nombre), 'pasamanos') !== false) {
+    echo '<h2 class="precioPerfil">$' . number_format($producto->precio, 2) . ' MXN m</h2>';
+} else {
+    echo '<h2 class="precioPerfil">$' . number_format($producto->precio, 2) . ' MXN m<sup>2</sup></h2>';
+}
+?>
+
             <p class="descripcionPerfil"><?php echo htmlspecialchars($producto->descripcion); ?></p>
            
             <?php if (!empty($disenos)) : ?>
@@ -398,7 +407,7 @@ input[type=number] {
                 if (!empty($notificacionesRecientes)) {
                     foreach ($notificacionesRecientes as $notif) {
                         echo '<div class="notification">';
-                        echo '<p>' . htmlspecialchars($notif->notificacion) . '</p>';
+                        echo '<mark><p>' . htmlspecialchars($notif->notificacion) . '</p></mark>';
                         echo '<small>' . htmlspecialchars($notif->fecha) . '</small>';
                         echo '</div>';
                     }

@@ -33,7 +33,7 @@ if (isset($_SESSION["nom_usuario"])) {
                 $id_cliente = $fila->id_cliente;
                 $id_usuario = $id_cliente;
 
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
+                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ? order by fecha desc";
                 $paramsNotificaciones = [$id_cliente];
                 $notificaciones = $conexion->seleccionar($consultaNotificaciones, $paramsNotificaciones);
 
@@ -290,7 +290,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             <div class="modal-footer">
     <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
         <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
-
+        <button type="button" id="limpiar-btn" class="btn btn-danger">Limpiar</button>
     <?php endif; ?>
 </div>
         </div>
@@ -668,6 +668,28 @@ function saveToFavorites(id_producto) {
             favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
         <?php endif; ?>
     }
+
+   $(document).ready(function() {
+    $('#limpiar-btn').on('click', function() {
+        $('.producto-checkbox:checked').each(function() {
+            var idDetalleProducto = $(this).val();
+            var card = $(this).closest('.card'); // Guardar referencia al elemento de la tarjeta para eliminarlo
+
+            $.ajax({
+                url: '../scripts/desactivar_cotizacion.php', // Archivo PHP que manejará la desactivación
+                method: 'POST',
+                data: { id_detalle_producto: idDetalleProducto },
+                success: function(response) {
+                    console.log('Producto desactivado:', response);
+                    card.remove(); // Eliminar la tarjeta del DOM
+                },
+                error: function(error) {
+                    console.error('Error al desactivar el producto:', error);
+                }
+            });
+        });
+    });
+});
 
 </script>
 
