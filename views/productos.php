@@ -280,19 +280,19 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                     <?php else: ?>
                        
                     <?php endif; ?>
-                <?php else: ?>
+                    <?php else: ?>
                     <!-- Usuario no logueado -->
-                    <div class="text-center">
-                        <p><a href="../views/iniciarSesion.php">Inicia sesión</a> para ver tus cotizaciones y acceder a ellas cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
-                    </div>
-                <?php endif; ?>
-            </div>
+                         <div class="text-center">
+                            <p><a href="../views/iniciarSesion.php">Inicia sesión</a> para ver tus cotizaciones y acceder a ellas cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
             <div class="modal-footer">
-    <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
-        <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
-        <button type="button" id="limpiar-btn" class="btn btn-danger">Limpiar</button>
-    <?php endif; ?>
-</div>
+            <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
+                <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
+                <button type="button" id="limpiar-btn" class="btn btn-danger">Limpiar</button>
+            <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>
