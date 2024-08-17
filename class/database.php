@@ -7,7 +7,7 @@ class database{
     private $PDOlocal;
     private $user = 'arizpe1';
     private $password = "arizpe1";
-    private $server = "mysql:host=54.214.99.251;dbname=glass_store_ana";
+    private $server = "mysql:host=18.246.191.85;dbname=glass_store_ana";
 
     // le ponemos la sig cadena: host, base de datos
     function conectarDB()
@@ -152,14 +152,17 @@ class database{
     }
 
     // Método para preparar una consulta
-    public function prepareQuery($query) {
-        try {
-            return $this->prepareQuery($query);
-            //return $this->prepare($query);
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }
+public function prepareQuery($query) {
+    try {
+        // Usar el objeto PDO directamente para preparar la consulta
+        return $this->PDOlocal->prepare($query);
+    } catch (PDOException $e) {
+        // Manejo de errores
+        echo "Error en la preparación de la consulta: " . $e->getMessage();
+        return false; // Retornar false en caso de error
     }
+}
+
 
     // Método para ejecutar una consulta sin parámetros
     public function executeQuery($query) {
