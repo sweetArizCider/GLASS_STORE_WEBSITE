@@ -100,9 +100,10 @@
         <div class="welcome-message">
             <h1>Bienvenido, <?php echo htmlspecialchars($nombres); ?>!</h1>
             <p>Tu cuenta  <?php echo htmlspecialchars($usuario); ?>  ha sido creada exitosamente.</p>
+
         </div>
     </div>
-<?php endif;   ?>
+<?php endif;  header("refresh:2;../views/iniciarSesion.php"); ?>
 
 <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 </body>
