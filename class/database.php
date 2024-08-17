@@ -7,7 +7,7 @@ class database{
     private $PDOlocal;
     private $user = 'arizpe1';
     private $password = "arizpe1";
-    private $server = "mysql:host=54.214.99.251;dbname=glass_store_ana";
+    private $server = "mysql:host=52.13.18.10;dbname=glass_store_ana";
 
     // le ponemos la sig cadena: host, base de datos
     function conectarDB()
