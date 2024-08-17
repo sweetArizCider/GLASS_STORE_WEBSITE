@@ -532,15 +532,11 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 <script>
-  function changeIcon(container) {
-      const icon = container.querySelector('img.icon-overlay');
-      if (icon.src.includes('addFavorites.svg')) {
-          icon.src = '../img/index/heartCover.svg'; 
-      } else {
-          icon.src = '../img/index/addFavorites.svg'; 
-      }
-      sound.play();
-  }
+     $('#favoritosModal').on('hidden.bs.modal', function () {
+        location.reload(); // Recarga la página al cerrar el modal
+    });
+
+ 
   document.getElementById('user-icon').addEventListener('click', function() {
             var loginForm = document.getElementById('login-form');
             if (loginForm.style.display === 'none' || loginForm.style.display === '') {
@@ -620,7 +616,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
 
 
     // Cargar carrito cuando el modal es mostrado
-    $(document).ready(function() {
+     $(document).ready(function() {
         $('#carritoModal').on('shown.bs.modal', function () {
             cargarCarrito();
         });
@@ -631,7 +627,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
 
         function cargarCarrito() {
     $.ajax({
-        url: './scripts/obtener_carrito.php',
+        url: '../scripts/obtener_carrito.php',
         method: 'GET',
         dataType: 'json',
         success: function(carrito) {
@@ -639,7 +635,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             carritoList.empty();
             if (carrito.length > 0) {
                 carrito.forEach(function(item) {
-                    var imagen = item.imagen_producto ? './img/disenos/' + item.imagen_producto : './img/disenos/default.png';
+                    var imagen = item.imagen_producto ? '../img/disenos/' + item.imagen_producto : '../img/disenos/default.png';
 
                     // Concatenar las propiedades en una sola línea
                     var descripcion = [];
@@ -660,7 +656,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                         <div class='col-md-12 mt-3 py-3 py-md-0'>
                             <div class='card shadow' style='display: flex; flex-direction: row;padding:1em 1em;'>
                                 <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 9px;'>
-                                <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left imagen-cotizacion-cliente-detalle' style='width: 150px; height: 150px;'>
+                                <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
                                 <div class='card-body'>
                                     <h5 class='card-title'>${item.nombre_producto}</h5>
                                     <p class='card-text'>${descripcionProducto}</p>
@@ -685,12 +681,12 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             $('.producto-checkbox:checked').each(function() {
                 var idDetalleProducto = $(this).val();
                 $.ajax({
-                    url: './scripts/actualizar_carrito.php',
+                    url: '../scripts/actualizar_carrito.php',
                     method: 'POST',
                     data: { id_detalle_producto: idDetalleProducto },
                     success: function(response) {
                         console.log('Producto actualizado:', response);
-                        window.location.href = './views/citas.php';
+                        window.location.href = './citas.php';
                     },
                     error: function(error) {
                         console.error('Error al actualizar el producto:', error);
@@ -699,6 +695,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             });
         }
     });
+
 </script>
 <script src="../js/loginSuccess.js"></script>
 <script src="./js/bootstrap.bundle.min.js"></script>
