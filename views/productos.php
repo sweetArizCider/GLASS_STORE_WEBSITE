@@ -549,20 +549,20 @@ $(document).ready(function() {
     var iconoFavorito = producto.es_favorito ? '../img/index/heartCover.svg' : '../img/index/addFavorites.svg';
 
     var productoHtml = `
-        <div class='col-md-3 mt-3 py-3 py-md-0 product-item' id='favorito-${favorito.id_producto}'>
-        <div class='card shadow'>
-            <a href='./perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
-                <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
-                <div class='card-body'>
-                    <h5 class='card-title'>${favorito.nombre}</h5>
-                    <p class='card-text'>$${favorito.precio}</p>
+        <div class='col-md-3 mt-3 py-3 py-md-0 product-item' data-name='${producto.nombre}'>
+            <div class='card shadow' id='c'>
+                <a href='./perfilProducto.php?id=${producto.id_producto}' style='text-decoration: none; color: inherit;'>
+                    <img src='${imagen}' alt='${producto.nombre}' class='card image-top pad'>
+                </a>
+                <div class='icon-overlay-container' onclick='changeIcon(this, ${producto.id_producto})'>
+                    <img src='${iconoFavorito}' alt='Favorite Icon' class='icon-overlay'>
                 </div>
-            </a>
-            <div class='icon-overlay-container-fav' onclick='eliminarFavoritoDesdeModal(${favorito.id_producto})'>
-                <img src='${iconoFavorito}' alt='Remove Favorite Icon' class='icon-overlay-fav'>
+                <div class='card-body'>
+                    <h3 class='card-title text-center title-card-new'>${producto.nombre}</h3>
+                    <p class='card-text text-center card-price'>\$${producto.precio}</p>
+                </div>
             </div>
         </div>
-    </div>
     `;
     $('#product-list').append(productoHtml);
 }

@@ -310,11 +310,6 @@ if ($categoriaSeleccionada) {
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="edit-product-image-portada-<?php echo $producto->id_producto; ?>" class="form-label">Portada del Producto</label>
-                        <input type="file" class="form-control" name="fileToUpload" id="edit-product-image-portada-<?php echo $producto->id_producto; ?>">
-                        <input type="hidden" name="upload_type" value="portada">
-                    </div>
-                    <div class="mb-3">
                         <label for="edit-product-image-adicional-<?php echo $producto->id_producto; ?>" class="form-label">Imágenes del Producto</label>
                         <input type="file" class="form-control" name="fileToUpload" id="edit-product-image-adicional-<?php echo $producto->id_producto; ?>">
                         <input type="hidden" name="upload_type" value="imagenes">
