@@ -1,9 +1,4 @@
 <?php
-// Mostrar errores en pantalla
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 include '../../class/database.php';
 $db = new Database();
 $db->conectarDB();
