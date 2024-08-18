@@ -385,8 +385,8 @@ if (isset($_GET['message'])) {
             <div class="mb-3">
               <label for="add-product-estatus" class="form-label">Estatus</label>
               <select class="form-control" name="estatus" id="add-product-estatus">
+              <option value="inactivo">Inactivo</option>
                 <option value="activo">Activo</option>
-                <option value="inactivo">Inactivo</option>
               </select>
             </div>
             <div class="modal-footer">
