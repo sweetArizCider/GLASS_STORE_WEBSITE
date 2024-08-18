@@ -82,6 +82,7 @@ class database{
         }
     }
 
+
     function ejecutar($query, $params = []) {
         $stmt = $this->PDOlocal->prepare($query);
         try {
@@ -380,8 +381,62 @@ class database{
         }
     }
     
+//     function ejecuta2($consulta, $params = [])
+// {
+//     try
+//     {
+//         // Preparar la consulta
+//         $stmt = $this->PDOlocal->query($consulta);
+
+//         // Ejecutar la consulta con parámetros
+//         $stmt->execute($params);
+
+//         // Devolver el statement para manejar los resultados
+//         return $stmt;
+//     }
+//     catch (PDOException $e)
+//     {
+//         echo $e->getMessage();
+//         return false; // Devolver false en caso de error
+//     }
+// }
     
     
-    
+function ejecuta2($consulta, $params = [])
+{
+    try
+    {
+        // Verifica si la conexión a la base de datos se ha realizado
+        if ($this->PDOlocal === null) {
+            throw new Exception("No se ha establecido la conexión a la base de datos.");
+        }
+
+        // Preparar la consulta
+        $stmt = $this->PDOlocal->prepare($consulta);
+
+        // Verificar si la preparación fue exitosa
+        if ($stmt === false) {
+            throw new Exception("Error al preparar la consulta SQL.");
+        }
+
+        // Ejecutar la consulta con parámetros
+        $stmt->execute($params);
+
+        // Devolver el statement para manejar los resultados
+        return $stmt;
+    }
+    catch (PDOException $e)
+    {
+        echo $e->getMessage();
+        return false; // Devolver false en caso de error
+    }
+    catch (Exception $e)
+    {
+        echo $e->getMessage(); // Manejar otros tipos de errores
+        return false;
+    }
+}
+
+
 }
 ?>
