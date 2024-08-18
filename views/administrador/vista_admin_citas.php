@@ -44,54 +44,49 @@ try {
 
 $db = new Database();
 $db->conectarDB();
-
-$order = isset($_GET['order']) && $_GET['order'] === 'asc' ? 'ASC' : 'DESC';
-
 $cadena = "SELECT
     c.id_cita,
-    concat(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) as nombre_cliente,
+    CONCAT(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) AS nombre_cliente,
     c.fecha,
     c.hora,
-    concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
+    CONCAT(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) AS direccion,
     c.notas,
-    ifnull(
-        replace(
-            (select group_concat(
-                concat(
+    IFNULL(
+        REPLACE(
+            (SELECT GROUP_CONCAT(
+                CONCAT(
                     prod.nombre, ': $', dp.monto,
-                    if(dp.alto is not null, concat(', alto: ', dp.alto), ''),
-                    if(dp.largo is not null, concat(', largo: ', dp.largo), ''),
-                    if(dp.cantidad is not null, concat(', cantidad: ', dp.cantidad), ''),
-                    if(dp.grosor is not null, concat(', grosor: ', dp.grosor), ''),
-                    if(dp.tipo_tela is not null, concat(', tipo de tela: ', dp.tipo_tela), ''),
-                    if(dp.marco is not null, concat(', marco: ', dp.marco), ''),
-                    if(dp.tipo_cadena is not null, concat(', tipo de cadena: ', dp.tipo_cadena), ''),
-                    if(dp.color is not null, concat(', color: ', dp.color), ''),
-                    if(dp.diseno is not null, concat(', diseño: ', dis.codigo), '')
-                ) separator '\n'
-            ) from detalle_cita dc 
-            join detalle_producto dp on dc.detalle_producto = dp.id_detalle_producto 
-            join productos prod on dp.producto = prod.id_producto 
-            left join disenos dis on dp.diseno = dis.id_diseno
-            where dc.cita = c.id_cita), 
+                    IF(dp.alto IS NOT NULL, CONCAT(', alto: ', dp.alto), ''),
+                    IF(dp.largo IS NOT NULL, CONCAT(', largo: ', dp.largo), ''),
+                    IF(dp.cantidad IS NOT NULL, CONCAT(', cantidad: ', dp.cantidad), ''),
+                    IF(dp.grosor IS NOT NULL, CONCAT(', grosor: ', dp.grosor), ''),
+                    IF(dp.tipo_tela IS NOT NULL, CONCAT(', tipo de tela: ', dp.tipo_tela), ''),
+                    IF(dp.marco IS NOT NULL, CONCAT(', marco: ', dp.marco), ''),
+                    IF(dp.tipo_cadena IS NOT NULL, CONCAT(', tipo de cadena: ', dp.tipo_cadena), ''),
+                    IF(dp.color IS NOT NULL, CONCAT(', color: ', dp.color), ''),
+                    IF(dp.diseno IS NOT NULL, CONCAT(', diseño: ', dis.codigo), '')
+                ) SEPARATOR '\n'
+            ) FROM detalle_cita dc 
+            JOIN detalle_producto dp ON dc.detalle_producto = dp.id_detalle_producto 
+            JOIN productos prod ON dp.producto = prod.id_producto 
+            LEFT JOIN disenos dis ON dp.diseno = dis.id_diseno
+            WHERE dc.cita = c.id_cita), 
             ',', '\n'
         ),
         'no hay cotizaciones'
-    ) as cotizaciones
+    ) AS cotizaciones
 FROM
     citas c
 JOIN
-    cliente_direcciones cd on c.cliente_direccion = cd.id_cliente_direcciones
+    cliente_direcciones cd ON c.cliente_direccion = cd.id_cliente_direcciones
 JOIN
-    cliente cli on cd.cliente = cli.id_cliente
+    cliente cli ON cd.cliente = cli.id_cliente
 JOIN
-    persona p on cli.persona = p.id_persona
+    persona p ON cli.persona = p.id_persona
 JOIN
-    direcciones d on cd.direccion = d.id_direccion
+    direcciones d ON cd.direccion = d.id_direccion
 WHERE
-    c.estatus = 'en espera'
-ORDER BY c.fecha $order";
-
+    c.estatus = 'en espera';";
 
 $result = $db->ejecutar($cadena, []);
 
@@ -100,19 +95,6 @@ if ($result === false) {
     $db->desconectarDB();
     exit();
 }
-
-$instaladoresQuery = "
-    SELECT
-        i.id_instalador,
-        p.nombres,
-        p.apellido_p,
-        p.apellido_m
-    FROM instalador i
-    JOIN persona p ON i.persona = p.id_persona;
-";
-
-$instaladoresResult = $db->ejecutar($instaladoresQuery, []);
-$instaladores = $instaladoresResult ? $instaladoresResult->fetchAll(PDO::FETCH_ASSOC) : [];
 
 $verificarAsignacionesQuery = "
     SELECT cita, COUNT(*) AS total_asignados
@@ -128,9 +110,7 @@ foreach ($asignaciones as $asignacion) {
     $asignacionesArray[$asignacion['cita']] = $asignacion['total_asignados'];
 }
 
-$db->desconectarDB();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -219,7 +199,6 @@ $db->desconectarDB();
           <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
               <a href="./vista_admin_citas.php" class="sidebar-link">Gestionar citas</a>
-          
             </li>
           </ul>
         </li>
@@ -283,12 +262,7 @@ $db->desconectarDB();
       <div class="text-center">
       <div class="col-12 mb-4 card-bienvenida">
         <div class="text-center">
-          <h6 class="mensaje-bienvenida">Gestionar Citas</h6>
-          <br>
-          <div class="text-center">         
-              <button class="buuton-dar-rol" onclick="window.location.href='?order=asc'">Citas Más Antiguas</button>
-              <button class="buuton-dar-rol" onclick="window.location.href='?order=desc'">Citas Más Recientes</button>
-          </div>
+          <h5 class="mensaje-bienvenida">Gestionar Citas</h5>
         </div>
       </div><br>
         
@@ -303,6 +277,32 @@ $db->desconectarDB();
             $tipo_cita = $hasCotizaciones ? "Cita de toma de medidas" : "Instalación";
             $fecha = date('d \d\e F \d\e Y', strtotime($row['fecha']));
             $hora = date('h:i A', strtotime($row['hora']));
+
+            // Mover la consulta de instaladores aquí dentro
+            $instaladoresQuery = "
+                SELECT
+                    i.id_instalador,
+                    p.nombres,
+                    p.apellido_p,
+                    p.apellido_m
+                FROM instalador i
+                JOIN persona p ON i.persona = p.id_persona
+                WHERE i.id_instalador NOT IN (
+                    SELECT ic.instalador
+                    FROM instalador_cita ic
+                    JOIN citas c ON ic.cita = c.id_cita
+                    WHERE c.fecha = :fecha AND c.hora = :hora
+                )
+            ";
+
+            // Prepara y ejecuta la consulta con los parámetros de fecha y hora de la cita actual
+            $instaladoresStmt = $db->getPDO()->prepare($instaladoresQuery);
+            $instaladoresStmt->execute([
+                ':fecha' => $row['fecha'], // La fecha de la cita actual
+                ':hora' => $row['hora']    // La hora de la cita actual
+            ]);
+
+            $instaladores = $instaladoresStmt->fetchAll(PDO::FETCH_ASSOC);
           ?>
           <div class="secc-sub-general">
             <p class="fecha"><?php echo $fecha; ?></p>
