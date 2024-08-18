@@ -79,6 +79,22 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     <link rel="stylesheet" href="./css/styles.css">
     <link rel="stylesheet" href="./css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
     
+    <style>
+         .icon-overlay-container-fav {
+    position: absolute;
+    bottom: 10px; /* Ajusta la distancia desde el borde inferior */
+    right: 10px; /* Ajusta la distancia desde el borde derecho */
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.8); /* Opcional: Fondo blanco semitransparente */
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.icon-overlay-fav {
+    width: 25px; /* Ajusta el tamaño del ícono */
+    height: 25px;
+}
+    </style>
     
 
 </head>
@@ -460,6 +476,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
       </div>
     </div>
     
+
 <!-- Modal de Favoritos -->
 <div class="modal fade" id="favoritosModal" tabindex="-1" aria-labelledby="favoritosModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -471,20 +488,21 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             <div class="modal-body">
                 <?php if (isset($_SESSION["nom_usuario"])): ?>
                     <!-- Usuario logueado -->
-                    <p class="text-center">Guarda tus <a href="./views/productos.php">productos</a> favoritos y accede a ellos en cualquier momento.</p>
+                    <p class="text-center">Guarda tus productos favoritos y accede a ellos en cualquier momento.</p>
                     <div id="favoritos-list" class="row">
                         <!-- Aquí se cargarán los productos favoritos -->
                     </div>
                 <?php else: ?>
                     <!-- Usuario no logueado -->
                     <div class="text-center">
-                        <p><a href="./views/iniciarSesion.php">Inicia sesión</a> para guardar tus productos favoritos y acceder a ellos cuando quieras. ¡ <a href="./views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                        <p><a href="./views/iniciarSesion.php">Inicia sesión</a> para guardar tus productos favoritos y acceder a ellos cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
+
 
 
 
@@ -506,18 +524,19 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                     <?php else: ?>
                        
                     <?php endif; ?>
-                <?php else: ?>
+                    <?php else: ?>
                     <!-- Usuario no logueado -->
-                    <div class="text-center">
-                        <p><a href="./views/iniciarSesion.php">Inicia sesión</a> para ver tus cotizaciones y acceder a ellas cuando quieras. ¡ <a href="./views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
-                    </div>
-                <?php endif; ?>
-            </div>
+                         <div class="text-center">
+                            <p><a href="./views/iniciarSesion.php">Inicia sesión</a> para ver tus cotizaciones y acceder a ellas cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
             <div class="modal-footer">
-    <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
-        <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
-    <?php endif; ?>
-</div>
+            <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
+                <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
+                <button type="button" id="limpiar-btn" class="btn btn-danger">Limpiar</button>
+            <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>
@@ -532,15 +551,11 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 <script>
-  function changeIcon(container) {
-      const icon = container.querySelector('img.icon-overlay');
-      if (icon.src.includes('addFavorites.svg')) {
-          icon.src = '../img/index/heartCover.svg'; 
-      } else {
-          icon.src = '../img/index/addFavorites.svg'; 
-      }
-      sound.play();
-  }
+     $('#favoritosModal').on('hidden.bs.modal', function () {
+        location.reload(); // Recarga la página al cerrar el modal
+    });
+
+ 
   document.getElementById('user-icon').addEventListener('click', function() {
             var loginForm = document.getElementById('login-form');
             if (loginForm.style.display === 'none' || loginForm.style.display === '') {
@@ -567,60 +582,125 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             document.getElementById('login-form').style.display = 'none';
         }
 
-
-
-    $(document).ready(function() {
-        $('#favoritosModal').on('shown.bs.modal', function () {
-            cargarFavoritos();
-        });
-
-        function cargarFavoritos() {
-            <?php if (isset($_SESSION["nom_usuario"])): ?>
-                $.ajax({
-                    url: './scripts/obtener_favoritos.php',
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function(favoritos) {
-                        var favoritosList = $('#favoritos-list');
-                        favoritosList.empty();
-                        if (favoritos.length > 0) {
-                            favoritos.forEach(function(favorito) {
-                                var imagen = favorito.imagen ? './img/disenos/' + favorito.imagen : './img/disenos/default.png';
-                                var favoritoHtml = `
-                                    <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
-                                        <div class='card shadow' >
-                                            <a href='./views/perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
-                                                <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top' >
-                                                <div class='card-body'>
-                                                    <h5 class='card-title'>${favorito.nombre}</h5>
-                                                    <p class='card-text'>$ ${favorito.precio}</p>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>`;
-                                favoritosList.append(favoritoHtml);
-                            });
-                        } 
-                    },
-                    error: function(error) {
-                        console.error('Error al obtener los favoritos:', error);
-                        $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
-                    }
-                });
-            <?php else: ?>
-                var favoritosList = $('#favoritos-list');
-                favoritosList.empty();
-                favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
-            <?php endif; ?>
+        function saveToFavorites(id_producto) {
+    $.ajax({
+        url: './scripts/guardar_favorito.php',
+        method: 'POST',
+        data: { id_producto: id_producto },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(error) {
+            console.error('Error:', error);
         }
     });
+}
 
 
 
+        $('#favoritosModal').on('shown.bs.modal', function () {
+        cargarFavoritos();
+    });
+
+    // Función para cargar favoritos
+    function cargarFavoritos() {
+    <?php if (isset($_SESSION["nom_usuario"])): ?>
+        $.ajax({
+            url: './scripts/obtener_favoritos.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(favoritos) {
+                var favoritosList = $('#favoritos-list');
+                favoritosList.empty();
+                if (favoritos.length > 0) {
+                    favoritos.forEach(function(favorito) {
+                        var imagen = favorito.imagen ? './img/disenos/' + favorito.imagen : './img/index/default.png';
+                        var iconoFavorito = './img/index/heartCover.svg';
+
+                        var favoritoHtml = `
+                           <div class='col-md-3 mt-3 py-3 py-md-0 product-item' id='favorito-${favorito.id_producto}'>
+                                <div class='card shadow'>
+                                    <a href='./views/perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
+                                        <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
+                                        <div class='card-body'>
+                                            <h5 class='card-title'>${favorito.nombre}</h5>
+                                            <p class='card-text'>$${favorito.precio}</p>
+                                        </div>
+                                    </a>
+                                    <div class='icon-overlay-container-fav' onclick='eliminarFavoritoDesdeModal(${favorito.id_producto})'>
+                                        <img src='${iconoFavorito}' alt='Remove Favorite Icon' class='icon-overlay-fav'>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                        favoritosList.append(favoritoHtml);
+                    });
+                } else {
+                    favoritosList.append("<p class='text-center'>No tienes productos en favoritos.</p>");
+                }
+            },
+            error: function(error) {
+                console.error('Error al obtener los favoritos:', error);
+                $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
+            }
+        });
+    <?php else: ?>
+        var favoritosList = $('#favoritos-list');
+        favoritosList.empty();
+        favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
+    <?php endif; ?>
+}
+
+   $(document).ready(function() {
+    $('#limpiar-btn').on('click', function() {
+        $('.producto-checkbox:checked').each(function() {
+            var idDetalleProducto = $(this).val();
+            var card = $(this).closest('.card'); // Guardar referencia al elemento de la tarjeta para eliminarlo
+
+            $.ajax({
+                url: './scripts/desactivar_cotizacion.php', // Archivo PHP que manejará la desactivación
+                method: 'POST',
+                data: { id_detalle_producto: idDetalleProducto },
+                success: function(response) {
+                    console.log('Producto desactivado:', response);
+                    card.remove(); // Eliminar la tarjeta del DOM
+                },
+                error: function(error) {
+                    console.error('Error al desactivar el producto:', error);
+                }
+            });
+        });
+    });
+});
+
+function eliminarFavoritoDesdeModal(id_producto) {
+    $.ajax({
+        url: './scripts/guardar_favorito.php',
+        method: 'POST',
+        data: { id_producto: id_producto },
+        success: function(response) {
+            if (response.mensaje === 'Producto eliminado de favoritos.') {
+                // Eliminar el producto del modal de favoritos
+                $('#favorito-' + id_producto).remove();
+
+                // Opcional: Mostrar un mensaje si ya no hay más favoritos
+                if ($('#favoritos-list').children().length === 0) {
+                    $('#favoritos-list').append("<p class='text-center'>No tienes productos en favoritos.</p>");
+                }
+            } else if (response.error) {
+                console.error('Error:', response.error);
+            }
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
 
 
-    // Cargar carrito cuando el modal es mostrado
-    $(document).ready(function() {
+
+     // Cargar carrito cuando el modal es mostrado
+     $(document).ready(function() {
         $('#carritoModal').on('shown.bs.modal', function () {
             cargarCarrito();
         });
@@ -660,7 +740,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                         <div class='col-md-12 mt-3 py-3 py-md-0'>
                             <div class='card shadow' style='display: flex; flex-direction: row;padding:1em 1em;'>
                                 <input type='checkbox' class='form-check-input align-self-center producto-checkbox' value='${item.id_detalle_producto}' style='margin-right: 9px;'>
-                                <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left imagen-cotizacion-cliente-detalle' style='width: 150px; height: 150px;'>
+                                <img src='${imagen}' alt='${item.nombre_producto}' class='card-img-left' style='width: 150px; height: 150px;'>
                                 <div class='card-body'>
                                     <h5 class='card-title'>${item.nombre_producto}</h5>
                                     <p class='card-text'>${descripcionProducto}</p>
@@ -671,7 +751,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                 });
             } else {
                 carritoList.append(` <div class='text-center'>
-                ¿Aún no has solicitado una cotización? <a href='./productos.php'style='color: #007bff;'>¡Cotiza ahora!</a> y transforma tu espacio con nuestros productos.
+                ¿Aún no has solicitado una cotización? <a href='./views/productos.php'style='color: #007bff;'>¡Cotiza ahora!</a> y transforma tu espacio con nuestros productos.
                 </div>`);
             }
         },
@@ -699,6 +779,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
             });
         }
     });
+
 </script>
 <script src="../js/loginSuccess.js"></script>
 <script src="./js/bootstrap.bundle.min.js"></script>

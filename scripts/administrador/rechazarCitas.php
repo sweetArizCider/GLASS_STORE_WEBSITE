@@ -90,7 +90,7 @@ text-decoration: none;
                  <h1>¡Rechazo Exitoso!</h1>
                  <p style="margin-bottom: 1em;"></strong> Cita rechazada con exito</p>
                  
-                 <a href="../../views/administrador/vista_admin_citas.php" class="button-cita-ex">Volver al Inicio</a>
+                 <a href="../../views/administrador/vista_admin_citas.php" class="button-cita-ex">Volver a Citas</a>
                  <br><br>
              </div>
          </body>

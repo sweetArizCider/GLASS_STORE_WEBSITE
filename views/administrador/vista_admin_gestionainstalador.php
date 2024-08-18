@@ -11,9 +11,46 @@ session_start();
     <title>Glass Store</title>
     <link rel="shortcut icon" href="../../img/index/logoVarianteSmall.png" type="image/x-icon">
     <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="../../css/normalized.css">
     <link rel="stylesheet" href="../../css/style_admin.css">
 </head>
+<style>
+
+/* Estilo para la alerta */
+.custom-alert {
+    font-family: 'Montserrat'; /* Cambia el tipo de letra */
+    background-color: #f4f4f4; /* Cambia el fondo */
+    border-radius: 30px; /* Bordes redondeados */
+}
+
+/* Estilo para el título */
+.custom-title {
+    font-size: 2em;
+    color: #132644; /* Cambia el color del texto */
+    font-weight: 600;
+}
+
+/* Estilo para el botón */
+.custom-button {
+    background: #132644;
+                border: 1.5px solid #132644;
+                border-radius: 30px;
+                font-family: Inter;
+                font-size: .8em;
+                font-weight: 400;
+                color: #fff;
+                cursor: pointer;
+                padding: 8px 18px;
+                text-decoration: none;
+}
+
+.custom-button:hover {
+    background-color: #4AB3D5;
+    border: 1.5px solid #4AB3D5; /* Cambia el color al hacer hover */
+}
+
+  </style>
 
 <body>
     <!--Logo flotante del negocio-->
@@ -166,13 +203,27 @@ session_start();
 
     <?php if (isset($_SESSION['message'])): ?>
         <script>
-            alert("<?php echo $_SESSION['message']; ?>");
+            // Mostrar notificación personalizada con SweetAlert2
+            Swal.fire({
+                title: 'Datos Ingresados',
+                text: '<?php echo $_SESSION['message']; ?>',
+                icon: null, // Puedes cambiar el ícono si prefieres otro estilo
+                showConfirmButton: true,
+                confirmButtonText: 'Aceptar',
+                customClass: {
+                    popup: 'custom-alert',
+                    title: 'custom-title',
+                    confirmButton: 'custom-button'
+                }
+            });
         </script>
         <?php unset($_SESSION['message']); // Limpiar el mensaje después de mostrarlo ?>
     <?php endif; ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+   
+
     <script>
         (function () {
             'use strict';

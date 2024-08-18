@@ -286,8 +286,8 @@ $db->desconectarDB();
           <h6 class="mensaje-bienvenida">Gestionar Citas</h6>
           <br>
           <div class="text-center">         
-              <button class="buuton-dar-rol" onclick="window.location.href='?order=asc'">Citas Más Antiguas</button>
-              <button class="buuton-dar-rol" onclick="window.location.href='?order=desc'">Citas Más Recientes</button>
+              <button class="buuton-dar-rol" onclick="window.location.href='?order=asc'">Citas Proximas</button>
+              <button class="buuton-dar-rol" onclick="window.location.href='?order=desc'">Citas Lejanas</button>
           </div>
         </div>
       </div><br>

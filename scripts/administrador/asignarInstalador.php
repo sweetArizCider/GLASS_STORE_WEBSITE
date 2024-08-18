@@ -89,6 +89,7 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
     <title>Asignación Exitosa</title>
     <meta http-equiv="refresh" content="5;url=../../views/administrador/vista_admin_citas.php">
     <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/styles.css">
     <style>
         body {
             background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url('../../img/index/background.jpeg') center/cover no-repeat;
@@ -96,25 +97,28 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: Arial, sans-serif;
+            font-family: 'Montserrat';
         }
         .confirmation-container {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgb(255, 255, 255);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
             max-width: 500px;
             width: 100%;
+            
         }
         .confirmation-container h1 {
             color: #132644;
             font-size: 2.5em;
             font-weight: 800;
+            font-family: 'Montserrat';
             margin-bottom: 15px;
         }
         .confirmation-container p {
             font-size: .9em;
+            font-family: 'Montserrat';
             margin-bottom: 15px;
         }
         .button-cita-ex {
@@ -122,6 +126,7 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
             border: 1.5px solid #132644;
             border-radius: 30px;
             font-size: .9em;
+            font-family: 'Montserrat';
             color: #fff;
             cursor: pointer;
             padding: 8px 18px;
@@ -135,7 +140,9 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
         <h1>¡Asignación Exitosa!</h1>
         <p>Los instaladores han sido asignados con éxito a la cita.</p>
         <p>Se ha notificado a los instaladores sobre los detalles de la cita. Por favor, mantente pendiente de tus notificaciones para cualquier actualización.</p>
+        <br>
         <a href="../../views/administrador/vista_admin_citas.php" class="button-cita-ex">Volver a Citas</a>
+        <br><br>
     </div>
 </body>
 </html>
@@ -152,6 +159,7 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
          <title>Error en la Asignación</title>
          <meta http-equiv="refresh" content="5;url=../../views/administrador/vista_admin_citas.php">
          <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+         <link rel="stylesheet" href="../../css/styles.css">
          <style>
              body {
                  background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url('../../img/index/background.jpeg') center/cover no-repeat;
@@ -159,10 +167,10 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
                  justify-content: center;
                  align-items: center;
                  height: 100vh;
-                 font-family: Arial, sans-serif;
+                 font-family: 'Montserrat';
              }
              .error-container {
-                 background-color: rgba(255, 255, 255, 0.9);
+                 background-color: rgb(255, 255, 255);
                  padding: 20px;
                  border-radius: 10px;
                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -175,10 +183,12 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
                  font-size: 2.5em;
                  font-weight: 800;
                  margin-bottom: 15px;
+                 font-family: 'Montserrat';
              }
              .error-container p {
                  font-size: .9em;
                  margin-bottom: 15px;
+                 font-family: 'Montserrat';
              }
              .button-retry {
                  background: #c82333;
@@ -189,6 +199,7 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
                  cursor: pointer;
                  padding: 8px 18px;
                  text-decoration: none;
+                 font-family: 'Montserrat';
              }
          </style>
      </head>
@@ -196,7 +207,7 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
          <div class="error-container">
              <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px;">
              <h1>¡Lo Lamentamos!</h1>
-             <p>Ha ocurrido un error al intentar asignar los instaladores a la cita. Por favor, inténtalo de nuevo.</p>
+             <p>Ha ocurrido un error al intentar asignar los instaladores a la cita. Por favor, asigne al personal que acudirá a la cita.</p>
              <a href="../../views/administrador/vista_admin_citas.php" class="button-retry">Volver a Intentar</a>
          </div>
      </body>
@@ -214,6 +225,7 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
     <title>Error en la Asignación</title>
     <meta http-equiv="refresh" content="5;url=../../views/administrador/vista_admin_citas.php">
     <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/styles.css">
     <style>
         body {
             background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url('../../img/index/background.jpeg') center/cover no-repeat;
@@ -221,10 +233,10 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: Arial, sans-serif;
+            font-family: 'Montserrat';
         }
         .error-container {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgb(255, 255, 255);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -258,8 +270,9 @@ if (isset($_POST['id_cita']) && isset($_POST['instaladores'])) {
     <div class="error-container">
         <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px;">
         <h1>¡Lo Lamentamos!</h1>
-        <p>Ha ocurrido un error al intentar asignar los instaladores a la cita. Por favor, inténtalo de nuevo.</p>
-        <a href="../../views/administrador/vista_admin_citas.php" class="button-retry">Volver a Intentar</a>
+        <p>Ha ocurrido un error al intentar asignar los instaladores a la cita. Por favor, asigne al personal que acudirá a la cita.</p>
+        <br>
+        <a href="../../views/administrador/vista_admin_citas.php" class="button-retry">Volver a Intentar</a> <br><br>
     </div>
 </body>
 </html>

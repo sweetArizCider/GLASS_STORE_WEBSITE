@@ -102,7 +102,59 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
         border-radius: 10px;
         margin-bottom: 20px;
     }
+    .icon-overlay-container-fav {
+    position: absolute;
+    bottom: 10px; /* Ajusta la distancia desde el borde inferior */
+    right: 10px; /* Ajusta la distancia desde el borde derecho */
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.8); /* Opcional: Fondo blanco semitransparente */
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.card {
+    position: relative; /* Necesario para que el ícono se posicione correctamente dentro de la tarjeta */
+}
+
+.icon-overlay-fav {
+    width: 25px; /* Ajusta el tamaño del ícono */
+    height: 25px;
+}
+/* Estilo para la alerta */
+.custom-alert {
+    font-family: 'Montserrat'; /* Cambia el tipo de letra */
+    background-color: #f4f4f4; /* Cambia el fondo */
+    border-radius: 30px; /* Bordes redondeados */
+}
+
+/* Estilo para el título */
+.custom-title {
+    font-size: 2em;
+    color: #132644; /* Cambia el color del texto */
+    font-weight: 600;
+}
+
+/* Estilo para el botón */
+.custom-button {
+    background: #132644;
+                border: 1.5px solid #132644;
+                border-radius: 30px;
+                font-family: Inter;
+                font-size: .8em;
+                font-weight: 400;
+                color: #fff;
+                cursor: pointer;
+                padding: 8px 18px;
+                text-decoration: none;
+}
+
+.custom-button:hover {
+    background-color: #4AB3D5;
+    border: 1.5px solid #4AB3D5; /* Cambia el color al hacer hover */
+}
+
   </style>
+
 </head>
 <body>
     <!-- whatsapp flotante -->
@@ -184,12 +236,13 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
               </div>
               <div class="offcanvas-body">
                   <ul class="navbar-nav">
+                  <li class="nav-item">
+                          <a class="nav-link " href="../index.php">Volver</a>
+                      </li>
                       <li class="nav-item ">
-                          <a class="nav-link" href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">Contacto</a>
+                          <a class="nav-link nav-left" href="https://api.whatsapp.com/send?phone=528717843809" target="_blank">Contacto</a>
                       </li>
-                      <li class="nav-item">
-                          <a class="nav-link nav-left" href="../views/productos.php">Productos</a>
-                      </li>
+                     
                       <li class="nav-item">
                           <a class="nav-link nav-left" href="../views/citas.php">Agendar</a>
                       </li>
@@ -381,10 +434,16 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 $(document).ready(function() {
     var currentPage = 1;
     var productosPorPagina = <?php echo $productos_por_pagina; ?>;
+
+    $('#favoritosModal').on('hidden.bs.modal', function () {
+        location.reload(); // Recarga la página al cerrar el modal
+    });
 
     // Filtro en tiempo real al escribir en el campo
     $('#search-input').on('input', function() {
@@ -594,10 +653,25 @@ $(document).ready(function() {
         }
     });
 
-function changeIcon(element, id_producto) {
+    function changeIcon(element, id_producto) {
     <?php if (!isset($_SESSION["nom_usuario"])): ?>
-        // Redirigir a la página de inicio de sesión si el usuario no está logueado
-        window.location.href = "../views/iniciarSesion.php";
+        // Mostrar alerta personalizada antes de redirigir
+        Swal.fire({
+            title: '¡Inicia sesión para guardar favoritos!',
+            text: 'Disfruta de todos los beneficios que ofrecemos para tí',
+            showConfirmButton: true,
+            confirmButtonText: 'Iniciar sesión',
+            customClass: {
+                popup: 'custom-alert',
+                title: 'custom-title',
+                confirmButton: 'custom-button'
+            },
+            icon: null // Elimina el ícono
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "../views/iniciarSesion.php";
+            }
+        });
     <?php else: ?>
         var icon = element.querySelector('.icon-overlay');
         var isFavorite = icon.getAttribute('src') === '../img/index/heartCover.svg';
@@ -609,6 +683,8 @@ function changeIcon(element, id_producto) {
         saveToFavorites(id_producto);
     <?php endif; ?>
 }
+
+
 
 function saveToFavorites(id_producto) {
     $.ajax({
@@ -630,44 +706,52 @@ function saveToFavorites(id_producto) {
 
     // Función para cargar favoritos
     function cargarFavoritos() {
-        <?php if (isset($_SESSION["nom_usuario"])): ?>
-            $.ajax({
-                url: '../scripts/obtener_favoritos.php',
-                method: 'GET',
-                dataType: 'json',
-                success: function(favoritos) {
-                    var favoritosList = $('#favoritos-list');
-                    favoritosList.empty();
-                    if (favoritos.length > 0) {
-                        favoritos.forEach(function(favorito) {
-                            var imagen = favorito.imagen ? '../img/disenos/' + favorito.imagen : '../img/index/default.png';
-                            var favoritoHtml = `
-                                <div class='col-md-3 mt-3 py-3 py-md-0 product-item'>
-                                    <div class='card shadow'>
-                                        <a href='./perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
-                                            <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
-                                            <div class='card-body'>
-                                                <h5 class='card-title'>${favorito.nombre}</h5>
-                                                <p class='card-text'>$ ${favorito.precio}</p>
-                                            </div>
-                                        </a>
+    <?php if (isset($_SESSION["nom_usuario"])): ?>
+        $.ajax({
+            url: '../scripts/obtener_favoritos.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(favoritos) {
+                var favoritosList = $('#favoritos-list');
+                favoritosList.empty();
+                if (favoritos.length > 0) {
+                    favoritos.forEach(function(favorito) {
+                        var imagen = favorito.imagen ? '../img/disenos/' + favorito.imagen : '../img/index/default.png';
+                        var iconoFavorito = '../img/index/heartCover.svg';
+
+                        var favoritoHtml = `
+                           <div class='col-md-3 mt-3 py-3 py-md-0 product-item' id='favorito-${favorito.id_producto}'>
+                                <div class='card shadow'>
+                                    <a href='./perfilProducto.php?id=${favorito.id_producto}' style='text-decoration: none; color: inherit;'>
+                                        <img src='${imagen}' alt='${favorito.nombre}' class='card-img-top'>
+                                        <div class='card-body'>
+                                            <h5 class='card-title'>${favorito.nombre}</h5>
+                                            <p class='card-text'>$${favorito.precio}</p>
+                                        </div>
+                                    </a>
+                                    <div class='icon-overlay-container-fav' onclick='eliminarFavoritoDesdeModal(${favorito.id_producto})'>
+                                        <img src='${iconoFavorito}' alt='Remove Favorite Icon' class='icon-overlay-fav'>
                                     </div>
-                                </div>`;
-                            favoritosList.append(favoritoHtml);
-                        });
-                    } 
-                },
-                error: function(error) {
-                    console.error('Error al obtener los favoritos:', error);
-                    $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
+                                </div>
+                            </div>`;
+
+                        favoritosList.append(favoritoHtml);
+                    });
+                } else {
+                    favoritosList.append("<p class='text-center'>No tienes productos en favoritos.</p>");
                 }
-            });
-        <?php else: ?>
-            var favoritosList = $('#favoritos-list');
-            favoritosList.empty();
-            favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
-        <?php endif; ?>
-    }
+            },
+            error: function(error) {
+                console.error('Error al obtener los favoritos:', error);
+                $('#favoritos-list').append("<p>Error al cargar los favoritos.</p>");
+            }
+        });
+    <?php else: ?>
+        var favoritosList = $('#favoritos-list');
+        favoritosList.empty();
+        favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
+    <?php endif; ?>
+}
 
    $(document).ready(function() {
     $('#limpiar-btn').on('click', function() {
@@ -690,6 +774,31 @@ function saveToFavorites(id_producto) {
         });
     });
 });
+
+function eliminarFavoritoDesdeModal(id_producto) {
+    $.ajax({
+        url: '../scripts/guardar_favorito.php',
+        method: 'POST',
+        data: { id_producto: id_producto },
+        success: function(response) {
+            if (response.mensaje === 'Producto eliminado de favoritos.') {
+                // Eliminar el producto del modal de favoritos
+                $('#favorito-' + id_producto).remove();
+
+                // Opcional: Mostrar un mensaje si ya no hay más favoritos
+                if ($('#favoritos-list').children().length === 0) {
+                    $('#favoritos-list').append("<p class='text-center'>No tienes productos en favoritos.</p>");
+                }
+            } else if (response.error) {
+                console.error('Error:', response.error);
+            }
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
 
 </script>
 
