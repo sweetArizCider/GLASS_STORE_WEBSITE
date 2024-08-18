@@ -27,48 +27,50 @@ try {
     $id_cliente = $cliente['id_cliente'];
 
     // Obtener las citas del cliente junto con todos los instaladores asignados
-    $query_citas = "
-        SELECT 
-            c.id_cita,
-            c.fecha,
-            c.hora,
-            c.estatus AS estatus_cita,
-            concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
-            IFNULL(
-                REPLACE(
-                    (SELECT GROUP_CONCAT(
-                        CONCAT(
-                            prod.nombre, ': $', dp.monto,
-                            IF(dp.alto IS NOT NULL, CONCAT(', alto: ', dp.alto), ''),
-                            IF(dp.largo IS NOT NULL, CONCAT(', largo: ', dp.largo), ''),
-                            IF(dp.cantidad IS NOT NULL, CONCAT(', cantidad: ', dp.cantidad), ''),
-                            IF(dp.grosor IS NOT NULL, CONCAT(', grosor: ', dp.grosor), ''),
-                            IF(dp.tipo_tela IS NOT NULL, CONCAT(', tipo de tela: ', dp.tipo_tela), ''),
-                            IF(dp.marco IS NOT NULL, CONCAT(', marco: ', dp.marco), ''),
-                            IF(dp.tipo_cadena IS NOT NULL, CONCAT(', tipo de cadena: ', dp.tipo_cadena), ''),
-                            IF(dp.color IS NOT NULL, CONCAT(', color: ', dp.color), ''),
-                            IF(dp.diseno IS NOT NULL, CONCAT(', diseño: ', dis.codigo), '')
-                        ) SEPARATOR '\n'
-                    )
-                    FROM detalle_cita dc 
-                    JOIN detalle_producto dp ON dc.detalle_producto = dp.id_detalle_producto 
-                    JOIN productos prod ON dp.producto = prod.id_producto 
-                    LEFT JOIN disenos dis ON dp.diseno = dis.id_diseno
-                    WHERE dc.cita = c.id_cita),
-                    ',', '\n'
-                ),
-                'no hay cotizaciones'
-            ) as cotizaciones,
-            (SELECT GROUP_CONCAT(CONCAT(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) SEPARATOR ', ')
-             FROM instalador_cita ic
-             JOIN instalador i ON ic.instalador = i.id_instalador
-             JOIN persona p ON i.persona = p.id_persona
-             WHERE ic.cita = c.id_cita
-            ) AS instaladores_asignados
-        FROM citas c
-        JOIN cliente_direcciones cd ON c.cliente_direccion = cd.id_cliente_direcciones
-        JOIN direcciones d ON cd.direccion = d.id_direccion
-        WHERE cd.cliente = :id_cliente";
+$query_citas = "
+SELECT 
+    c.id_cita,
+    c.fecha,
+    c.hora,
+    c.estatus AS estatus_cita,
+    concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
+    IFNULL(
+        REPLACE(
+            (SELECT GROUP_CONCAT(
+                CONCAT(
+                    prod.nombre, ': $', dp.monto,
+                    IF(dp.alto IS NOT NULL, CONCAT(', alto: ', dp.alto), ''),
+                    IF(dp.largo IS NOT NULL, CONCAT(', largo: ', dp.largo), ''),
+                    IF(dp.cantidad IS NOT NULL, CONCAT(', cantidad: ', dp.cantidad), ''),
+                    IF(dp.grosor IS NOT NULL, CONCAT(', grosor: ', dp.grosor), ''),
+                    IF(dp.tipo_tela IS NOT NULL, CONCAT(', tipo de tela: ', dp.tipo_tela), ''),
+                    IF(dp.marco IS NOT NULL, CONCAT(', marco: ', dp.marco), ''),
+                    IF(dp.tipo_cadena IS NOT NULL, CONCAT(', tipo de cadena: ', dp.tipo_cadena), ''),
+                    IF(dp.color IS NOT NULL, CONCAT(', color: ', dp.color), ''),
+                    IF(dp.diseno IS NOT NULL, CONCAT(', diseño: ', dis.codigo), '')
+                ) SEPARATOR '\n'
+            )
+            FROM detalle_cita dc 
+            JOIN detalle_producto dp ON dc.detalle_producto = dp.id_detalle_producto 
+            JOIN productos prod ON dp.producto = prod.id_producto 
+            LEFT JOIN disenos dis ON dp.diseno = dis.id_diseno
+            WHERE dc.cita = c.id_cita),
+            ',', '\n'
+        ),
+        'no hay cotizaciones'
+    ) as cotizaciones,
+    (SELECT GROUP_CONCAT(CONCAT(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) SEPARATOR ', ')
+     FROM instalador_cita ic
+     JOIN instalador i ON ic.instalador = i.id_instalador
+     JOIN persona p ON i.persona = p.id_persona
+     WHERE ic.cita = c.id_cita
+    ) AS instaladores_asignados
+FROM citas c
+JOIN cliente_direcciones cd ON c.cliente_direccion = cd.id_cliente_direcciones
+JOIN direcciones d ON cd.direccion = d.id_direccion
+WHERE cd.cliente = :id_cliente
+ORDER BY c.fecha DESC, c.hora DESC";
+
 
     $stmt_citas = $db->ejecutarcita($query_citas, [':id_cliente' => $id_cliente]);
 
