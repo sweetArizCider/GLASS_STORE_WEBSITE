@@ -33,7 +33,7 @@ if (isset($_SESSION["nom_usuario"])) {
                 $id_cliente = $fila->id_cliente;
                 $id_usuario = $id_cliente;
 
-                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ?";
+                $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ? order by fecha desc";
                 $paramsNotificaciones = [$id_cliente];
                 $notificaciones = $conexion->seleccionar($consultaNotificaciones, $paramsNotificaciones);
 
@@ -280,19 +280,19 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                     <?php else: ?>
                        
                     <?php endif; ?>
-                <?php else: ?>
+                    <?php else: ?>
                     <!-- Usuario no logueado -->
-                    <div class="text-center">
-                        <p><a href="../views/iniciarSesion.php">Inicia sesión</a> para ver tus cotizaciones y acceder a ellas cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
-                    </div>
-                <?php endif; ?>
-            </div>
+                         <div class="text-center">
+                            <p><a href="../views/iniciarSesion.php">Inicia sesión</a> para ver tus cotizaciones y acceder a ellas cuando quieras. ¡ <a href="../views/register.php">Crea tu cuenta</a> y disfruta de una experiencia personalizada!</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
             <div class="modal-footer">
-    <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
-        <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
-
-    <?php endif; ?>
-</div>
+            <?php if (isset($_SESSION["nom_usuario"]) && !empty($productos_espera)): ?>
+                <button type="button" id="aceptar-btn" class="btn btn-primary">Aceptar</button>
+                <button type="button" id="limpiar-btn" class="btn btn-danger">Limpiar</button>
+            <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>
@@ -595,6 +595,10 @@ $(document).ready(function() {
     });
 
 function changeIcon(element, id_producto) {
+    <?php if (!isset($_SESSION["nom_usuario"])): ?>
+        // Redirigir a la página de inicio de sesión si el usuario no está logueado
+        window.location.href = "../views/iniciarSesion.php";
+    <?php else: ?>
         var icon = element.querySelector('.icon-overlay');
         var isFavorite = icon.getAttribute('src') === '../img/index/heartCover.svg';
         if (isFavorite) {
@@ -603,21 +607,22 @@ function changeIcon(element, id_producto) {
             icon.setAttribute('src', '../img/index/heartCover.svg');
         }
         saveToFavorites(id_producto);
-    }
+    <?php endif; ?>
+}
 
-    function saveToFavorites(id_producto) {
-        $.ajax({
-            url: '../scripts/guardar_favorito.php',
-            method: 'POST',
-            data: { id_producto: id_producto },
-            success: function(response) {
-                console.log(response);
-            },
-            error: function(error) {
-                console.error('Error:', error);
-            }
-        });
-    }
+function saveToFavorites(id_producto) {
+    $.ajax({
+        url: '../scripts/guardar_favorito.php',
+        method: 'POST',
+        data: { id_producto: id_producto },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
      // Cargar favoritos cuando el modal es mostrado
      $('#favoritosModal').on('shown.bs.modal', function () {
         cargarFavoritos();
@@ -663,6 +668,28 @@ function changeIcon(element, id_producto) {
             favoritosList.append("<p>No tienes favoritos, por favor inicia sesión.</p>");
         <?php endif; ?>
     }
+
+   $(document).ready(function() {
+    $('#limpiar-btn').on('click', function() {
+        $('.producto-checkbox:checked').each(function() {
+            var idDetalleProducto = $(this).val();
+            var card = $(this).closest('.card'); // Guardar referencia al elemento de la tarjeta para eliminarlo
+
+            $.ajax({
+                url: '../scripts/desactivar_cotizacion.php', // Archivo PHP que manejará la desactivación
+                method: 'POST',
+                data: { id_detalle_producto: idDetalleProducto },
+                success: function(response) {
+                    console.log('Producto desactivado:', response);
+                    card.remove(); // Eliminar la tarjeta del DOM
+                },
+                error: function(error) {
+                    console.error('Error al desactivar el producto:', error);
+                }
+            });
+        });
+    });
+});
 
 </script>
 

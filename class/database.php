@@ -2,6 +2,7 @@
 class database{
     // paramentros que le voy a enviar al objeto pdo
     private $PDOlocal;
+
     private $user = 'root';
     private $password = "M*%:qYC6~.UjCdb";
     private $server = "mysql:host=localhost;dbname=glass_store_ana";
@@ -150,14 +151,17 @@ class database{
     }
 
     // Método para preparar una consulta
-    public function prepareQuery($query) {
-        try {
-            return $this->prepareQuery($query);
-            //return $this->prepare($query);
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-        }
+public function prepareQuery($query) {
+    try {
+        // Usar el objeto PDO directamente para preparar la consulta
+        return $this->PDOlocal->prepare($query);
+    } catch (PDOException $e) {
+        // Manejo de errores
+        echo "Error en la preparación de la consulta: " . $e->getMessage();
+        return false; // Retornar false en caso de error
     }
+}
+
 
     // Método para ejecutar una consulta sin parámetros
     public function executeQuery($query) {
