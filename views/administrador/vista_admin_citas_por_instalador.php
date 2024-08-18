@@ -152,7 +152,7 @@ $db->desconectarDB();
       </div>
       <ul class="sidebar-nav">
       <div class="sidebar-itemr">
-        <a href="./vista_admin.php" class="sidebar-link">
+        <a href="../../" class="sidebar-link">
           <img src="../../img/index/home.svg" alt="Volver">
           <span>Volver</span>
         </a>
@@ -181,7 +181,9 @@ $db->desconectarDB();
           <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
               <a href="./vista_admin_citas.php" class="sidebar-link">Gestionar citas</a>
-          
+            </li>
+            <li class="sidebar-item">
+              <a href="./vista_admin_citas_por_instalador.php" class="sidebar-link">Asignaciones</a>
             </li>
           </ul>
         </li>

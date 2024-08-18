@@ -20,8 +20,82 @@ if ($_POST['action'] == 'add' || $_POST['action'] == 'remove') {
             $stmt->bindParam(':codigo_diseno', $codigo_diseno, PDO::PARAM_STR);
             $stmt->bindParam(':id_producto', $id_producto, PDO::PARAM_INT);
             if ($stmt->execute()) {
-                error_log("Diseño agregado correctamente.");
-                echo "<div class='alert alert-success'>Diseño agregado correctamente.</div>";
+                ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Diseño Agregado</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Diseño Agregado!</h1>
+                            <p>Tu diseño ya está disponible para nuestros clientes. </p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Continuar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
             } else {
                 error_log("Error en la ejecución del procedimiento.");
                 echo "<div class='alert alert-danger'>Error al agregar diseño.</div>";
@@ -32,7 +106,82 @@ if ($_POST['action'] == 'add' || $_POST['action'] == 'remove') {
             echo "<div class='alert alert-danger'>Error al agregar diseño: " . htmlspecialchars($e->getMessage()) . "</div>";
         }
     } elseif ($_POST['action'] == 'add') {
-        echo "<div class='alert alert-danger'>El código de diseño no puede estar vacío.</div>";
+        ?>
+
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Error</title>
+            <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+            <link rel="stylesheet" href="../../css/styles.css">
+            <style>
+                body {
+                    background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                    background-size: cover;
+                    background-position: center;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    font-family: Arial, sans-serif;
+                }
+                .confirmation-container {
+                    background-color: rgba(255, 255, 255);
+                    padding: 20px;
+                    padding-bottom: 20px !important;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    text-align: center;
+                    max-width: 500px;
+                    width: 100%;
+                    margin: auto;
+                }
+                .confirmation-container h1 {
+                    font-family: 'Montserrat';
+                    color: #132644;
+                    font-size: 2.5em;
+                    font-weight: 800;
+                    margin-bottom: 15px;
+                }
+                .confirmation-container p {
+                    font-family: 'Montserrat';
+                    font-size: .9em;
+                    margin-bottom: 15px;
+                }
+                .confirmation-container .btn:hover {
+                    background-color: #0056b3;
+                }
+                .button-cita-ex {
+                    background: #132644;
+                    border: 1.5px solid #132644;
+                    border-radius: 30px;
+                    font-family: Inter;
+                    font-size: .9em;
+                    font-weight: 400;
+                    color: #fff;
+                    cursor: pointer;
+                    padding: 8px 18px;
+                    text-decoration: none;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="confirmation-container">
+                <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+               
+                    <h1>¡Error al Agregar!</h1>
+                    <p>Recuerde seleccionar el diseño. </p>
+              
+                <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Continuar</a>
+                <br><br>
+            </div>
+        </body>
+        </html>
+        
+        <?php
+        header("refresh:2;../../views/administrador/vista_admin_productos.php");
     }
 
     // Manejar la eliminación de un diseño
@@ -42,18 +191,316 @@ if ($_POST['action'] == 'add' || $_POST['action'] == 'remove') {
             $stmt->bindParam(':codigo_diseno', $codigo_diseno, PDO::PARAM_STR);
             $stmt->bindParam(':id_producto', $id_producto, PDO::PARAM_INT);
             if ($stmt->execute()) {
-                echo "<div class='alert alert-success'>Diseño quitado correctamente.</div>";
+                ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Diseño Eliminado</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Diseño Eliminado!</h1>
+                            <p>Tu diseño ya no está disponible</p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Continuar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
             } else {
-                error_log("Error en la ejecución del procedimiento.");
-                echo "<div class='alert alert-danger'>Error al quitar diseño.</div>";
+                ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Error al Eliminar!</h1>
+                            <p></p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Volver a Intentar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
             }
             $stmt->closeCursor();
         } catch (PDOException $e) {
-            error_log("Error al quitar diseño: " . $e->getMessage());
-            echo "<div class='alert alert-danger'>Error al quitar diseño: " . htmlspecialchars($e->getMessage()) . "</div>";
+            ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Error al Eliminar!</h1>
+                            <p></p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Volver a Intentar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
         }
     } elseif ($_POST['action'] == 'remove') {
-        echo "<div class='alert alert-danger'>El código de diseño no puede estar vacío.</div>";
+        ?>
+
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Error</title>
+            <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+            <link rel="stylesheet" href="../../css/styles.css">
+            <style>
+                body {
+                    background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                    background-size: cover;
+                    background-position: center;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    font-family: Arial, sans-serif;
+                }
+                .confirmation-container {
+                    background-color: rgba(255, 255, 255);
+                    padding: 20px;
+                    padding-bottom: 20px !important;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    text-align: center;
+                    max-width: 500px;
+                    width: 100%;
+                    margin: auto;
+                }
+                .confirmation-container h1 {
+                    font-family: 'Montserrat';
+                    color: #132644;
+                    font-size: 2.5em;
+                    font-weight: 800;
+                    margin-bottom: 15px;
+                }
+                .confirmation-container p {
+                    font-family: 'Montserrat';
+                    font-size: .9em;
+                    margin-bottom: 15px;
+                }
+                .confirmation-container .btn:hover {
+                    background-color: #0056b3;
+                }
+                .button-cita-ex {
+                    background: #132644;
+                    border: 1.5px solid #132644;
+                    border-radius: 30px;
+                    font-family: Inter;
+                    font-size: .9em;
+                    font-weight: 400;
+                    color: #fff;
+                    cursor: pointer;
+                    padding: 8px 18px;
+                    text-decoration: none;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="confirmation-container">
+                <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+               
+                    <h1>¡Error al Agregar!</h1>
+                    <p>Recuerde seleccionar el diseño. </p>
+              
+                <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Continuar</a>
+                <br><br>
+            </div>
+        </body>
+        </html>
+        
+        <?php
+        header("refresh:2;../../views/administrador/vista_admin_productos.php");
     }
 } else {
     // Esta parte solo debe ejecutarse si se está editando el producto.
@@ -74,23 +521,323 @@ if ($_POST['action'] == 'add' || $_POST['action'] == 'remove') {
             if ($check !== false) {
                 $uploadOk = 1;
             } else {
-                echo "<div class='alert alert-danger'>El archivo no es una imagen.</div>";
+                ?>
+
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Error</title>
+            <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+            <link rel="stylesheet" href="../../css/styles.css">
+            <style>
+                body {
+                    background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                    background-size: cover;
+                    background-position: center;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    font-family: Arial, sans-serif;
+                }
+                .confirmation-container {
+                    background-color: rgba(255, 255, 255);
+                    padding: 20px;
+                    padding-bottom: 20px !important;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    text-align: center;
+                    max-width: 500px;
+                    width: 100%;
+                    margin: auto;
+                }
+                .confirmation-container h1 {
+                    font-family: 'Montserrat';
+                    color: #132644;
+                    font-size: 2.5em;
+                    font-weight: 800;
+                    margin-bottom: 15px;
+                }
+                .confirmation-container p {
+                    font-family: 'Montserrat';
+                    font-size: .9em;
+                    margin-bottom: 15px;
+                }
+                .confirmation-container .btn:hover {
+                    background-color: #0056b3;
+                }
+                .button-cita-ex {
+                    background: #132644;
+                    border: 1.5px solid #132644;
+                    border-radius: 30px;
+                    font-family: Inter;
+                    font-size: .9em;
+                    font-weight: 400;
+                    color: #fff;
+                    cursor: pointer;
+                    padding: 8px 18px;
+                    text-decoration: none;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="confirmation-container">
+                <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+               
+                    <h1>¡Error al Agregar!</h1>
+                    <p>Recuerde usar imagenes </p>
+              
+                <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Volver a Intentar</a>
+                <br><br>
+            </div>
+        </body>
+        </html>
+        
+        <?php
+        header("refresh:2;../../views/administrador/vista_admin_productos.php");
                 $uploadOk = 0;
             }
 
             $allowedFormats = ['jpg', 'jpeg', 'png', 'gif'];
             if (!in_array($imageFileType, $allowedFormats)) {
-                echo "<div class='alert alert-danger'>Lo siento, solo se permiten archivos JPG, JPEG, PNG y GIF.</div>";
+                ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Error al Agregar!</h1>
+                            <p>Recuerde usar imagenes </p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Volver a Intentar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
                 $uploadOk = 0;
             }
 
             if (file_exists($target_file)) {
-                echo "<div class='alert alert-danger'>Lo siento, el archivo ya existe.</div>";
+                ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Error al Agregar!</h1>
+                            <p>El archivo ya no existe </p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Volver a Intentar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
                 $uploadOk = 0;
             }
 
             if ($_FILES["fileToUpload"]["size"] > 500000) {
-                echo "<div class='alert alert-danger'>Lo siento, tu archivo es demasiado grande.</div>";
+                ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Error al Agregar!</h1>
+                            <p>El archivo es demasiado grande </p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Volver a Intentar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
                 $uploadOk = 0;
             }
 
@@ -116,20 +863,395 @@ if ($_POST['action'] == 'add' || $_POST['action'] == 'remove') {
 
                         $result_check = $db->ejecutar1("SELECT * FROM imagen WHERE producto = :producto_id AND imagen = :imagen_nombre", [':producto_id' => $producto, ':imagen_nombre' => $imagen]);
                         if ($result_check && $result_check->rowCount() > 0) {
-                            echo "<div class='alert alert-success'>Imagen verificada correctamente en la base de datos.</div>";
+                            ?>
+
+                            <!DOCTYPE html>
+                            <html lang="es">
+                            <head>
+                                <meta charset="UTF-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <title>Imagen Agregada</title>
+                                <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                                <link rel="stylesheet" href="../../css/styles.css">
+                                <style>
+                                    body {
+                                        background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                                        background-size: cover;
+                                        background-position: center;
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        height: 100vh;
+                                        font-family: Arial, sans-serif;
+                                    }
+                                    .confirmation-container {
+                                        background-color: rgba(255, 255, 255);
+                                        padding: 20px;
+                                        padding-bottom: 20px !important;
+                                        border-radius: 10px;
+                                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                        text-align: center;
+                                        max-width: 500px;
+                                        width: 100%;
+                                        margin: auto;
+                                    }
+                                    .confirmation-container h1 {
+                                        font-family: 'Montserrat';
+                                        color: #132644;
+                                        font-size: 2.5em;
+                                        font-weight: 800;
+                                        margin-bottom: 15px;
+                                    }
+                                    .confirmation-container p {
+                                        font-family: 'Montserrat';
+                                        font-size: .9em;
+                                        margin-bottom: 15px;
+                                    }
+                                    .confirmation-container .btn:hover {
+                                        background-color: #0056b3;
+                                    }
+                                    .button-cita-ex {
+                                        background: #132644;
+                                        border: 1.5px solid #132644;
+                                        border-radius: 30px;
+                                        font-family: Inter;
+                                        font-size: .9em;
+                                        font-weight: 400;
+                                        color: #fff;
+                                        cursor: pointer;
+                                        padding: 8px 18px;
+                                        text-decoration: none;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div class="confirmation-container">
+                                    <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                                   
+                                        <h1>¡Imagen Agregada!</h1>
+                                        <p>La imagen ha sido agregada correctamente</p>
+                                  
+                                    <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Continuar</a>
+                                    <br><br>
+                                </div>
+                            </body>
+                            </html>
+                            
+                            <?php
+                            header("refresh:2;../../views/administrador/vista_admin_productos.php");
                         } else {
-                            echo "<div class='alert alert-danger'>Error: La imagen no se actualizó correctamente en la base de datos.</div>";
+                            ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Error al Agregar!</h1>
+                            <p>La imagen no se pudo actualizar </p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Volver a Intentar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
                         }
                     } else {
-                        echo "<div class='alert alert-danger'>No se pudo obtener el ID del producto. Verifica el nombre del producto.</div>";
+                        ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Error al Agregar!</h1>
+                            <p>Por favor, verifique en nombre del producto</p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Volver a Intentar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
                     }
                 } else {
-                    echo "<div class='alert alert-danger'>Lo siento, hubo un error al subir tu archivo.</div>";
+                    ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Error al Agregar!</h1>
+                            <p>Hubo un problema al agregar el archivo </p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Volver a Intentar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
                 }
             }
         }
     } else {
-        echo "<div class='alert alert-danger'>Faltan datos necesarios para la edición del producto.</div>";
+        ?>
+
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error</title>
+                    <link rel="stylesheet" href="../../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                            margin: auto;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container .btn:hover {
+                            background-color: #0056b3;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                       
+                            <h1>¡Error al Agregar!</h1>
+                            <p>Recuerde llenar todos los campos necesarios para la edición </p>
+                      
+                        <a href="../../views/administrador/vista_admin_productos.php" class="button-cita-ex">Volver a Intentar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                
+                <?php
+                header("refresh:2;../../views/administrador/vista_admin_productos.php");
     }
 }
 

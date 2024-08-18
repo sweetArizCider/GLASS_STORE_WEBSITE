@@ -254,6 +254,9 @@ try {
             <li class="sidebar-item">
               <a href="./vista_admin_citas.php" class="sidebar-link">Gestionar citas</a>
             </li>
+            <li class="sidebar-item">
+              <a href="./vista_admin_citas_por_instalador.php" class="sidebar-link">Asignaciones</a>
+            </li>
           </ul>
         </li>
         <li class="sidebar-item">
