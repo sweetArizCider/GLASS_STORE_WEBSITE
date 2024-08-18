@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
     <title>Registro de Usuario</title>
     <style>
         .welcome-container {
@@ -20,12 +21,72 @@
             color: white;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
+        .error-welcome-user{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../img/index/background.jpeg) center/cover no-repeat;
+            background-size: cover;
+
+
+        }
         .welcome-message {
             text-align: center;
         }
         .hidden {
             display: none;
         }
+        .error-container {
+                    background-color: rgba(255, 255, 255); /* Fondo semitransparente */
+                    padding: 20px;
+                    padding-bottom: 20px !important;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    text-align: center;
+                    max-width: 500px;
+                    width: 100%;
+                }
+                .error-container h1 {
+                    font-family: 'Montserrat';
+                    color: #c82333;
+                    font-size: 2.5em;
+                    font-weight: 800;
+                    margin-bottom: 15px;
+                }
+                .error-container p {
+                    font-family: 'Montserrat';
+                    font-size: .9em;
+                    margin-bottom: 15px;
+                }
+                .error-container .btn {
+                    background-color: #c82333;
+                    color: #ffffff;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    font-weight: bold;
+                    transition: background-color 0.3s;
+                }
+                .error-container .btn:hover {
+                    background-color: #a71d2a;
+                }
+                .button-retry{
+                    background: #c82333;
+                    border: 1.5px solid #c82333;
+                    border-radius: 30px;
+                    font-family: Inter;
+                    font-size: .9em;
+                    font-weight: 400;
+                    color: #fff;
+                    cursor: pointer;
+                    padding: 8px 18px;
+                    text-decoration: none;
+                }
     </style>
 </head>
 <body>
@@ -85,10 +146,23 @@
             $userCreated = true;
 
         } catch (PDOException $e) {
-            echo "<div class='alert alert-danger mt-3'>Error: " . $e->getMessage() . "</div>";
+            ?>
+        <div class="error-welcome-user">
+        <div class="welcome-message">
+            <div class="error-container">
+                <img src="../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                <h1>¡Usuario Ocupado!</h1>
+                <p>Ha ocurrido un error al intentar crear tu cuenta. Por favor, ingresa un nuevo nombre de usuario.</p>
+                
+                <a href="../views/register.php" class="button-retry">Volver a Intentar</a>
+                <br><br>
+            </div>
+        </div>
+        </div>
+        <?php
         }
         
-        $db->desconectarDB();
+        header("refresh:2;../views/register.php"); 
     } 
 ?>
 <script>

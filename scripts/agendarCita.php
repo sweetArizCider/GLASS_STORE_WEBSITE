@@ -71,7 +71,7 @@ if (isset($_SESSION["nom_usuario"])) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Inicia Sesión</title>
-        <meta http-equiv="refresh" content="5;url=../views/iniciarSesion.php">
+        <meta http-equiv="refresh" content="3;url=../views/iniciarSesion.php">
         <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="../css/styles.css">
         <style>
@@ -429,7 +429,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="error-container">
                 <img src="../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
                 <h1>¡Lo Lamentamos!</h1>
-                <p>Ha ocurrido un error al intentar crear tu cita. Por favor, inténtalo de nuevo.</p>
+                <p>Ha ocurrido un error al intentar crear tu cita. Por favor, seleccione un día en el calendario.</p>
                 
                 <a href="../views/citas.php" class="button-retry">Volver a Intentar</a>
                 <br><br>

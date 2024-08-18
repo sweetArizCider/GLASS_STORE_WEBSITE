@@ -71,7 +71,7 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control border-0 border-bottom rounded-0" name="telefono" id="telefono" placeholder="Teléfono">
+                                        <input type="tel" pattern="\d{10}" class="form-control border-0 border-bottom rounded-0" name="telefono" id="telefono" placeholder="Teléfono" required>
                                         <label for="telefono" class="form-label">Teléfono</label>
                                     </div>
                                 </div>

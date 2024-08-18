@@ -300,7 +300,7 @@ if ($categoriaSeleccionada) {
                     </div>
                     <div class="mb-3">
                         <label for="edit-product-precio-<?php echo $producto->id_producto; ?>" class="form-label">Precio</label>
-                        <input type="text" class="form-control" name="precio" id="edit-product-precio-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->precio); ?>">
+                        <input type="number" class="form-control" name="precio" id="edit-product-precio-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->precio); ?>">
                     </div>
                     <div class="mb-3">
                         <label for="edit-product-estatus-<?php echo $producto->id_producto; ?>" class="form-label">Estatus</label>
@@ -356,7 +356,7 @@ if ($categoriaSeleccionada) {
           <form action="../../scripts/administrador/agregarProducto.php" method="POST">
             <div class="mb-3">
               <label for="add-product-nombre" class="form-label">Nombre</label>
-              <input type="text" class="form-control" name="nombre" id="add-product-nombre">
+              <input type="text" class="form-control" name="nombre" id="add-product-nombre"  required>
             </div>
             <div class="mb-3">
               <label for="add-product-categoria" class="form-label">Categoría</label>
@@ -368,11 +368,11 @@ if ($categoriaSeleccionada) {
             </div>
             <div class="mb-3">
               <label for="add-product-descripcion" class="form-label">Descripción</label>
-              <textarea class="form-control" name="descripcion" id="add-product-descripcion"></textarea>
+              <textarea class="form-control" name="descripcion" id="add-product-descripcion" required></textarea>
             </div>
             <div class="mb-3">
               <label for="add-product-precio" class="form-label">Precio</label>
-              <input type="text" class="form-control" name="precio" id="add-product-precio">
+              <input type="number" class="form-control" name="precio" id="add-product-precio" required>
             </div>
             <div class="mb-3">
               <label for="add-product-estatus" class="form-label">Estatus</label>
@@ -403,7 +403,7 @@ if ($categoriaSeleccionada) {
           <form action="../../scripts/administrador/crearCategoria.php" method="POST">
             <div class="mb-3">
               <label for="add-category-nombre" class="form-label">Nombre</label>
-              <input type="text" class="form-control" name="nombre" id="add-category-nombre">
+              <input type="text" class="form-control" name="nombre" id="add-category-nombre" required>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>

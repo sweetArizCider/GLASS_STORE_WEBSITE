@@ -26,48 +26,49 @@ try {
     $cliente = $stmt_cliente->fetch(PDO::FETCH_ASSOC);
     $id_cliente = $cliente['id_cliente'];
 
-    // Obtener las citas del cliente
-    $query_citas = "SELECT 
-                        c.id_cita,
-                        c.fecha,
-                        c.hora,
-                        c.estatus AS estatus_cita,
-                        concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
-                        ifnull(
-                            replace(
-                                (SELECT group_concat(
-                                    concat(
-                                        prod.nombre, ': $', dp.monto,
-                                        if(dp.alto is not null, concat(', alto: ', dp.alto), ''),
-                                        if(dp.largo is not null, concat(', largo: ', dp.largo), ''),
-                                        if(dp.cantidad is not null, concat(', cantidad: ', dp.cantidad), ''),
-                                        if(dp.grosor is not null, concat(', grosor: ', dp.grosor), ''),
-                                        if(dp.tipo_tela is not null, concat(', tipo de tela: ', dp.tipo_tela), ''),
-                                        if(dp.marco is not null, concat(', marco: ', dp.marco), ''),
-                                        if(dp.tipo_cadena is not null, concat(', tipo de cadena: ', dp.tipo_cadena), ''),
-                                        if(dp.color is not null, concat(', color: ', dp.color), ''),
-                                        if(dp.diseno is not null, concat(', diseño: ', dis.codigo), '')
-                                    ) separator '\n'
-                                ) 
-                                FROM detalle_cita dc 
-                                JOIN detalle_producto dp ON dc.detalle_producto = dp.id_detalle_producto 
-                                JOIN productos prod ON dp.producto = prod.id_producto 
-                                LEFT JOIN disenos dis ON dp.diseno = dis.id_diseno
-                                WHERE dc.cita = c.id_cita),
-                                ',', '\n'
-                            ),
-                            'no hay cotizaciones'
-                        ) as cotizaciones,
-                        (SELECT concat(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m)
-                         FROM instalador_cita ic
-                         JOIN instalador i ON ic.instalador = i.id_instalador
-                         JOIN persona p ON i.persona = p.id_persona
-                         WHERE ic.cita = c.id_cita
-                         LIMIT 1) AS instalador_asignado
-                    FROM citas c
-                    JOIN cliente_direcciones cd ON c.cliente_direccion = cd.id_cliente_direcciones
-                    JOIN direcciones d ON cd.direccion = d.id_direccion
-                    WHERE cd.cliente = :id_cliente";
+    // Obtener las citas del cliente junto con todos los instaladores asignados
+    $query_citas = "
+        SELECT 
+            c.id_cita,
+            c.fecha,
+            c.hora,
+            c.estatus AS estatus_cita,
+            concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
+            IFNULL(
+                REPLACE(
+                    (SELECT GROUP_CONCAT(
+                        CONCAT(
+                            prod.nombre, ': $', dp.monto,
+                            IF(dp.alto IS NOT NULL, CONCAT(', alto: ', dp.alto), ''),
+                            IF(dp.largo IS NOT NULL, CONCAT(', largo: ', dp.largo), ''),
+                            IF(dp.cantidad IS NOT NULL, CONCAT(', cantidad: ', dp.cantidad), ''),
+                            IF(dp.grosor IS NOT NULL, CONCAT(', grosor: ', dp.grosor), ''),
+                            IF(dp.tipo_tela IS NOT NULL, CONCAT(', tipo de tela: ', dp.tipo_tela), ''),
+                            IF(dp.marco IS NOT NULL, CONCAT(', marco: ', dp.marco), ''),
+                            IF(dp.tipo_cadena IS NOT NULL, CONCAT(', tipo de cadena: ', dp.tipo_cadena), ''),
+                            IF(dp.color IS NOT NULL, CONCAT(', color: ', dp.color), ''),
+                            IF(dp.diseno IS NOT NULL, CONCAT(', diseño: ', dis.codigo), '')
+                        ) SEPARATOR '\n'
+                    )
+                    FROM detalle_cita dc 
+                    JOIN detalle_producto dp ON dc.detalle_producto = dp.id_detalle_producto 
+                    JOIN productos prod ON dp.producto = prod.id_producto 
+                    LEFT JOIN disenos dis ON dp.diseno = dis.id_diseno
+                    WHERE dc.cita = c.id_cita),
+                    ',', '\n'
+                ),
+                'no hay cotizaciones'
+            ) as cotizaciones,
+            (SELECT GROUP_CONCAT(CONCAT(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) SEPARATOR ', ')
+             FROM instalador_cita ic
+             JOIN instalador i ON ic.instalador = i.id_instalador
+             JOIN persona p ON i.persona = p.id_persona
+             WHERE ic.cita = c.id_cita
+            ) AS instaladores_asignados
+        FROM citas c
+        JOIN cliente_direcciones cd ON c.cliente_direccion = cd.id_cliente_direcciones
+        JOIN direcciones d ON cd.direccion = d.id_direccion
+        WHERE cd.cliente = :id_cliente";
 
     $stmt_citas = $db->ejecutarcita($query_citas, [':id_cliente' => $id_cliente]);
 
@@ -87,7 +88,6 @@ try {
 
 $db->desconectarDB();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -206,6 +206,9 @@ $db->desconectarDB();
               <span class="bueld"><?php echo htmlspecialchars($row['direccion']); ?></span><br>
               el día <span class="bueld"><?php echo $fecha; ?></span> a las <span class="bueld"><?php echo $hora; ?></span></p>
             
+            <!-- Mostrar estatus de la cita -->
+            <p>Estatus de la cita: <strong><?php echo htmlspecialchars($row['estatus_cita']); ?></strong></p>
+            
             <?php if ($hasCotizaciones): ?>
             <p class="cotizacion-toggle" data-bs-toggle="collapse" data-bs-target="#cotizaciones<?php echo $row['id_cita']; ?>">Ver Cotizaciones</p>
             <div id="cotizaciones<?php echo $row['id_cita']; ?>" class="collapse">
@@ -215,10 +218,10 @@ $db->desconectarDB();
             <p>No hay cotizaciones</p>
             <?php endif; ?>
 
-            <?php if ($row['instalador_asignado']): ?>
-              <p>Instalador asignado: <?php echo htmlspecialchars($row['instalador_asignado']); ?></p>
+            <?php if ($row['instaladores_asignados']): ?>
+              <p>Instaladores asignados: <?php echo htmlspecialchars($row['instaladores_asignados']); ?></p>
             <?php else: ?>
-              <p>No hay instalador asignado</p>
+              <p>No hay instaladores asignados</p>
             <?php endif; ?>
 
           </div>

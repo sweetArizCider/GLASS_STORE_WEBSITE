@@ -770,7 +770,7 @@ function eliminarFavoritoDesdeModal(id_producto) {
                     data: { id_detalle_producto: idDetalleProducto },
                     success: function(response) {
                         console.log('Producto actualizado:', response);
-                        window.location.href = './citas.php';
+                        window.location.href = './views/citas.php';
                     },
                     error: function(error) {
                         console.error('Error al actualizar el producto:', error);

@@ -120,6 +120,38 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     width: 25px; /* Ajusta el tamaño del ícono */
     height: 25px;
 }
+/* Estilo para la alerta */
+.custom-alert {
+    font-family: 'Montserrat'; /* Cambia el tipo de letra */
+    background-color: #f4f4f4; /* Cambia el fondo */
+    border-radius: 30px; /* Bordes redondeados */
+}
+
+/* Estilo para el título */
+.custom-title {
+    font-size: 2em;
+    color: #132644; /* Cambia el color del texto */
+    font-weight: 600;
+}
+
+/* Estilo para el botón */
+.custom-button {
+    background: #132644;
+                border: 1.5px solid #132644;
+                border-radius: 30px;
+                font-family: Inter;
+                font-size: .8em;
+                font-weight: 400;
+                color: #fff;
+                cursor: pointer;
+                padding: 8px 18px;
+                text-decoration: none;
+}
+
+.custom-button:hover {
+    background-color: #4AB3D5;
+    border: 1.5px solid #4AB3D5; /* Cambia el color al hacer hover */
+}
 
   </style>
 
@@ -402,6 +434,8 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 $(document).ready(function() {
     var currentPage = 1;
@@ -619,10 +653,25 @@ $(document).ready(function() {
         }
     });
 
-function changeIcon(element, id_producto) {
+    function changeIcon(element, id_producto) {
     <?php if (!isset($_SESSION["nom_usuario"])): ?>
-        // Redirigir a la página de inicio de sesión si el usuario no está logueado
-        window.location.href = "../views/iniciarSesion.php";
+        // Mostrar alerta personalizada antes de redirigir
+        Swal.fire({
+            title: '¡Inicia sesión para guardar favoritos!',
+            text: 'Disfruta de todos los beneficios que ofrecemos para tí',
+            showConfirmButton: true,
+            confirmButtonText: 'Iniciar sesión',
+            customClass: {
+                popup: 'custom-alert',
+                title: 'custom-title',
+                confirmButton: 'custom-button'
+            },
+            icon: null // Elimina el ícono
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "../views/iniciarSesion.php";
+            }
+        });
     <?php else: ?>
         var icon = element.querySelector('.icon-overlay');
         var isFavorite = icon.getAttribute('src') === '../img/index/heartCover.svg';
@@ -634,6 +683,8 @@ function changeIcon(element, id_producto) {
         saveToFavorites(id_producto);
     <?php endif; ?>
 }
+
+
 
 function saveToFavorites(id_producto) {
     $.ajax({

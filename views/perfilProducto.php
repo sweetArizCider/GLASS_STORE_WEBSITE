@@ -593,6 +593,21 @@ document.addEventListener('DOMContentLoaded', function () {
     if (anchoInput) anchoInput.addEventListener('input', validarInput);
     if (largoInput) largoInput.addEventListener('input', validarInput);
     cantidadInput.addEventListener('input', validarInput);
+    const designImages = document.querySelectorAll('.design-image');
+    if (designImages.length > 0) {
+        // Seleccionar automáticamente el primer diseño
+        designImages[0].classList.add('selected');
+        disenoInput.value = designImages[0].getAttribute('data-id');
+    }
+    designImages.forEach(function(image) {
+        image.addEventListener('click', function() {
+            designImages.forEach(function(img) {
+                img.classList.remove('selected');
+            });
+            image.classList.add('selected');
+            disenoInput.value = image.getAttribute('data-id');
+        });
+    });
 
     document.querySelectorAll('.design-image').forEach(function(image) {
         image.addEventListener('click', function() {
