@@ -30,7 +30,13 @@ if (isset($_SESSION["nom_usuario"])) {
             if ($nombre_rol == 'cliente' && isset($fila->id_cliente)) {
                 $id_cliente = $fila->id_cliente;
                 $id_usuario = $id_cliente;
-                // Cambia el nombre de la tabla a minúsculas
+                
+                // Cambiar el estado de todos los productos "en carrito" a "en espera" para el cliente actual
+                $consulta_update = "UPDATE detalle_producto SET estatus = 'en espera' WHERE cliente = :id_cliente AND estatus = 'en carrito'";
+                $params_update = [':id_cliente' => $id_cliente];
+                $conexion->ejecutar1($consulta_update, $params_update);
+
+                // Consulta de notificaciones del cliente
                 $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = :cliente order by fecha desc";
                 $paramsNotificaciones = [':cliente' => $id_cliente];
                 $notificaciones = $conexion->seleccionar($consultaNotificaciones, $paramsNotificaciones);
@@ -67,6 +73,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     return esReciente($notif->fecha);
 });
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

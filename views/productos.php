@@ -33,6 +33,11 @@ if (isset($_SESSION["nom_usuario"])) {
                 $id_cliente = $fila->id_cliente;
                 $id_usuario = $id_cliente;
 
+                 // Cambiar el estado de todos los productos "en carrito" a "en espera" para el cliente actual
+                 $consulta_update = "UPDATE detalle_producto SET estatus = 'en espera' WHERE cliente = :id_cliente AND estatus = 'en carrito'";
+                 $params_update = [':id_cliente' => $id_cliente];
+                 $conexion->ejecutar1($consulta_update, $params_update);
+
                 $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_cliente WHERE cliente = ? order by fecha desc";
                 $paramsNotificaciones = [$id_cliente];
                 $notificaciones = $conexion->seleccionar($consultaNotificaciones, $paramsNotificaciones);
