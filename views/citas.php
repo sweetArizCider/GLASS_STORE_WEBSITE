@@ -7,21 +7,18 @@ $id_usuario = 0;
 if (isset($_SESSION["nom_usuario"])) {
     $user = $_SESSION["nom_usuario"];
 
-    // Crear la instancia de la base de datos y conectar
     $conexion = new database();
     $conexion->conectarDB();
 
     //echo "adentro del if de obtener rol usuario ";
     //var_dump($conexion);
 
-    // Obtener el rol del usuario
     $consulta_rol = "CALL roles_usuario(?)";
     $resultado_rol = $conexion->seleccionar($consulta_rol, [$user]);
 
     if ($resultado_rol && !empty($resultado_rol)) {
         $nombre_rol = $resultado_rol[0]->nombre_rol;
 
-        // Obtener los IDs del usuario
         $consulta_ids = "CALL obtener_id_por_nombre_usuario(?)";
         $resultado_ids = $conexion->seleccionar($consulta_ids, [$user]);
 
@@ -63,62 +60,63 @@ if (isset($_SESSION["nom_usuario"])) {
 //   var_dump($id_cliente);
 //   var_dump($user);
   
-  $conexion->conectarDB();
+//quoteado por razones importantes ------------------------------------------------------
+//   $conexion->conectarDB();
 
 
-if ($id_cliente) {
-    // echo "ID Cliente dentro del if: " . ($id_cliente ? $id_cliente : 'No encontrado') . "<br>";
+// if ($id_cliente) {
+//     // echo "ID Cliente dentro del if: " . ($id_cliente ? $id_cliente : 'No encontrado') . "<br>";
 
-    try {
-        $consulta = "
-            SELECT 1
-            FROM citas
-            WHERE cliente_direccion = :clienteId
-            AND estatus IN ('en espera', 'aceptada')
-            LIMIT 1
-        ";
+//     try {
+//         $consulta = "
+//             SELECT 1
+//             FROM citas
+//             WHERE cliente_direccion = :clienteId
+//             AND estatus IN ('en espera', 'aceptada')
+//             LIMIT 1
+//         ";
         
 
-        $stmt = $conexion->ejecuta2($consulta, [':clienteId' => $id_cliente]);
+//         $stmt = $conexion->ejecuta2($consulta, [':clienteId' => $id_cliente]);
 
 
-        if ($stmt === false) {
-            throw new Exception("Error al ejecutar la consulta SQL.");
-        }
+//         if ($stmt === false) {
+//             throw new Exception("Error al ejecutar la consulta SQL.");
+//         }
 
-        // Verificar si se encontraron citas
-        $citaExistente = $stmt->fetchColumn();
+//         // Verificar si se encontraron citas
+//         $citaExistente = $stmt->fetchColumn();
 
-        // echo "Valor devuelto por fetchColumn(): " . var_export($citaExistente, true) . "<br>";
-        var_dump($citaExistente);
+//         // echo "Valor devuelto por fetchColumn(): " . var_export($citaExistente, true) . "<br>";
+//         var_dump($citaExistente);
 
-        if ($citaExistente === 'false') {
-            echo "NO PUEDES CREAR CITAS"; //hay coincidencia
-        } else {
-            echo "HAZ UNA CITA"; //no hay coincidencia
-        }
+//         if ($citaExistente === 'false') {
+//             echo "NO PUEDES CREAR CITAS"; //hay coincidencia
+//         } else {
+//             echo "HAZ UNA CITA"; //no hay coincidencia
+//         }
 
-    } catch (Exception $e) {
-        echo "Excepción capturada: " . $e->getMessage();
-    }
+//     } catch (Exception $e) {
+//         echo "Excepción capturada: " . $e->getMessage();
+//     }
 
-} else {
-    echo "No se ha enviado el id_cliente.";
-}
+// } else {
+//     echo "No se ha enviado el id_cliente.";
+// }
 
 
-// $puedeHacerCitas = false;
+// // $puedeHacerCitas = false;
 
-if ($citaExistente === '1') {
-    $puedeHacerCitas = false; //no puedes, boton desabilitado
-    echo '<div style="color: white; background-color: #800020; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center;">
-    Tendrá que esperar a que le contesten de su anterior cita antes de agendar otra, favor esté pendiente de su cuenta.
-  </div>';
-} else {
-    $puedeHacerCitas = true; //si puedes, boton habilitado
-}
+// if ($citaExistente === '1') {
+//     $puedeHacerCitas = false; //no puedes, boton desabilitado
+//     echo '<div style="color: white; background-color: #800020; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center;">
+//     Tendrá que esperar a que le contesten de su anterior cita antes de agendar otra, favor esté pendiente de su cuenta.
+//   </div>';
+// } else {
+//     $puedeHacerCitas = true; //si puedes, boton habilitado
+// }
 
-echo "Valor de puedeHacerCitas: " . var_export($puedeHacerCitas, true) . "<br>";
+// echo "Valor de puedeHacerCitas: " . var_export($puedeHacerCitas, true) . "<br>";
 
 } //if de roles de usuario 
 else {
@@ -275,11 +273,11 @@ else {
 
                                 <div class="col-12">
                                     <div class="d-grid">
-                                        <!-- <button id="submitAgendar" class="submit-button-register" type="submit">Agendar</button> -->
-                                        <button id="submitAgendar" class="submit-button-register" type="submit" 
+                                        <button id="submitAgendar" class="submit-button-register" type="submit">Agendar</button>
+                                        <!-- <button id="submitAgendar" class="submit-button-register" type="submit" 
                                             <?php echo $puedeHacerCitas ? '' : 'disabled'; ?>>
                                             Agendar
-                                        </button>
+                                        </button> -->
                                     </div>
                                 </div>
 
