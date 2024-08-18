@@ -2,99 +2,146 @@
 session_start();
 
 // Verificar si el usuario está autenticado
-if (!isset($_SESSION["nom_usuario"])) {
-    error_log("Usuario no autenticado. Redirigiendo a iniciarSesion.php");
-    header("Location: ../iniciarSesion.php");
-    exit();
-}
+// if (!isset($_SESSION["nom_usuario"])) {
+//     error_log("Usuario no autenticado. Redirigiendo a iniciarSesion.php");
+//     header("Location: ../iniciarSesion.php");
+//     exit();
+// }
 
 include '../../class/database.php';
 
 $db = new database();
 $db->conectarDB();
-$user = $_SESSION["nom_usuario"];
+// $user = $_SESSION["nom_usuario"];
 
-try {
-    $stmt = $db->getPDO()->prepare("CALL roles_usuario(?)");
-    $stmt->execute([$user]);
-    $roles = $stmt->fetchAll(PDO::FETCH_OBJ);
+// try {
+//     $stmt = $db->getPDO()->prepare("CALL roles_usuario(?)");
+//     $stmt->execute([$user]);
+//     $roles = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    $isAdmin = false;
+//     $isAdmin = false;
 
-    foreach ($roles as $role) {
-        if ($role->nombre_rol == 'administrador') {
-            $isAdmin = true;
-            break;
-        }
-    }
+//     foreach ($roles as $role) {
+//         if ($role->nombre_rol == 'administrador') {
+//             $isAdmin = true;
+//             break;
+//         }
+//     }
 
-    if ($isAdmin) {
-        $_SESSION["nombre_rol"] = 'administrador';
-        error_log("Usuario autenticado como Administrador: " . $user);
-    } else {
-        error_log("Usuario sin privilegios de Administrador. Redirigiendo a iniciarSesion.php");
-        header("Location: ../iniciarSesion.php");
-        exit();
-    }
-} catch (Exception $e) {
-    error_log("Error al ejecutar el procedimiento almacenado: " . $e->getMessage());
-    header("Location: ../iniciarSesion.php");
-    exit();
-}
+//     if ($isAdmin) {
+//         $_SESSION["nombre_rol"] = 'administrador';
+//         error_log("Usuario autenticado como Administrador: " . $user);
+//     } else {
+//         error_log("Usuario sin privilegios de Administrador. Redirigiendo a iniciarSesion.php");
+//         header("Location: ../iniciarSesion.php");
+//         exit();
+//     }
+// } catch (Exception $e) {
+//     error_log("Error al ejecutar el procedimiento almacenado: " . $e->getMessage());
+//     header("Location: ../iniciarSesion.php");
+//     exit();
+// }
 
 $db = new Database();
 $db->conectarDB();
 
+
+// logica para filtrar las citas
+$filter = isset($_GET['filter']) ? $_GET['filter'] : 'en_espera';  // Por defecto, en espera
 $order = isset($_GET['order']) && $_GET['order'] === 'asc' ? 'ASC' : 'DESC';
 
-$cadena = "SELECT
-    c.id_cita,
-    concat(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) as nombre_cliente,
-    c.fecha,
-    c.hora,
-    concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
-    c.notas,
-    ifnull(
-        replace(
-            (select group_concat(
-                concat(
-                    prod.nombre, ': $', dp.monto,
-                    if(dp.alto is not null, concat(', alto: ', dp.alto), ''),
-                    if(dp.largo is not null, concat(', largo: ', dp.largo), ''),
-                    if(dp.cantidad is not null, concat(', cantidad: ', dp.cantidad), ''),
-                    if(dp.grosor is not null, concat(', grosor: ', dp.grosor), ''),
-                    if(dp.tipo_tela is not null, concat(', tipo de tela: ', dp.tipo_tela), ''),
-                    if(dp.marco is not null, concat(', marco: ', dp.marco), ''),
-                    if(dp.tipo_cadena is not null, concat(', tipo de cadena: ', dp.tipo_cadena), ''),
-                    if(dp.color is not null, concat(', color: ', dp.color), ''),
-                    if(dp.diseno is not null, concat(', diseño: ', dis.codigo), '')
-                ) separator '\n'
-            ) from detalle_cita dc 
-            join detalle_producto dp on dc.detalle_producto = dp.id_detalle_producto 
-            join productos prod on dp.producto = prod.id_producto 
-            left join disenos dis on dp.diseno = dis.id_diseno
-            where dc.cita = c.id_cita), 
-            ',', '\n'
-        ),
-        'no hay cotizaciones'
-    ) as cotizaciones
-FROM
-    citas c
-JOIN
-    cliente_direcciones cd on c.cliente_direccion = cd.id_cliente_direcciones
-JOIN
-    cliente cli on cd.cliente = cli.id_cliente
-JOIN
-    persona p on cli.persona = p.id_persona
-JOIN
-    direcciones d on cd.direccion = d.id_direccion
-WHERE
-    c.estatus = 'en espera'
-ORDER BY c.fecha $order";
+switch ($filter) {
+    case 'rechazadas':
+        $cadena = "SELECT
+            c.id_cita,
+            concat(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) as nombre_cliente,
+            f.fecha,
+            f.hora,
+            concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
+            c.notas,
+            ifnull(
+                replace(
+                    (select group_concat(
+                        concat(
+                            prod.nombre, ': $', dp.monto,
+                            if(dp.alto is not null, concat(', alto: ', dp.alto), ''),
+                            if(dp.largo is not null, concat(', largo: ', dp.largo), ''),
+                            if(dp.cantidad is not null, concat(', cantidad: ', dp.cantidad), ''),
+                            if(dp.grosor is not null, concat(', grosor: ', dp.grosor), ''),
+                            if(dp.tipo_tela is not null, concat(', tipo de tela: ', dp.tipo_tela), ''),
+                            if(dp.marco is not null, concat(', marco: ', dp.marco), ''),
+                            if(dp.tipo_cadena is not null, concat(', tipo de cadena: ', dp.tipo_cadena), ''),
+                            if(dp.color is not null, concat(', color: ', dp.color), ''),
+                            if(dp.diseno is not null, concat(', diseño: ', dis.codigo), '')
+                        ) separator '\n'
+                    ) from detalle_cita dc 
+                    join detalle_producto dp on dc.detalle_producto = dp.id_detalle_producto 
+                    join productos prod on dp.producto = prod.id_producto 
+                    left join disenos dis on dp.diseno = dis.id_diseno
+                    where dc.cita = c.id_cita), 
+                    ',', '\n'
+                ),
+                'no hay cotizaciones'
+            ) as cotizaciones
+        FROM
+            citas c
+        JOIN cliente_direcciones cd on c.cliente_direccion = cd.id_cliente_direcciones
+        JOIN cliente cli on cd.cliente = cli.id_cliente
+        JOIN persona p on cli.persona = p.id_persona
+        JOIN direcciones d on cd.direccion = d.id_direccion
+        JOIN fechas f on c.fechas = f.id_fechas  
+        WHERE c.estatus = 'rechazada'
+        ORDER BY f.fecha $order";
+        break;
 
+    default:
+        $cadena = "SELECT
+            c.id_cita,
+            concat(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) as nombre_cliente,
+            f.fecha,
+            f.hora,
+            concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
+            c.notas,
+            ifnull(
+                replace(
+                    (select group_concat(
+                        concat(
+                            prod.nombre, ': $', dp.monto,
+                            if(dp.alto is not null, concat(', alto: ', dp.alto), ''),
+                            if(dp.largo is not null, concat(', largo: ', dp.largo), ''),
+                            if(dp.cantidad is not null, concat(', cantidad: ', dp.cantidad), ''),
+                            if(dp.grosor is not null, concat(', grosor: ', dp.grosor), ''),
+                            if(dp.tipo_tela is not null, concat(', tipo de tela: ', dp.tipo_tela), ''),
+                            if(dp.marco is not null, concat(', marco: ', dp.marco), ''),
+                            if(dp.tipo_cadena is not null, concat(', tipo de cadena: ', dp.tipo_cadena), ''),
+                            if(dp.color is not null, concat(', color: ', dp.color), ''),
+                            if(dp.diseno is not null, concat(', diseño: ', dis.codigo), '')
+                        ) separator '\n'
+                    ) from detalle_cita dc 
+                    join detalle_producto dp on dc.detalle_producto = dp.id_detalle_producto 
+                    join productos prod on dp.producto = prod.id_producto 
+                    left join disenos dis on dp.diseno = dis.id_diseno
+                    where dc.cita = c.id_cita), 
+                    ',', '\n'
+                ),
+                'no hay cotizaciones'
+            ) as cotizaciones
+        FROM
+            citas c
+        JOIN cliente_direcciones cd on c.cliente_direccion = cd.id_cliente_direcciones
+        JOIN cliente cli on cd.cliente = cli.id_cliente
+        JOIN persona p on cli.persona = p.id_persona
+        JOIN direcciones d on cd.direccion = d.id_direccion
+        JOIN fechas f on c.fechas = f.id_fechas  
+        WHERE c.estatus = 'en espera'
+        ORDER BY f.fecha $order";
+        break;
+}
 
 $result = $db->ejecutar($cadena, []);
 
+
+//cachando errores
 if ($result === false) {
     echo "Error en la consulta.";
     $db->desconectarDB();
@@ -286,8 +333,10 @@ $db->desconectarDB();
           <h6 class="mensaje-bienvenida">Gestionar Citas</h6>
           <br>
           <div class="text-center">         
-              <button class="buuton-dar-rol" onclick="window.location.href='?order=asc'">Citas Más Antiguas</button>
-              <button class="buuton-dar-rol" onclick="window.location.href='?order=desc'">Citas Más Recientes</button>
+          <button class="buuton-dar-rol" onclick="window.location.href='?filter=en_espera&order=asc'">Citas Más Antiguas</button>
+<button class="buuton-dar-rol" onclick="window.location.href='?filter=en_espera&order=desc'">Citas Más Recientes</button>
+<button class="buuton-dar-rol" onclick="window.location.href='?filter=rechazadas&order=desc'">Citas Rechazadas</button>
+
           </div>
         </div>
       </div><br>
@@ -320,10 +369,12 @@ $db->desconectarDB();
             <p>No hay cotizaciones</p>
             <?php endif; ?>
 
-            <div class="text-end">
-              <button class="buuton-dar-rol" data-bs-toggle="modal" data-bs-target="#asignarModal<?php echo $row['id_cita']; ?>" id="asignarButton<?php echo $row['id_cita']; ?>">Asignar</button>
-              <button class="buuton-dar-rol-danger" data-bs-toggle="modal" data-bs-target="#rechazarModal<?php echo $row['id_cita']; ?>" id="rechazarButton<?php echo $row['id_cita']; ?>">Rechazar</button>
-            </div>
+            <?php if ($filter !== 'rechazadas'): ?>
+              <div class="text-end">
+                <button class="buuton-dar-rol" data-bs-toggle="modal" data-bs-target="#asignarModal<?php echo $row['id_cita']; ?>" id="asignarButton<?php echo $row['id_cita']; ?>">Asignar</button>
+                <button class="buuton-dar-rol-danger" data-bs-toggle="modal" data-bs-target="#rechazarModal<?php echo $row['id_cita']; ?>" id="rechazarButton<?php echo $row['id_cita']; ?>">Rechazar</button>
+              </div>
+            <?php endif; ?>
           </div>
 
           <!-- Modal para Asignar Instaladores -->
