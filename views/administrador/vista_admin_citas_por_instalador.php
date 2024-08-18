@@ -22,44 +22,43 @@ $instaladoresResult = $db->ejecutar1($instaladoresQuery, []);
 $instaladores = $instaladoresResult ? $instaladoresResult->fetchAll(PDO::FETCH_ASSOC) : [];
 
 $cadena = "
-    SELECT
-        c.id_cita,
-        concat(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) as nombre_cliente,
-        f.fecha,
-        f.hora,
-        concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
-        c.notas,
-        ifnull(
-            replace(
-                (select group_concat(
-                    concat(
-                        prod.nombre, ': $', dp.monto,
-                        if(dp.alto is not null, concat(', alto: ', dp.alto), ''),
-                        if(dp.largo is not null, concat(', largo: ', dp.largo), ''),
-                        if(dp.cantidad is not null, concat(', cantidad: ', dp.cantidad), ''),
-                        if(dp.grosor is not null, concat(', grosor: ', dp.grosor), ''),
-                        if(dp.tipo_tela is not null, concat(', tipo de tela: ', dp.tipo_tela), ''),
-                        if(dp.marco is not null, concat(', marco: ', dp.marco), ''),
-                        if(dp.tipo_cadena is not null, concat(', tipo de cadena: ', dp.tipo_cadena), ''),
-                        if(dp.color is not null, concat(', color: ', dp.color), ''),
-                        if(dp.diseno is not null, concat(', diseño: ', dis.codigo), '')
-                    ) separator '\n'
-                ) from detalle_cita dc 
-                join detalle_producto dp on dc.detalle_producto = dp.id_detalle_producto 
-                join productos prod on dp.producto = prod.id_producto 
-                left join disenos dis on dp.diseno = dis.id_diseno
-                where dc.cita = c.id_cita), 
-                ',', '\n'
-            ),
-            'no hay cotizaciones'
-        ) as cotizaciones
-    FROM
-        citas c
-    JOIN cliente_direcciones cd on c.cliente_direccion = cd.id_cliente_direcciones
-    JOIN cliente cli on cd.cliente = cli.id_cliente
-    JOIN persona p on cli.persona = p.id_persona
-    JOIN direcciones d on cd.direccion = d.id_direccion
-    JOIN fechas f on c.fechas = f.id_fechas  
+SELECT
+    c.id_cita,
+    concat(p.nombres, ' ', p.apellido_p, ' ', p.apellido_m) as nombre_cliente,
+    c.fecha as fecha,
+    c.hora as hora,
+    concat(d.calle, ' ', d.numero, ' ', d.numero_int, ', ', d.colonia, ', ', d.ciudad, '. referencias: ', d.referencias) as direccion,
+    c.notas,
+    ifnull(
+        replace(
+            (select group_concat(
+                concat(
+                    prod.nombre, ': $', dp.monto,
+                    if(dp.alto is not null, concat(', alto: ', dp.alto), ''),
+                    if(dp.largo is not null, concat(', largo: ', dp.largo), ''),
+                    if(dp.cantidad is not null, concat(', cantidad: ', dp.cantidad), ''),
+                    if(dp.grosor is not null, concat(', grosor: ', dp.grosor), ''),
+                    if(dp.tipo_tela is not null, concat(', tipo de tela: ', dp.tipo_tela), ''),
+                    if(dp.marco is not null, concat(', marco: ', dp.marco), ''),
+                    if(dp.tipo_cadena is not null, concat(', tipo de cadena: ', dp.tipo_cadena), ''),
+                    if(dp.color is not null, concat(', color: ', dp.color), ''),
+                    if(dp.diseno is not null, concat(', diseño: ', dis.codigo), '')
+                ) separator '\n'
+            ) from detalle_cita dc 
+            join detalle_producto dp on dc.detalle_producto = dp.id_detalle_producto 
+            join productos prod on dp.producto = prod.id_producto 
+            left join disenos dis on dp.diseno = dis.id_diseno
+            where dc.cita = c.id_cita), 
+            ',', '\n'
+        ),
+        'no hay cotizaciones'
+    ) as cotizaciones
+FROM
+    citas c
+JOIN cliente_direcciones cd on c.cliente_direccion = cd.id_cliente_direcciones
+JOIN cliente cli on cd.cliente = cli.id_cliente
+JOIN persona p on cli.persona = p.id_persona
+JOIN direcciones d on cd.direccion = d.id_direccion 
 ";
 
 // Filtrar por instalador si se selecciona uno
@@ -68,7 +67,7 @@ if ($id_instalador) {
 } else {
 }
 
-$cadena .= " ORDER BY f.fecha $order";
+$cadena .= " ORDER BY c.fecha $order";
 
 $params = $id_instalador ? [':id_instalador' => $id_instalador] : [];
 $result = $db->ejecutar1($cadena, $params);
@@ -274,13 +273,14 @@ $db->desconectarDB();
             $tipo_cita = $hasCotizaciones ? "Cita de toma de medidas" : "Instalación";
             $fecha = date('d \d\e F \d\e Y', strtotime($row['fecha']));
             $hora = date('h:i A', strtotime($row['hora']));
+
           ?>
           <div class="secc-sub-general">
-            <p class="fecha"><?php echo $fecha; ?></p>
+            <p class="fecha"><?php echo $fecha_formateada; ?></p>
             <p><mark class="marklued"><?php echo htmlspecialchars($row['nombre_cliente']); ?></mark><br>
               Requiere <span class="bueld"><?php echo $tipo_cita; ?></span> en el domicilio: 
               <span class="bueld"><?php echo htmlspecialchars($row['direccion']); ?></span><br>
-              el día <span class="bueld"><?php echo $fecha; ?></span> a las <span class="bueld"><?php echo $hora; ?></span></p>
+              el día <span class="bueld"><?php echo $fecha_formateada; ?></span> a las <span class="bueld"><?php echo $hora; ?></span></p>
             
             <?php if ($hasCotizaciones): ?>
             <p class="cotizacion-toggle" data-bs-toggle="collapse" data-bs-target="#cotizaciones<?php echo $row['id_cita']; ?>">Ver Cotizaciones</p>
