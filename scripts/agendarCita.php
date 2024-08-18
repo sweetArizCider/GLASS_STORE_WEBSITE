@@ -133,7 +133,6 @@ if (isset($_SESSION["nom_usuario"])) {
     </html>
     <?php
     exit;
-
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -157,119 +156,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $conexion->conectarDB();
 
     try {
-        $id_cliente_direccion = obtenerIdClienteDireccion($id_cliente, $calle, $numero, $numero_interior, $colonia, $ciudad, $referencias, $conexion);
+        // Verificar si el cliente ya tiene una cita en espera
+        $query_verificar_cita = "
+            SELECT COUNT(*) as total
+            FROM citas
+            INNER JOIN cliente_direcciones ON citas.cliente_direccion = cliente_direcciones.id_cliente_direcciones
+            WHERE cliente_direcciones.cliente = ?
+            AND citas.estatus = 'en espera';
+        ";
+        $stmt_verificar_cita = $conexion->getPDO()->prepare($query_verificar_cita);
+        $stmt_verificar_cita->execute([$id_cliente]);
+        $resultado_verificar = $stmt_verificar_cita->fetch(PDO::FETCH_ASSOC);
 
-        $query = "CALL crear_cita(?, ?, ?, ?, ?, @id_cita)";
-        $stmt = $conexion->getPDO()->prepare($query);
-        $stmt->execute(['instalacion', $fecha, $hora, $id_cliente_direccion, $motivo]);
-
-        $result = $conexion->getPDO()->query("SELECT @id_cita as id_cita");
-        $row = $result->fetch(PDO::FETCH_ASSOC);
-        $id_cita = $row['id_cita'] ?? null;
-
-        if ($id_cita) {
-            $username = $_SESSION["nom_usuario"];
-            ?>
-           <!DOCTYPE html>
-            <html lang="es">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Cita Confirmada</title>
-                <meta http-equiv="refresh" content="3;url=../index.php">
-                <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
-                <link rel="stylesheet" href="../css/styles.css">
-                <style>
-                    body {
-                        background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../img/index/background.jpeg) center/cover no-repeat;
-                        background-size: cover;
-                        background-position: center;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        height: 100vh;
-                        font-family: Arial, sans-serif;
-                    }
-                    .confirmation-container {
-                        background-color: rgba(255, 255, 255);
-                        padding: 20px;
-                        padding-bottom: 20px !important;
-                        border-radius: 10px;
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                        text-align: center;
-                        max-width: 500px;
-                        width: 100%;
-                    }
-                    .confirmation-container h1 {
-                        font-family: 'Montserrat';
-                        color: #132644;
-                        font-size: 2.5em;
-                        font-weight: 800;
-                        margin-bottom: 15px;
-                    }
-                    .confirmation-container p {
-                        font-family: 'Montserrat';
-                        font-size: .9em;
-                        margin-bottom: 15px;
-                    }
-                    .confirmation-container .btn:hover {
-                        background-color: #0056b3;
-                    }
-                    .button-cita-ex{
-
-  background: #132644;
-  border: 1.5px solid #132644;
-  border-radius: 30px;
-  font-family: Inter;
-  font-size: .9em;
-  font-weight: 400;
-  color: #fff;
-  cursor: pointer;
-  padding: 8px 18px;
-  text-decoration: none;
-                    }
-
-                </style>
-            </head>
-            <body>
-                <div class="confirmation-container">
-                    <img src="../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
-                    <h1>¡Cita Exitosa!</h1>
-                    <p>Gracias <strong><?php echo htmlspecialchars($username); ?></strong> por agendar tu cita con nosotros.</p>
-                    <p style="margin-bottom:2em;">Por favor, mantente pendiente de tus notificaciones para cualquier actualización.</p>
-                    <a href="../views/citas.php" class="button-cita-ex">Volver al Inicio</a>
-                    <br><br>
-                </div>
-            </body>
-            </html>
-            <?php
-            
-
-            // Obtener los productos en carrito del cliente
-            $query_productos_carrito = "SELECT id_detalle_producto FROM detalle_producto WHERE estatus = 'en carrito' AND cliente = ?";
-            $stmt_productos_carrito = $conexion->getPDO()->prepare($query_productos_carrito);
-            $stmt_productos_carrito->execute([$id_cliente]);
-
-            $productos_carrito = $stmt_productos_carrito->fetchAll(PDO::FETCH_COLUMN);
-
-            if (!empty($productos_carrito)) {
-                foreach ($productos_carrito as $detalle_producto_id) {
-                    $query_detalle_cita = "INSERT INTO detalle_cita (cita, detalle_producto) VALUES (?, ?)";
-                    $stmt_detalle_cita = $conexion->getPDO()->prepare($query_detalle_cita);
-                    $stmt_detalle_cita->execute([$id_cita, $detalle_producto_id]);
-
-                    if ($stmt_detalle_cita->rowCount() > 0) {
-                       
-                        // Asegúrate de que el estatus es válido para la columna
-                        $estatus_valido = 'aceptada';  // Asegúrate de que este valor es válido para la columna 'estatus'
-                        $query_actualizar_estatus = "UPDATE detalle_producto SET estatus = ? WHERE id_detalle_producto = ?";
-                        $stmt_actualizar_estatus = $conexion->getPDO()->prepare($query_actualizar_estatus);
-                        $stmt_actualizar_estatus->execute([$estatus_valido, $detalle_producto_id]);
-                    } 
-                }
-            } 
-        } 
-        else{
+        if ($resultado_verificar['total'] > 0) {
+            // Si ya tiene una cita en espera, mostrar un mensaje de error
             ?>
             <!DOCTYPE html>
             <html lang="es">
@@ -325,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     .error-container .btn:hover {
                         background-color: #a71d2a;
                     }
-                    .button-retry{
+                    .button-retry {
                         background: #c82333;
                         border: 1.5px solid #c82333;
                         border-radius: 30px;
@@ -337,22 +237,207 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         padding: 8px 18px;
                         text-decoration: none;
                     }
-    
                 </style>
             </head>
             <body>
                 <div class="error-container">
-
                     <img src="../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
                     <h1>¡Lo Lamentamos!</h1>
-                    <p>Ha ocurrido un error al intentar crear tu cita. Por favor, inténtalo de nuevo.</p>
+                    <p>No se pudo crear la cita ya que tienes una cita en espera. Mantente atento a tus notificaciones para cualquier cambio.</p>
                     <a href="../views/citas.php" class="button-retry" style="border-radius: 30px;">Volver a Intentar</a>
                     <br><br>
-
                 </div>
             </body>
             </html>
             <?php
+        } else {
+            // Proceder con la creación de la cita
+            $id_cliente_direccion = obtenerIdClienteDireccion($id_cliente, $calle, $numero, $numero_interior, $colonia, $ciudad, $referencias, $conexion);
+
+            $query = "CALL crear_cita(?, ?, ?, ?, ?, @id_cita)";
+            $stmt = $conexion->getPDO()->prepare($query);
+            $stmt->execute(['instalacion', $fecha, $hora, $id_cliente_direccion, $motivo]);
+
+            $result = $conexion->getPDO()->query("SELECT @id_cita as id_cita");
+            $row = $result->fetch(PDO::FETCH_ASSOC);
+            $id_cita = $row['id_cita'] ?? null;
+
+            if ($id_cita) {
+                $username = $_SESSION["nom_usuario"];
+                ?>
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Cita Confirmada</title>
+                    <meta http-equiv="refresh" content="3;url=../index.php">
+                    <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .confirmation-container {
+                            background-color: rgba(255, 255, 255);
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                        }
+                        .confirmation-container h1 {
+                            font-family: 'Montserrat';
+                            color: #132644;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .confirmation-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .button-cita-ex {
+                            background: #132644;
+                            border: 1.5px solid #132644;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="confirmation-container">
+                        <img src="../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                        <h1>¡Cita Exitosa!</h1>
+                        <p>Gracias <strong><?php echo htmlspecialchars($username); ?></strong> por agendar tu cita con nosotros.</p>
+                        <p style="margin-bottom:2em;">Por favor, mantente pendiente de tus notificaciones para cualquier actualización.</p>
+                        <a href="../views/citas.php" class="button-cita-ex">Volver al Inicio</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                <?php
+
+                // Obtener los productos en carrito del cliente
+                $query_productos_carrito = "SELECT id_detalle_producto FROM detalle_producto WHERE estatus = 'en carrito' AND cliente = ?";
+                $stmt_productos_carrito = $conexion->getPDO()->prepare($query_productos_carrito);
+                $stmt_productos_carrito->execute([$id_cliente]);
+
+                $productos_carrito = $stmt_productos_carrito->fetchAll(PDO::FETCH_COLUMN);
+
+                if (!empty($productos_carrito)) {
+                    foreach ($productos_carrito as $detalle_producto_id) {
+                        $query_detalle_cita = "INSERT INTO detalle_cita (cita, detalle_producto) VALUES (?, ?)";
+                        $stmt_detalle_cita = $conexion->getPDO()->prepare($query_detalle_cita);
+                        $stmt_detalle_cita->execute([$id_cita, $detalle_producto_id]);
+
+                        if ($stmt_detalle_cita->rowCount() > 0) {
+                            // Asegúrate de que el estatus es válido para la columna
+                            $estatus_valido = 'aceptada';  // Asegúrate de que este valor es válido para la columna 'estatus'
+                            $query_actualizar_estatus = "UPDATE detalle_producto SET estatus = ? WHERE id_detalle_producto = ?";
+                            $stmt_actualizar_estatus = $conexion->getPDO()->prepare($query_actualizar_estatus);
+                            $stmt_actualizar_estatus->execute([$estatus_valido, $detalle_producto_id]);
+                        } 
+                    }
+                } 
+            } else {
+                ?>
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Error al Crear la Cita</title>
+                    <meta http-equiv="refresh" content="5;url=../index.php">
+                    <link rel="stylesheet" href="../css/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="../css/styles.css">
+                    <style>
+                        body {
+                            background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../img/index/background.jpeg) center/cover no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            font-family: Arial, sans-serif;
+                        }
+                        .error-container {
+                            background-color: rgba(255, 255, 255); /* Fondo semitransparente */
+                            padding: 20px;
+                            padding-bottom: 20px !important;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                            max-width: 500px;
+                            width: 100%;
+                        }
+                        .error-container h1 {
+                            font-family: 'Montserrat';
+                            color: #c82333;
+                            font-size: 2.5em;
+                            font-weight: 800;
+                            margin-bottom: 15px;
+                        }
+                        .error-container p {
+                            font-family: 'Montserrat';
+                            font-size: .9em;
+                            margin-bottom: 15px;
+                        }
+                        .error-container .btn {
+                            background-color: #c82333;
+                            color: #ffffff;
+                            padding: 10px 20px;
+                            border-radius: 5px;
+                            text-decoration: none;
+                            font-weight: bold;
+                            transition: background-color 0.3s;
+                        }
+                        .error-container .btn:hover {
+                            background-color: #a71d2a;
+                        }
+                        .button-retry {
+                            background: #c82333;
+                            border: 1.5px solid #c82333;
+                            border-radius: 30px;
+                            font-family: Inter;
+                            font-size: .9em;
+                            font-weight: 400;
+                            color: #fff;
+                            cursor: pointer;
+                            padding: 8px 18px;
+                            text-decoration: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="error-container">
+                        <img src="../img/index/GLASS.png" alt="Glass Store" class="mb-4" style="width: 100px; margin-top:1em;">
+                        <h1>¡Lo Lamentamos!</h1>
+                        <p>Ha ocurrido un error al intentar crear tu cita. Por favor, inténtalo de nuevo.</p>
+                        <a href="../views/citas.php" class="button-retry" style="border-radius: 30px;">Volver a Intentar</a>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                <?php
+            }
         }
     } catch (Exception $e) {
         ?>
@@ -410,7 +495,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 .error-container .btn:hover {
                     background-color: #a71d2a;
                 }
-                .button-retry{
+                .button-retry {
                     background: #c82333;
                     border: 1.5px solid #c82333;
                     border-radius: 30px;
@@ -422,7 +507,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     padding: 8px 18px;
                     text-decoration: none;
                 }
-
             </style>
         </head>
         <body>
@@ -439,3 +523,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php
     }
 }
+?>
