@@ -327,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <h1>¡Cita Exitosa!</h1>
                         <p>Gracias <strong><?php echo htmlspecialchars($username); ?></strong> por agendar tu cita con nosotros.</p>
                         <p style="margin-bottom:2em;">Por favor, mantente pendiente de tus notificaciones para cualquier actualización.</p>
-                        <a href="../views/citas.php" class="button-cita-ex">Volver al Inicio</a>
+                        <a href="../index.php" class="button-cita-ex">Volver al Inicio</a>
                         <br><br>
                     </div>
                 </body>

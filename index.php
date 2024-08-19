@@ -7,8 +7,8 @@ $notificaciones = [];
 if (isset($_SESSION["nom_usuario"])) {
     $user = $_SESSION["nom_usuario"];
 
-    // Crear conexión a la base de datos
-    $conexion = new Database(); // Asegúrate de que la clase tenga la mayúscula correcta si así está definida
+
+    $conexion = new Database();
     $conexion->conectarDB();
 
     // Consulta para obtener el rol del usuario basado en el nombre de usuario
@@ -31,7 +31,7 @@ if (isset($_SESSION["nom_usuario"])) {
                 $id_cliente = $fila->id_cliente;
                 $id_usuario = $id_cliente;
                 
-                // Cambiar el estado de todos los productos "en carrito" a "en espera" para el cliente actual
+                // Cambiar el estado de todos los productos "en carrito" a "en espera" para el cliente actual asi le sallen cuando no concluye la cita
                 $consulta_update = "UPDATE detalle_producto SET estatus = 'en espera' WHERE cliente = :id_cliente AND estatus = 'en carrito'";
                 $params_update = [':id_cliente' => $id_cliente];
                 $conexion->ejecutar1($consulta_update, $params_update);
@@ -45,7 +45,7 @@ if (isset($_SESSION["nom_usuario"])) {
                 $id_instalador = $fila->id_instalador;
                 $id_usuario = $id_instalador;
 
-                // Cambia el nombre de la tabla a minúsculas
+              
                 $consultaNotificaciones = "SELECT notificacion, fecha FROM notificaciones_instalador WHERE instalador = :instalador";
                 $paramsNotificaciones = [':instalador' => $id_instalador];
                 $notificaciones = $conexion->seleccionar($consultaNotificaciones, $paramsNotificaciones);
@@ -56,7 +56,7 @@ if (isset($_SESSION["nom_usuario"])) {
 
 $productos_espera = [];
 if ($id_usuario != 0) {
-    // Obtener los detalles del producto en espera
+    // solo los que estan en espera 
     $consulta_productos = "CALL carrito(?)";
     $params_productos = [$id_usuario];
     $productos_espera = $conexion->seleccionar($consulta_productos, $params_productos);
@@ -66,7 +66,7 @@ function esReciente($fecha){
     $fechaNotif = new DateTime($fecha);
     $fechaActual = new DateTime();
     $intervalo = $fechaActual->diff($fechaNotif);
-    return ($intervalo->d < 30); // Considera reciente si es de los últimos 30 días
+    return ($intervalo->d < 30); // la agarra de los ultimos 30 dias 
 }
 
 $notificacionesRecientes = array_filter($notificaciones, function($notif) {
@@ -89,16 +89,16 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     <style>
          .icon-overlay-container-fav {
     position: absolute;
-    bottom: 10px; /* Ajusta la distancia desde el borde inferior */
-    right: 10px; /* Ajusta la distancia desde el borde derecho */
+    bottom: 10px; 
+    right: 10px; 
     cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.8); /* Opcional: Fondo blanco semitransparente */
+    background-color: rgba(255, 255, 255, 0.8); 
     border-radius: 50%;
     padding: 5px;
 }
 
 .icon-overlay-fav {
-    width: 25px; /* Ajusta el tamaño del ícono */
+    width: 25px;
     height: 25px;
 }
     </style>
@@ -136,7 +136,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
     </a>
     <?php if (isset($_SESSION["nom_usuario"])): ?>
         <ul class="dropdown-menu" aria-labelledby="user-icon">
-            <li class="dropdown-item" style="color: #6c757d; font-size: .8em; pointer-events: none; cursor: default;"> <!-- Estilo del nombre de usuario en gris claro -->
+            <li class="dropdown-item" style="color: #6c757d; font-size: .8em; pointer-events: none; cursor: default;"> 
                 <?php echo htmlspecialchars($_SESSION["nom_usuario"]); ?>
             </li>
             <li><a class="dropdown-item" href="./views/cliente/perfil.php">Perfil</a></li>
@@ -497,7 +497,7 @@ $notificacionesRecientes = array_filter($notificaciones, function($notif) {
                     <!-- Usuario logueado -->
                     <p class="text-center">Guarda tus productos favoritos y accede a ellos en cualquier momento.</p>
                     <div id="favoritos-list" class="row">
-                        <!-- Aquí se cargarán los productos favoritos -->
+                        <!-- Aquí se cargarán los productos favoritos con lo de abjo -->
                     </div>
                 <?php else: ?>
                     <!-- Usuario no logueado -->

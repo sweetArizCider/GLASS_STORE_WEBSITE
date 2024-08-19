@@ -1,0 +1,49 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+body {
+    background: linear-gradient(180deg, rgba(19, 38, 68, 0.45) 100%, rgba(19, 38, 68, 0.45) 100%), url(../../img/index/background.jpeg) center/cover no-repeat;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+.confirmation-container {
+    background-color: rgba(255, 255, 255);
+    padding: 20px;
+    padding-bottom: 20px !important;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    margin: auto;
+}
+.confirmation-container h1 {
+    font-family: 'Montserrat';
+    color: #132644;
+    font-size: 2.5em;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+.confirmation-container p {
+    font-family: 'Montserrat';
+    font-size: .9em;
+    margin-bottom: 15px;
+}
+.button-cita-ex {
+    background: #132644;
+    border: 1.5px solid #132644;
+    border-radius: 30px;
+    font-family: Inter;
+    font-size: .9em;
+    font-weight: 400;
+    color: #fff;
+    cursor: pointer;
+    padding: 8px 18px;
+    text-decoration: none;
+}
