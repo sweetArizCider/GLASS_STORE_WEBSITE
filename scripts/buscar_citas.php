@@ -1,5 +1,5 @@
 <?php
-include '../class/database.php';  // Ajusta la ruta según sea necesario
+include '../class/database.php';
 
 $db = new database();
 $db->conectarDB();
@@ -41,3 +41,4 @@ foreach ($citas as $id_cita => $cita) {
 }
 
 $db->desconectarDB();
+?>

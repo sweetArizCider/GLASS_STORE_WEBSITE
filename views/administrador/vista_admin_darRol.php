@@ -184,31 +184,10 @@ try {
         </div>
         <div class="container mt-5">
           <div class="row">
-            <!-- Columna para Asignar Rol -->
-            <div class="col-md-6">
-              <h2  style="color:#132644;">Asignar Rol</h2>
-              <form action="../../scripts/administrador/asignar_rol.php" method="POST">
-                <div class="mb-3">
-                  <label for="nom_usuario_asignar" class="form-label">Nombre de Usuario</label>
-                  <input type="text" class="form-control" id="nom_usuario_asignar" name="nom_usuario" required>
-                </div>
-                <div class="mb-3">
-                  <label for="nombre_rol_asignar" class="form-label">Rol</label>
-                  <select class="form-select" id="nombre_rol_asignar" name="nombre_rol" required>
-                    <option value="">Seleccione un rol</option>
-                    <?php foreach ($roles as $role): ?>
-                      <option value="<?php echo htmlspecialchars($role['nombre_rol']); ?>">
-                        <?php echo htmlspecialchars($role['nombre_rol']); ?>
-                      </option>
-                    <?php endforeach; ?>
-                  </select>
-                </div>
-                <button type="submit"  class="buuton-dar-rol">Asignar Rol</button>
-              </form>
-            </div>
+            
 
             <!-- Columna para Quitar Rol -->
-            <div class="col-md-6">
+            <div class="col-md-12">
               <h2  style="color:#132644;">Quitar Rol</h2>
               <form action="../../scripts/administrador/quitar_rol.php" method="POST">
                 <div class="mb-3">
@@ -220,7 +199,7 @@ try {
                   <select class="form-select" id="nombre_rol_quitar" name="nombre_rol_quitar" required>
                     <option value="">Seleccione un rol</option>
                     <?php foreach ($roles as $role): ?>
-                      <?php if ($role['nombre_rol'] !== 'cliente'): ?>
+                      <?php if ($role['nombre_rol'] !== 'cliente' && $role['nombre_rol'] !== 'administrador'): ?>
                         <option value="<?php echo htmlspecialchars($role['nombre_rol']); ?>">
                           <?php echo htmlspecialchars($role['nombre_rol']); ?>
                         </option>

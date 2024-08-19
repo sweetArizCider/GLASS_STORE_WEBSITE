@@ -156,7 +156,7 @@ foreach ($detalles_citas as $detalle) {
     
     <div class="col-12 mb-4 card-bienvenida">
         <div class="text-center">
-          <h5 class="mensaje-bienvenida">Reporte de recibos</h5>
+          <h5 class="mensaje-bienvenida">Reportes</h5>
         </div>
     
     <div class="container">

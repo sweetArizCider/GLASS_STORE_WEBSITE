@@ -188,6 +188,13 @@ if ($categoriaSeleccionada) {
 
 
     <div class="main p-3">
+    <div class="col-12 mb-4 card-bienvenida">
+        <div class="text-center">
+          <h5 class="mensaje-bienvenida">Gestión de Productos</h5>
+          <p class="mensaje-sub"><mark class="marklued">¡Hoy es un gran día para expandir tu catálogo de productos!</mark></p>
+        </div>
+      </div>
+      
       <div class="text-center">
         <div class="busqueda mx-auto">
           <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
@@ -196,12 +203,7 @@ if ($categoriaSeleccionada) {
       </div>
       <br>
 
-      <div class="col-12 mb-4 card-bienvenida">
-        <div class="text-center">
-          <h5 class="mensaje-bienvenida">Gestión de Productos</h5>
-          <p class="mensaje-sub"><mark class="marklued">¡Hoy es un gran día para expandir tu catálogo de productos!</mark></p>
-        </div>
-      </div>
+      
 
       <div class="contenidoGeneral mt-4">
         <div class="d-flex justify-content-end mt-4 flex-column flex-md-row">

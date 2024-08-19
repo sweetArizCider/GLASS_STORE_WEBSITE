@@ -184,6 +184,13 @@ try {
 
 
     <div class="main p-3">
+    <div class="col-12 mb-4 card-bienvenida">
+          <div class="text-center ">
+            <div class="">
+              <h5 class=" mensaje-bienvenida">Promociones</h5>
+            </div>
+          </div>
+        </div>
       <div class="text-center">
         <div class="busqueda mx-auto">
           <input type="text" placeholder="Buscar" class="buscar-input" id="search-input">
@@ -192,13 +199,7 @@ try {
       </div>
       <br>
 
-      <div class="col-12 mb-4 card-bienvenida">
-          <div class="text-center ">
-            <div class="">
-              <h5 class=" mensaje-bienvenida">Promociones</h5>
-            </div>
-          </div>
-        </div>
+     
     
   <!-- contenido general-->
   <div class="contenidoGeneral mt-4">

@@ -46,7 +46,7 @@ try {
 $limit = 8;
 $offset = 0;
 
-$cadena = "SELECT * FROM vista_citas_detalles ORDER BY id_cita LIMIT $limit OFFSET $offset";
+$cadena = "SELECT * FROM vista_citas_detalles ORDER BY id_cita desc LIMIT $limit OFFSET $offset";
 $resultado = $db->seleccionar($cadena);
 
 $citas = array();
@@ -263,46 +263,56 @@ hamBurger.addEventListener("click", function () {
                 $(target).collapse('toggle');
             });
 
-        $(document).ready(function() {
-            // Función para realizar la búsqueda en tiempo real
-            $('#search-input').on('input', function() {
-                const query = $(this).val();
+            $(document).ready(function() {
+    // Función para realizar la búsqueda en tiempo real
+    $('#search-input').on('input', function() {
+        const query = $(this).val();
+        
+        // Enviar la solicitud AJAX al servidor
+        $.ajax({
+            url: '../../scripts/buscar_citas.php',
+            type: 'GET',
+            data: { search: query },
+            success: function(response) {
+                // Actualizar el contenedor con los resultados
+                $('#accordion').html(response);
                 
-                // Enviar la solicitud AJAX al servidor
-                $.ajax({
-                    url: '../../scripts/buscar_citas.php',
-                    type: 'GET',
-                    data: { search: query },
-                    success: function(response) {
-                        // Actualizar el contenedor con los resultados
-                        $('#accordion').html(response);
-                    },
-                    error: function() {
-                        console.log('Error al realizar la búsqueda.');
-                    }
+                // Reactivar el comportamiento de los elementos collapse
+                $('.secc-sub-general').on('click', function() {
+                    var target = $(this).data('bs-target');
+                    $(target).collapse('toggle');
                 });
-            });
-        });
-
-        $(document).ready(function() {
-        let offset = 8;
-
-        // Función para cargar más citas
-        $('#load-more').click(function() {
-            $.ajax({
-                url: '../../scripts/cargar_mas_citas.php',
-                type: 'GET',
-                data: { offset: offset },
-                success: function(response) {
-                    $('#accordion').append(response);
-                    offset += 8;
-                },
-                error: function() {
-                    console.log('Error al cargar más citas.');
-                }
-            });
+            },
+            error: function() {
+                console.log('Error al realizar la búsqueda.');
+            }
         });
     });
+
+    // Función para cargar más citas
+    let offset = 8;
+    $('#load-more').click(function() {
+        $.ajax({
+            url: '../../scripts/cargar_mas_citas.php',
+            type: 'GET',
+            data: { offset: offset },
+            success: function(response) {
+                $('#accordion').append(response);
+                offset += 8;
+
+                // Reactivar el comportamiento de los elementos collapse en los nuevos elementos
+                $('.secc-sub-general').on('click', function() {
+                    var target = $(this).data('bs-target');
+                    $(target).collapse('toggle');
+                });
+            },
+            error: function() {
+                console.log('Error al cargar más citas.');
+            }
+        });
+    });
+});
+
     </script>
 </body>
 </html>

@@ -142,6 +142,7 @@ if (isset($_GET['id'])) {
 @media (max-width: 768px) {
     .buttonPerfilProductocancelar{
         margin-left: 0 !important;
+        text-align: center;
     }
 
 }
@@ -191,7 +192,7 @@ input[type=number] {
       <img src="../img/index/whatsappFloat.svg" alt="Contáctanos por WhatsApp">
     </a>
   </div>
-     <!-- barra superior -->
+     <!-- barra superior 
      <div class="container blue">
       <div class="navbar-top">
           <div class="social-link">
@@ -214,7 +215,7 @@ input[type=number] {
     </a>
     <?php if (isset($_SESSION["nom_usuario"])): ?>
         <ul class="dropdown-menu" aria-labelledby="user-icon">
-            <li class="dropdown-item" style="color: #6c757d; font-size: .8em; pointer-events: none; cursor: default;"> <!-- Estilo del nombre de usuario en gris claro -->
+            <li class="dropdown-item" style="color: #6c757d; font-size: .8em; pointer-events: none; cursor: default;"> 
                 <?php echo htmlspecialchars($_SESSION["nom_usuario"]); ?>
             </li>
             <li><a class="dropdown-item" href="../views/cliente/perfil.php">Perfil</a></li>
@@ -247,6 +248,7 @@ input[type=number] {
             </div>
         </div>
     </div> 
+    -->
 
   <!-- segunda barra -->
   <nav class="navbar sticky-top navbar-expand-md" id="navbar-color">
