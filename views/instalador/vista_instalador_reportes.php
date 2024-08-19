@@ -9,40 +9,36 @@
   <link rel="stylesheet" href="../../css/normalized.css">
   <link rel="stylesheet" href="../../css/style_admin.css">
 
-<style>
-  .dropdown img {
-            width: 50px;
-            height: auto;
-        }
-        .dropdown-item {
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
-        }
-        .dropdown-item span {
-            margin-left: 10px;
-        }
-        select {
-            width: 300px;
-            height: 50px;
-        }
-
-        .inputPerfil {
-    margin-bottom: 1rem;
-}
-
-.labelPerfilProduct {
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.form-control {
-    width: 100%;
-    display: block;
-    margin-top: 0.25rem;
-}
-</style>
-
+  <style>
+    .dropdown img {
+      width: 50px;
+      height: auto;
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+    }
+    .dropdown-item span {
+      margin-left: 10px;
+    }
+    select {
+      width: 300px;
+      height: 50px;
+    }
+    .inputPerfil {
+      margin-bottom: 1rem;
+    }
+    .labelPerfilProduct {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .form-control {
+      width: 100%;
+      display: block;
+      margin-top: 0.25rem;
+    }
+  </style>
 </head>
 <body>
 <?php
@@ -54,11 +50,20 @@ $db->conectarDB();
 $user = $_SESSION["nom_usuario"];
 
 if (isset($_SESSION['message'])) {
-  echo "<div class='alert alert-success'>";
-  echo "<h2 align='center'>" . $_SESSION['message'] . "</h2>";
-  echo "</div>";
-
-  // Eliminar el mensaje después de mostrarlo
+  echo "<script>
+          Swal.fire({
+              title: 'Datos Ingresados',
+              text: '" . $_SESSION['message'] . "',
+              icon: 'success',
+              showConfirmButton: true,
+              confirmButtonText: 'Aceptar',
+              customClass: {
+                  popup: 'custom-alert',
+                  title: 'custom-title',
+                  confirmButton: 'custom-button'
+              }
+          });
+        </script>";
   unset($_SESSION['message']);
 }
 
@@ -111,27 +116,27 @@ if ($result) {
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
 
-  <!-- Barra lateral -->
+  <!--Barra lateral-->
   <div class="wrapper">
     <aside id="sidebar">
-    <div class="d-flex">
+      <div class="d-flex">
         <button class="toggle-btn" type="button">
           <img src="../../img/index/menu.svg" alt="Menu">
         </button>
         <div class="sidebar-logo">
-          <a href="../../index.php">GLASS STORE</a>
+          <a href="../../../">GLASS STORE</a>
         </div>
       </div>
       <ul class="sidebar-nav">
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#inicio" aria-expanded="false" aria-controls="inicio">
-            <img src="../../img/instalador/home.svg" alt="Inicio">
+             <img src="../../img/instalador/home.svg" alt="Perfil">
             <span>Inicio</span>
           </a>
           <ul id="inicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="#" class="sidebar-link">Volver al Inicio</a>
+              <a href="./index_Instalador.php" class="sidebar-link">Volver al Inicio</a>
             </li>
           </ul>
         </li>
@@ -150,7 +155,7 @@ if ($result) {
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#citas" aria-expanded="false" aria-controls="citas">
-            <img src="../../img/admin/calendar.svg" alt="Citas">
+            <img src="../../img/admin/calendar.svg" alt="citas">
             <span>Citas</span>
           </a>
           <ul id="citas" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
@@ -162,28 +167,26 @@ if ($result) {
         <li class="sidebar-item">
           <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
              data-bs-target="#reporte" aria-expanded="false" aria-controls="reporte">
-            <img src="../../img/admin/clipboard.svg" alt="Reportes">
+            <img src="../../img/admin/clipboard.svg" alt="citas">
             <span>Reportes</span>
           </a>
           <ul id="reporte" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
             <li class="sidebar-item">
-              <a href="../../views/instalador/vista_instalador_reportes.php" class="sidebar-link">Hacer Reporte</a>
+              <a href="../../views/instalador/vista_instalador_reportes.php" class="sidebar-link">Hacer reporte</a>
             </li>
           </ul>
         </li>
+        
+       
       </ul>
       <div class="sidebar-footer">
-        <a href="./index_Instalador.php" class="sidebar-link">
-          <img src="../../img/admin/home.svg" alt="Volver">
-          <span>Volver</span>
+        <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
+            <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
+            <span>Cerrar Sesión</span>
         </a>
-      </div>
-      <div class="sidebar-footer">
-        <a href="#" class="sidebar-link">
-          <img src="../../img/admin/logout.svg" alt="Cerrar Sesión">
-          <span>Cerrar Sesión</span>
-        </a>
-      </div>
+    </div>
+     
+      
     </aside>
 
     <div class="main p-3">
@@ -198,7 +201,6 @@ if ($result) {
         <div class="general-container">
           <div class="d-flex justify-content-end mt-4">
             <div class="dropdown">
-             
               <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
                 <li><a class="dropdown-item" href="#" onclick="sortCitas('recientes')">Recientes</a></li>
                 <li><a class="dropdown-item" href="#" onclick="sortCitas('antiguos')">Antiguos</a></li>
@@ -238,120 +240,92 @@ if ($result) {
                           <div class="report-form" id="report-form-<?= htmlspecialchars($producto->id_detalle) ?>" style="display: none;">
                             <div class="card p-3 mb-3">
                               <h5>Generar Reporte para <?= htmlspecialchars($producto->producto_nombre) ?></h5>
-                              <!--<?php var_dump($producto); ?>-->
+                              <form id="cotizacionForm" method="POST" action="../../scripts/instalador/generar_reporte.php" class="formPerfil">
+                                <input type="hidden" name="detalle_cita" value="<?= htmlspecialchars($producto->id_detalle_cita); ?>">
+                                <input type="hidden" name="categoria" value="<?= htmlspecialchars($producto->id_categoria); ?>">
+                                <input type="hidden" name="diseno" id="diseno" value="<?= htmlspecialchars($producto->producto_diseno); ?>">
 
+                                <!-- Campos generales -->
+                                <div class="inputPerfil mb-3">
+                                  <label class="labelPerfilProduct" for="alto">Alto (metros)</label>
+                                  <input type="number" class="form-control inputPerfilProductoCont" id="alto" name="alto" value="<?= htmlspecialchars($producto->producto_alto); ?>" step="0.01" max="10" required>
+                                </div>
+                                <div class="inputPerfil mb-3">
+                                  <label class="labelPerfilProduct" for="largo">Largo (metros)</label>
+                                  <input type="number" class="form-control inputPerfilProductoCont" id="largo" name="largo" value="<?= htmlspecialchars($producto->producto_largo); ?>" step="0.01" max="50" required>
+                                </div>
 
-<div id="cotizacionContainer" class="mt-5">
-    <form id="cotizacionForm" method="POST" action="../../scripts/instalador/generar_reporte.php" class="formPerfil">
-        <input type="hidden" name="detalle_cita" value="<?php echo htmlspecialchars($producto->id_detalle_cita); ?>">
-        <input type="hidden" name="categoria" value="<?php echo htmlspecialchars($producto->id_categoria); ?>">
-        <input type="hidden" name="diseno" id="diseno" value="<?php echo htmlspecialchars($producto->producto_diseno); ?>">
+                                <div class="inputPerfil mb-3">
+                                  <label class="labelPerfilProduct" for="diseno">Diseño</label>
+                                  <select id="diseno" name="diseno" class="form-control">
+                                    <?php
+                                    $query = "SELECT id_diseno, codigo, file_path FROM disenos WHERE estatus = 'activo'";
+                                    $disenos = $db->seleccionar($query);
+                                    $selectedDesignId = htmlspecialchars($producto->producto_diseno, ENT_QUOTES, 'UTF-8');
+                                    if (!empty($disenos)) {
+                                        foreach ($disenos as $diseno) {
+                                            $isSelected = $diseno->id_diseno == $selectedDesignId ? 'selected' : '';
+                                            echo '<option value="' . htmlspecialchars($diseno->id_diseno, ENT_QUOTES, 'UTF-8') . '" ' . $isSelected . '>';
+                                            echo htmlspecialchars($diseno->codigo, ENT_QUOTES, 'UTF-8');
+                                            echo '</option>';
+                                        }
+                                    } else {
+                                        echo '<option disabled>No hay diseños activos</option>';
+                                    }
+                                    ?>
+                                  </select>
+                                </div>
 
-        <!-- Campos generales -->
-        
-        <div class="inputPerfil mb-3">
-                <label class="labelPerfilProduct" for="alto" class="form-label">Alto (metros)</label>
-                <input type="number" class="form-control inputPerfilProductoCont" id="alto" name="alto" value="<?php echo htmlspecialchars($producto->producto_alto); ?>" step="0.01" max="10" required>
-            </div>
+                                <div class="inputPerfil mb-3">
+                                  <label class="labelPerfilProduct" for="cantidad">Cantidad</label>
+                                  <input type="number" class="form-control inputPerfilProductoCont" id="cantidad" name="cantidad" value="<?= htmlspecialchars($producto->producto_cantidad); ?>" max="10" required>
+                                </div>
 
-            <div class="inputPerfil mb-3">
-                <label class="labelPerfilProduct" for="largo" class="form-label">Largo (metros)</label>
-                <input type="number" class="form-control inputPerfilProductoCont" id="largo" name="largo" value="<?php echo htmlspecialchars($producto->producto_largo); ?>" step="0.01" max="50" required>
-            </div>
+                                <div class="inputPerfil mb-3">
+                                  <label class="labelPerfilProduct" for="monto">Monto</label>
+                                  <input type="text" class="form-control inputPerfilProductoCont" id="monto" name="monto"  readonly value="<?= htmlspecialchars($producto->producto_monto); ?>">
+                                </div>
 
-            <div class="inputPerfil mb-3">
-            <label class="labelPerfilProduct" for="diseno" class="form-label">Diseno</label>
-                    <?php
-                    // Consulta para obtener todos los diseños activos
-                    $query = "SELECT id_diseno, codigo, file_path FROM disenos WHERE estatus = 'activo'";
-                    $disenos = $db->seleccionar($query);
-                    $selectedDesignId = htmlspecialchars($producto->producto_diseno, ENT_QUOTES, 'UTF-8');
-                    echo '
-                        <select id="diseno" name="diseno">
-                            ';
+                                <?php if ($producto->id_categoria == 1): ?>
+                                  <!-- Campos adicionales para la categoría VIDRIOS -->
+                                  <div class="inputPerfil mb-3">
+                                    <label class="labelPerfilProduct" for="grosor">Grosor</label>
+                                    <select class="form-control inputPerfilProductoCont" id="grosor" name="grosor">
+                                      <option value="">Seleccione</option>
+                                      <option value="6" <?= ($producto->producto_grosor == '6') ? 'selected' : ''; ?>>6</option>
+                                      <option value="10" <?= ($producto->producto_grosor == '10') ? 'selected' : ''; ?>>10</option>
+                                      <option value="12" <?= ($producto->producto_grosor == '12') ? 'selected' : ''; ?>>12</option>
+                                    </select>
+                                  </div>
+                                <?php elseif ($producto->id_categoria == 2): ?>
+                                  <!-- Campos adicionales para la categoría PERSIANAS -->
+                                  <div class="inputPerfil mb-3">
+                                    <label class="labelPerfilProduct" for="marco">Marco</label>
+                                    <input type="text" class="form-control inputPerfilProductoCont" id="marco" name="marco" value="<?= htmlspecialchars($producto->producto_marco); ?>">
+                                  </div>
+                                  <div class="inputPerfil mb-3">
+                                    <label class="labelPerfilProduct" for="tipo_cadena">Tipo de Cadena</label>
+                                    <input type="text" class="form-control inputPerfilProductoCont" id="tipo_cadena" name="tipo_cadena" value="<?= htmlspecialchars($producto->producto_tipo_cadena); ?>">
+                                  </div>
+                                  <div class="inputPerfil mb-3">
+                                    <label class="labelPerfilProduct" for="color">Color</label>
+                                    <input type="text" class="form-control inputPerfilProductoCont" id="color" name="color" value="<?= htmlspecialchars($producto->producto_color); ?>">
+                                  </div>
+                                <?php endif; ?>
 
-                            if (!empty($disenos)) {
-                                foreach ($disenos as $diseno) {
-                                $isSelected = $diseno->id_diseno == $selectedDesignId ? 'selected' : '';
-                                echo '<option value="' . htmlspecialchars($diseno->id_diseno, ENT_QUOTES, 'UTF-8') . '" ' . $isSelected . '>';
-                                echo '<img src="' . htmlspecialchars($diseno->file_path, ENT_QUOTES, 'UTF-8') . '" alt="Imagen de diseño" style="width: 50px; height: auto;">';
-                                echo htmlspecialchars($diseno->codigo, ENT_QUOTES, 'UTF-8');
-                                echo '</option>';
-                            }
-                            } else {
-                                echo '<option disabled>No hay diseños activos</option>';
-                            }
-                    ?>
-          </div>
+                                <div class="inputPerfil mb-3">
+                                  <label class="labelPerfilProduct" for="extras">Extras</label>
+                                  <input type="text" class="form-control inputPerfilProductoCont" id="extras" name="extras">
+                                </div>
 
-          <br><br>
-            <div class="inputPerfil mb-3">
-            <label class="labelPerfilProduct" for="cantidad" class="form-label">Cantidad</label>
-            <input type="number" class="form-control inputPerfilProductoCont" id="cantidad" name="cantidad" value="<?php echo htmlspecialchars($producto->producto_cantidad); ?>" max="10" required>
-        </div>
+                                <div class="inputPerfil mb-3">
+                                  <label class="labelPerfilProduct" for="notas">Notas</label>
+                                  <textarea class="form-control inputPerfilProductoCont" id="notas" name="notas"></textarea>
+                                </div>
 
-        <div class="inputPerfil mb-3">
-            <label class="labelPerfilProduct" for="monto" class="form-label">Monto</label>
-            <input type="text" class="form-control inputPerfilProductoCont" id="monto" name="monto" value="<?php echo htmlspecialchars($producto->producto_monto); ?>">
-        </div>
-
-        <!-- Campos dependientes de la categoría -->
-        <?php 
-        
-        if ($producto->id_categoria == 1) : // VIDRIOS ?>
-
-        <div class="inputPerfil mb-3">
-            <label class="labelPerfilProduct" for="grosor" class="form-label">Grosor</label>
-            <select class="form-control inputPerfilProductoCont" id="grosor" name="grosor">
-                <option value="">Seleccione</option>
-                <option value="6" <?php echo ($producto->producto_grosor == '6') ? 'selected' : ''; ?>>6</option>
-                <option value="10" <?php echo ($producto->producto_grosor == '10') ? 'selected' : ''; ?>>10</option>
-                <option value="12" <?php echo ($producto->producto_grosor == '12') ? 'selected' : ''; ?>>12</option>
-            </select>
-        </div>
-
-        <?php elseif ($producto->id_categoria == 2) : // PERSIANAS ?>
-
-        <div class="inputPerfil mb-3">
-            <label class="labelPerfilProduct" for="marco" class="form-label">Marco</label>
-            <input type="text" class="form-control inputPerfilProductoCont" id="marco" name="marco" value="<?php echo htmlspecialchars($producto->producto_marco); ?>">
-        </div>
-        <div class="inputPerfil mb-3">
-            <label class="labelPerfilProduct" for="tipo_cadena" class="form-label">Tipo de Cadena</label>
-            <input type="text" class="form-control inputPerfilProductoCont" id="tipo_cadena" name="tipo_cadena" value="<?php echo htmlspecialchars($producto->producto_tipo_cadena); ?>">
-        </div>
-
-          <div class="inputPerfil mb-3">
-            <label class="labelPerfilProduct" for="color" class="form-label">Color</label>
-            <input type="text" class="form-control inputPerfilProductoCont" id="color" name="color" value="<?php echo htmlspecialchars($producto->producto_color); ?>">
-        </div>
-
-        <?php elseif ($producto->id_categoria == 3 or $producto->id_categoria == 4) : // TAPICES y HERRERIAS ?>
-
-          
-
-        <?php endif; ?>
-
-
-        <div class="inputPerfil mb-3">
-            <label class="labelPerfilProduct" for="extras" class="form-label">Extras</label>
-            <input type="text" class="form-control inputPerfilProductoCont" id="extras" name="extras">
-        </div>
-
-        <div class="inputPerfil mb-3">
-            <label class="labelPerfilProduct" for="notas" class="form-label">Notas</label>
-            <textarea class="form-control inputPerfilProductoCont" id="notas" name="notas"></textarea>
-        </div>
-
-        
-        <button type="submit" class="btn btn-primary">Generar Reporte</button>
-        <button type="button" class="btn btn-secondary" onclick="toggleReportForm('report-form-<?= htmlspecialchars($producto->id_detalle) ?>')">Cancelar</button>
-
-    </form>
-</div>
-
-
-
+                                <button type="submit" class="btn btn-primary">Generar Reporte</button>
+                                <button type="button" class="btn btn-secondary" onclick="toggleReportForm('report-form-<?= htmlspecialchars($producto->id_detalle) ?>')">Cancelar</button>
+                              </form>
                             </div>
                           </div>
                         <?php endforeach; ?>
@@ -368,6 +342,9 @@ if ($result) {
       </div>
     </div>
   </div>
+
+  <!-- Incluye SweetAlert2 -->
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../../css/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
@@ -418,4 +395,3 @@ if ($result) {
   </script>
 </body>
 </html>
-

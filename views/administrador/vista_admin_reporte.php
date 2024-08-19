@@ -199,7 +199,7 @@ foreach ($detalles_citas as $detalle) {
                         <p class="card-text"><strong>Alto:</strong> <?php echo htmlspecialchars($detalle->alto); ?></p>
                         <p class="card-text"><strong>Largo:</strong> <?php echo htmlspecialchars($detalle->largo); ?></p>
                         <p class="card-text"><strong>Cantidad:</strong> <?php echo htmlspecialchars($detalle->cantidad); ?></p>
-                        <p class="card-text"><strong>Monto:</strong> <?php echo htmlspecialchars($detalle->monto); ?></p>
+                       
                         <p class="card-text"><strong>Características:</strong> <?php echo htmlspecialchars($detalle->caracteristicas); ?></p>
                         <p class="card-text"><strong>Extras:</strong> <?php echo htmlspecialchars($detalle->extras); ?></p>
                         <p class="card-text"><strong>Notas:</strong> <?php echo htmlspecialchars($detalle->notas); ?></p>

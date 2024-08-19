@@ -257,56 +257,32 @@ if ($categoriaSeleccionada) {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Formulario para editar producto -->
-                 <!-- Añadir Diseño -->
-<form action="../../scripts/administrador/editaProducto.php" method="POST">
-    <input type="hidden" name="id_producto" value="<?php echo $producto->id_producto; ?>">
-    <div class="mb-3">
-        <label for="add-design-<?php echo $producto->id_producto; ?>" class="form-label">Añadir Diseño</label>
-        <input type="text" class="form-control" name="codigo_diseno" id="add-design-<?php echo $producto->id_producto; ?>" required>
-        <input type="hidden" name="action" value="add"> <!-- Especifica la acción para agregar diseño -->
-        <button type="submit" class="btn btn-success mt-2">Añadir Diseño</button>
-    </div>
-</form>
-
-<!-- Quitar Diseño -->
-<form action="../../scripts/administrador/editaProducto.php" method="POST">
-    <input type="hidden" name="id_producto" value="<?php echo $producto->id_producto; ?>">
-    <div class="mb-3">
-        <label for="remove-design-<?php echo $producto->id_producto; ?>" class="form-label">Quitar Diseño</label>
-        <input type="text" class="form-control" name="codigo_diseno" id="remove-design-<?php echo $producto->id_producto; ?>" required>
-        <input type="hidden" name="action" value="remove"> <!-- Especifica la acción para quitar diseño -->
-        <button type="submit" class="btn btn-danger mt-2">Quitar Diseño</button>
-    </div>
-</form>
-                <form action="../../scripts/administrador/editaProducto.php" method="POST" enctype="multipart/form-data">
+                <!-- Añadir Diseño -->
+                <form action="../../scripts/administrador/editaProducto.php" method="POST">
                     <input type="hidden" name="id_producto" value="<?php echo $producto->id_producto; ?>">
                     <div class="mb-3">
-                        <label for="edit-product-nombre-<?php echo $producto->id_producto; ?>" class="form-label">Nombre Actual</label>
-                        <input type="text" class="form-control" name="nombre_actual" id="edit-product-nombre-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->nombre); ?>" readonly>
+                        <label for="add-design-<?php echo $producto->id_producto; ?>" class="form-label">Añadir Diseño</label>
+                        <input type="text" class="form-control" name="codigo_diseno" id="add-design-<?php echo $producto->id_producto; ?>" required>
+                        <input type="hidden" name="action" value="add">
+                        <button type="submit" class="btn btn-success mt-2">Añadir Diseño</button>
                     </div>
+                </form>
+
+                <!-- Quitar Diseño -->
+                <form action="../../scripts/administrador/editaProducto.php" method="POST">
+                  
+                    <input type="hidden" name="id_producto" value="<?php echo $producto->id_producto; ?>">
                     <div class="mb-3">
-                        <label for="edit-product-new-name-<?php echo $producto->id_producto; ?>" class="form-label">Nuevo Nombre</label>
-                        <input type="text" class="form-control" name="nuevo_nombre" id="edit-product-new-name-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->nombre); ?>">
+                        <label for="remove-design-<?php echo $producto->id_producto; ?>" class="form-label">Quitar Diseño</label>
+                        <input type="text" class="form-control" name="codigo_diseno" id="remove-design-<?php echo $producto->id_producto; ?>" required>
+                        <input type="hidden" name="action" value="remove">
+                        <button type="submit" class="btn btn-danger mt-2">Quitar Diseño</button>
                     </div>
-                    <div class="mb-3">
-                        <label for="edit-product-categoria-<?php echo $producto->id_producto; ?>" class="form-label">Categoría</label>
-                        <select class="form-control" name="categoria" id="edit-product-categoria-<?php echo $producto->id_producto; ?>">
-                            <?php foreach ($categorias as $categoria): ?>
-                            <option value="<?php echo $categoria->nombre; ?>" <?php echo $producto->categoria == $categoria->nombre ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($categoria->nombre); ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit-product-descripcion-<?php echo $producto->id_producto; ?>" class="form-label">Descripción</label>
-                        <textarea class="form-control" name="descripcion" id="edit-product-descripcion-<?php echo $producto->id_producto; ?>"><?php echo htmlspecialchars($producto->descripcion); ?></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit-product-precio-<?php echo $producto->id_producto; ?>" class="form-label">Precio</label>
-                        <input type="number" class="form-control" name="precio" id="edit-product-precio-<?php echo $producto->id_producto; ?>" value="<?php echo htmlspecialchars($producto->precio); ?>">
-                    </div>
+                </form>
+
+                <!-- Cambiar Estatus -->
+                <form action="../../scripts/administrador/editaProducto.php" method="POST">
+                    <input type="hidden" name="id_producto" value="<?php echo $producto->id_producto; ?>">
                     <div class="mb-3">
                         <label for="edit-product-estatus-<?php echo $producto->id_producto; ?>" class="form-label">Estatus</label>
                         <select class="form-control" name="estatus" id="edit-product-estatus-<?php echo $producto->id_producto; ?>">
@@ -314,16 +290,25 @@ if ($categoriaSeleccionada) {
                             <option value="inactivo" <?php echo $producto->estatus == 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="edit-product-image-adicional-<?php echo $producto->id_producto; ?>" class="form-label">Imágenes del Producto</label>
-                        <input type="file" class="form-control" name="fileToUpload" id="edit-product-image-adicional-<?php echo $producto->id_producto; ?>">
-                        <input type="hidden" name="upload_type" value="imagenes">
-                    </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Descartar</button>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
                 </form>
+
+                <!-- Agregar Imágenes 
+                <form action="../../scripts/administrador/editaProducto.php" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="id_producto" value="<?php echo $producto->id_producto; ?>">
+    <div class="mb-3">
+        <label for="edit-product-image-adicional-<?php echo $producto->id_producto; ?>" class="form-label">Imágenes del Producto</label>
+        <input type="file" class="form-control" name="fileToUpload" id="edit-product-image-adicional-<?php echo $producto->id_producto; ?>">
+        <input type="hidden" name="upload_type" value="imagenes">
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Descartar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</form>-->
+
             </div>
         </div>
     </div>

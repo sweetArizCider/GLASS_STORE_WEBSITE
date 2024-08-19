@@ -39,8 +39,8 @@ if ($result) {
   <div id="logotipo-flotante">
     <img src="../../img/index/GLASS.png" alt="Glass store">
   </div>
-   <!--Barra lateral-->
-   <div class="wrapper">
+  <!--Barra lateral-->
+  <div class="wrapper">
     <aside id="sidebar">
       <div class="d-flex">
         <button class="toggle-btn" type="button">
@@ -99,6 +99,8 @@ if ($result) {
             </li>
           </ul>
         </li>
+        
+       
       </ul>
       <div class="sidebar-footer">
         <a href="../../scripts/cerrarSesion.php" class="sidebar-link">
@@ -107,6 +109,7 @@ if ($result) {
         </a>
     </div>
      
+      
     </aside>
     
 
